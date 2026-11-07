@@ -1,3 +1,5 @@
+// ------------------ Setup & Imports ------------------ //
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -5,11 +7,15 @@ import { speechSupported, startDictation } from "@/services/speech";
 import { useCityStore } from "@/store/useCityStore";
 import { PixelButton, PixelPanel, cx } from "./ui/Pixel";
 
+// ------------------ Example Dreams ------------------ //
+
 const EXAMPLES = [
   "I was running down a corridor in my old school because I was late for an exam, and every door I opened led to the sea.",
   "I was flying over a city at night and my friend kept pointing at the stars. The sky felt enormous.",
   "I was lost in a forest where the trees kept moving, and a stranger with a light wouldn't tell me the way out.",
 ];
+
+// ------------------ Displaying Building Process ------------------ //
 
 const BUILD_STEPS = ["Writing the dream entry", "Extracting emotion, symbols & intensity", "Finding your district and street", "Scoring roads to your library"];
 
@@ -31,11 +37,15 @@ function BuildingProgress() {
   );
 }
 
+// ------------------ An Open/Close wrapper For Dialogue ------------------ //
+
 export function RecordDreamSheet() {
   const open = useCityStore((s) => s.record.open);
   // Mounting the dialog only while open resets its local state on close.
   return open ? <RecordDreamDialog /> : null;
 }
+
+// ------------------ Sets Up States & Actions ------------------ //
 
 function RecordDreamDialog() {
   const record = useCityStore((s) => s.record);
@@ -50,6 +60,8 @@ function RecordDreamDialog() {
   const [canSpeak] = useState(() => speechSupported());
   const stopRef = useRef<() => void>(() => {});
   const baseRef = useRef("");
+
+// ------------------ Microphone Controls ------------------ //
 
   useEffect(() => () => stopRef.current(), []);
 
@@ -79,12 +91,14 @@ function RecordDreamDialog() {
     });
   };
 
+  // ------------------ Dialogue Title ------------------ //
   const title = record.step === "input" ? "What did you dream?" : record.step === "followups" ? "A few quick questions" : "Your building is rising…";
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-end bg-[#02030a]/55 sm:place-items-center sm:p-4">
       <PixelPanel className="anim-rise w-full max-w-xl">
         <div role="dialog" aria-modal="true" aria-labelledby="record-title" className="flex max-h-[88dvh] flex-col">
+          {/* ------------------ Header & Close Button ------------------ */}
           <div className="flex items-center justify-between border-b-2 border-line px-4 py-3">
             <div>
               <div className="font-display text-[10px] uppercase tracking-[0.16em] text-[var(--emo-wonder)]">
@@ -100,9 +114,11 @@ function RecordDreamDialog() {
           </div>
 
           <div className="pixel-scroll min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            {/* ------------------ Initial Dream Input ------------------ */}
             {record.step === "input" && (
               <div className="space-y-3">
                 <div className="flex gap-3">
+                  {/* ------------------ Microphone Button ------------------ */}
                   {canSpeak && (
                     <button
                       type="button"
@@ -114,6 +130,7 @@ function RecordDreamDialog() {
                       {listening ? "■" : "🎙"}
                     </button>
                   )}
+                  {/* ------------------ Editable Dream Transcript ------------------ */}
                   <div className="flex-1">
                     <textarea
                       autoFocus
@@ -127,6 +144,7 @@ function RecordDreamDialog() {
                     <p className="mt-1 text-[12px] text-ink-faint">{listening ? "Listening. You can edit the transcript afterwards." : "Edit anything the microphone misheard."}</p>
                   </div>
                 </div>
+                {/* ------------------ Microphone Error ------------------ */}
                 {micError && <p className="text-[13px] text-[var(--emo-anger)]">{micError}</p>}
                 <div>
                   <div className="mb-1.5 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Or try an example</div>
@@ -146,6 +164,7 @@ function RecordDreamDialog() {
               </div>
             )}
 
+            {/* ------------------ Follow-Up Questions & Answers ------------------ */}
             {record.step === "followups" && (
               <div className="space-y-3">
                 <p className="border-l-2 border-line pl-3 text-[13px] italic text-ink-faint">“{record.transcript}”</p>
@@ -186,8 +205,10 @@ function RecordDreamDialog() {
               </div>
             )}
 
+            {/* ------------------ Building Progress Display ------------------ */}
             {record.step === "building" && <BuildingProgress />}
 
+            {/* ------------------ Processing Errors ------------------ */}
             {record.error && (
               <div className="mt-3 border-2 border-[var(--emo-anger)]/60 bg-[#2a0d12] p-2 text-[13px] text-[var(--emo-anger)]">
                 <p>{record.error}</p>
@@ -202,15 +223,18 @@ function RecordDreamDialog() {
             )}
           </div>
 
+          {/* ------------------ Footer & Submission Controls ------------------ */}
           {record.step !== "building" && (
             <div className="flex flex-wrap items-center justify-between gap-2 border-t-2 border-line px-4 py-3">
               <p className="hidden text-[11px] leading-snug text-ink-faint sm:block">Your dream stays in this browser.</p>
               <div className="ml-auto flex flex-wrap gap-2">
+                {/* ------------------ Offline Fallback ------------------ */}
                 {record.step === "followups" && record.canUseOffline && (
                   <PixelButton className="px-3 py-2" onClick={() => void build({ offline: true })} disabled={record.busy}>
                     Use offline estimate
                   </PixelButton>
                 )}
+                {/* ------------------ Continue / Build / Retry ------------------ */}
                 <PixelButton
                   variant="primary"
                   className="px-4 py-2"
