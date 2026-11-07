@@ -6,21 +6,21 @@ import type { Emotion, WorkKind } from "@/lib/types";
 export const EMOTION_COLOR: Record<Emotion, string> = EMOTION_COLORS;
 
 export const EMOTION_GROUND: Record<Emotion, string> = {
-  anger: "#3a1d24",
-  apprehension: "#271d42",
-  sadness: "#16264a",
-  confusion: "#123634",
-  happiness: "#3a2f18",
-  wonder: "#3a1a3a",
+  anger: "#4a1e26",
+  apprehension: "#2f2252",
+  sadness: "#172c5a",
+  confusion: "#123f3b",
+  happiness: "#4a3a17",
+  wonder: "#4a1c47",
 };
 
 export const EMOTION_WALL: Record<Emotion, string> = {
-  anger: "#6b2d32",
-  apprehension: "#3f3270",
-  sadness: "#24407a",
-  confusion: "#1e5a56",
-  happiness: "#6e5a2c",
-  wonder: "#5e2c5e",
+  anger: "#7d2e35",
+  apprehension: "#46348a",
+  sadness: "#244a94",
+  confusion: "#1b6b64",
+  happiness: "#80652a",
+  wonder: "#73306f",
 };
 
 export const WORK_KIND_COLOR: Record<WorkKind, string> = {

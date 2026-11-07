@@ -1,6 +1,7 @@
 import type { Emotion } from "@/lib/types";
-import { PLAZA_R, type WorldCity } from "./cityGeometry";
-import { EMOTION_GROUND, WORLD } from "./palette";
+import { DISTRICT_PUSH, PLAZA_R, SCALE, type WorldCity } from "./cityGeometry";
+import { DREAM_START } from "@/lib/layout";
+import { EMOTION_COLOR, EMOTION_GROUND, WORLD } from "./palette";
 import { rngFor } from "./rng";
 import { lamp, tree, type Voxel } from "./voxel";
 
@@ -27,6 +28,20 @@ export function emotionAt(city: WorldCity, x: number, z: number): Emotion {
   return city.districts.find((d) => a >= d.startAngle && a < d.endAngle)?.emotion ?? city.districts[0].emotion;
 }
 
+/** Distance (radians-scaled) from the nearest district boundary, for border rows. */
+function nearBoundary(city: WorldCity, x: number, z: number) {
+  const r = Math.hypot(x, z);
+  let a = Math.atan2(z, x);
+  if (a < 0) a += Math.PI * 2;
+  let best = Infinity;
+  for (const d of city.districts) {
+    let diff = Math.abs(a - d.startAngle);
+    diff = Math.min(diff, Math.PI * 2 - diff);
+    best = Math.min(best, diff * r);
+  }
+  return best;
+}
+
 export type GroundTile = { x: number; z: number; y: number; c: string };
 
 export function buildGround(city: WorldCity): GroundTile[] {
@@ -34,6 +49,7 @@ export function buildGround(city: WorldCity): GroundTile[] {
   const streetCells = new Set<string>();
   for (const s of city.streets) for (const c of s.cells) streetCells.add(key(c.x, c.z));
   const built = city.radius - 4;
+  const borderStart = DREAM_START * SCALE + DISTRICT_PUSH - 8; // district seams begin outside the library ring
   const R = Math.ceil(city.radius + 16);
   const tiles: GroundTile[] = [];
   for (let x = -R; x <= R; x++)
@@ -46,11 +62,19 @@ export function buildGround(city: WorldCity): GroundTile[] {
         c = jitter(Math.round(r) % 2 === 0 ? WORLD.plaza : WORLD.plazaAccent, (rng() - 0.5) * 0.12);
       } else if (streetCells.has(key(x, z))) {
         c = jitter(WORLD.street, (rng() - 0.5) * 0.15);
+      } else if (r > borderStart && r < built + 2 && nearBoundary(city, x, z) < 0.6) {
+        // a dark cobbled seam between districts, so each reads as its own zone
+        c = jitter("#0b0f1f", (rng() - 0.5) * 0.2);
       } else {
-        const tint = EMOTION_GROUND[emotionAt(city, x, z)];
+        const emotion = emotionAt(city, x, z);
+        const tint = EMOTION_GROUND[emotion];
         const base = rng() > 0.5 ? WORLD.grass : WORLD.grassAlt;
         const fade = Math.max(0, Math.min(1, (r - built) / 14));
-        c = jitter(hexMix(hexMix(base, tint, 0.62), WORLD.wild, fade * 0.85), (rng() - 0.5) * 0.18);
+        const inDistrict = r > borderStart;
+        // stronger emotion tint inside the districts; the occasional speckle uses the district's own colour
+        const ground = hexMix(base, tint, inDistrict ? 0.88 : 0.55);
+        const speck = inDistrict && rng() < 0.035 ? hexMix(ground, EMOTION_COLOR[emotion], 0.35) : ground;
+        c = jitter(hexMix(speck, WORLD.wild, fade * 0.85), (rng() - 0.5) * 0.18);
         if (r > built + 4) {
           // gentle voxel hills out in the unexplored wild
           const h = Math.sin(x * 0.35) * Math.cos(z * 0.31) + Math.sin((x + z) * 0.17);
@@ -103,7 +127,7 @@ export function buildProps(city: WorldCity): Voxel[] {
     for (let z = -R; z <= R; z++) {
       const r = Math.hypot(x, z);
       if (r < PLAZA_R + 3 || r > R - 2) continue;
-      if (rng() > (r > city.radius - 2 ? 0.05 : 0.022)) continue;
+      if (rng() > (r > city.radius - 2 ? 0.022 : 0.008)) continue; // sparse: a few trees in the city, a light forest at the edge
       if (blocked.has(key(x, z))) continue;
       out.push(...tree(`t${x},${z}`, x, z, EMOTION_GROUND[emotionAt(city, x, z)]));
       block(x, z, 2, 2);

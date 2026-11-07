@@ -10,6 +10,9 @@ import type { Dream, Emotion, SymbolStat, Work } from "@/lib/types";
 export const SCALE = 4;
 export const PLAZA_R = PLAZA_RADIUS * SCALE;
 const WEAK = 0.45; // below this a road is drawn dotted
+/** Extra outward push (voxels) so emotion districts sit toward the edge and the centre stays calm. */
+export const DISTRICT_PUSH = 12;
+const LIBRARY_PUSH = 6;
 
 export type Vec2 = { x: number; z: number };
 
@@ -26,21 +29,36 @@ export type WBuilding = {
   recency: number;
   order: number;
 };
-export type WRoad = { id: string; from: string; to: string; strength: number; bright: boolean; dotted: boolean; cells: Vec2[] };
+export type WRoad = {
+  id: string;
+  from: string;
+  to: string;
+  strength: number;
+  bright: boolean;
+  dotted: boolean;
+  cells: Vec2[]; // rasterised, used to keep trees off the road
+  path: Vec2[]; // smooth samples along the curve, used for rendering
+};
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
 export type WorldCity = {
   districts: WDistrict[];
   streets: WStreet[];
   buildings: WBuilding[];
   roads: WRoad[];
-  boulevard: { symbol: string; cells: Vec2[]; buildingIds: string[] } | null;
+  boulevard: { symbol: string; cells: Vec2[]; anchors: Vec2[]; buildingIds: string[] } | null;
   landmarks: WLandmark[];
   radius: number;
 };
 
 const key = (x: number, z: number) => `${x},${z}`;
 const polar = (r: number, a: number): Vec2 => ({ x: r * Math.cos(a), z: r * Math.sin(a) });
-const snap = (gx: number, gy: number): Vec2 => ({ x: Math.round(gx * SCALE), z: Math.round(gy * SCALE) });
+const snap = (gx: number, gy: number, push = 0): Vec2 => {
+  const r = Math.hypot(gx, gy);
+  const k = r > 0 ? (r * SCALE + push) / r : SCALE;
+  return { x: Math.round(gx * k), z: Math.round(gy * k) };
+};
+const pushFor = (kind: "dream" | "work" | "construction") => (kind === "work" ? LIBRARY_PUSH : DISTRICT_PUSH);
+const DREAM_R0 = DREAM_START * SCALE + DISTRICT_PUSH;
 const SUFFIX = ["Street", "Lane", "Row", "Way"];
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -65,6 +83,16 @@ function lineCells(a: Vec2, b: Vec2): Vec2[] {
     }
   }
   return out;
+}
+
+/** Smooth samples along a quadratic bezier (not snapped to the grid). */
+function bezierPath(a: Vec2, ctrl: Vec2, b: Vec2): Vec2[] {
+  const n = Math.max(8, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 1.5));
+  return Array.from({ length: n + 1 }, (_, i) => {
+    const t = i / n;
+    const u = 1 - t;
+    return { x: u * u * a.x + 2 * u * t * ctrl.x + t * t * b.x, z: u * u * a.z + 2 * u * t * ctrl.z + t * t * b.z };
+  });
 }
 
 /** Quadratic bezier rasterised to 4-connected voxel cells. */
@@ -99,21 +127,21 @@ export function toWorldCity(
 ): WorldCity {
   const districts: WDistrict[] = city.districts.map((d) => {
     const mid = (d.startAngle + d.endAngle) / 2;
-    return { emotion: d.emotion, startAngle: d.startAngle, endAngle: d.endAngle, midAngle: mid, labelPos: polar((DREAM_START - 1) * SCALE, mid) };
+    return { emotion: d.emotion, startAngle: d.startAngle, endAngle: d.endAngle, midAngle: mid, labelPos: polar(DREAM_R0 + 6, mid) };
   });
 
   const perDistrict = new Map<Emotion, number>();
   const streets: WStreet[] = city.streets.map((s) => {
     const i = perDistrict.get(s.emotion) ?? 0;
     perDistrict.set(s.emotion, i + 1);
-    const end = s.length * SCALE;
+    const end = s.length * SCALE + DISTRICT_PUSH;
     return {
       id: `${s.emotion}/${s.name}`,
       emotion: s.emotion,
       micro: s.name,
       name: streetLabel(s.name, i),
       angle: s.angle,
-      cells: lineCells(polar(PLAZA_R + 1, s.angle), polar(end, s.angle)),
+      cells: lineCells(polar(DREAM_R0 - 3, s.angle), polar(end, s.angle)), // starts at the district, not the plaza
       labelPos: polar(end + 2, s.angle),
     };
   });
@@ -132,7 +160,7 @@ export function toWorldCity(
       kind: b.kind,
       emotion: b.emotion,
       street: b.street ? `${b.emotion}/${b.street}` : undefined,
-      pos: snap(b.gx, b.gy),
+      pos: snap(b.gx, b.gy, pushFor(b.kind)),
       footprint: { w: 3, d: 3 },
       height,
       recency: b.recency,
@@ -143,8 +171,8 @@ export function toWorldCity(
 
   const roads: WRoad[] = city.roads.map((r) => {
     const [a, mid, b] = r.points;
-    const A = byId.get(r.from)?.pos ?? snap(a[0], a[1]);
-    const B = byId.get(r.to)?.pos ?? snap(b[0], b[1]);
+    const A = byId.get(r.from)?.pos ?? snap(a[0], a[1], DISTRICT_PUSH);
+    const B = byId.get(r.to)?.pos ?? snap(b[0], b[1], DISTRICT_PUSH);
     return {
       id: `${r.from}->${r.to}`,
       from: r.from,
@@ -152,7 +180,8 @@ export function toWorldCity(
       strength: r.strength,
       bright: r.strength >= STRONG_STRENGTH,
       dotted: r.strength < WEAK,
-      cells: curveCells(A, { x: mid[0] * SCALE, z: mid[1] * SCALE }, B),
+      cells: curveCells(A, snap(mid[0], mid[1], DISTRICT_PUSH * 0.5), B),
+      path: bezierPath(A, snap(mid[0], mid[1], DISTRICT_PUSH * 0.5), B),
     };
   });
 
@@ -161,7 +190,7 @@ export function toWorldCity(
     symbol: l.symbol,
     emotion: l.emotion,
     pos: snap(l.gx, l.gy),
-    height: 14 + Math.min(10, (statBy.get(l.symbol)?.count ?? 3) * 1.5),
+    height: 9 + Math.min(7, statBy.get(l.symbol)?.count ?? 3), // kept modest so the centre stays calm
   }));
 
   // Main boulevard: the symbol linking the most buildings across districts
@@ -187,15 +216,15 @@ export function toWorldCity(
       for (let i = 0; i < pts.length; i++) {
         const a = pts[i];
         const b = pts[(i + 1) % pts.length];
-        const ctrl = { x: ((a.x + b.x) / 2) * 0.55, z: ((a.z + b.z) / 2) * 0.55 };
+        const ctrl = { x: (a.x + b.x) / 2, z: (a.z + b.z) / 2 }; // straight chords: never cuts through the centre
         for (const c of curveCells(a, ctrl, b))
-          for (const d of [c, { x: c.x + 1, z: c.z }]) {
+          for (const d of [c]) {
             if (Math.hypot(d.x, d.z) <= PLAZA_R + 0.5 || seen.has(key(d.x, d.z))) continue;
             seen.add(key(d.x, d.z));
             cells.push(d);
           }
       }
-      boulevard = { symbol: best.symbol, cells, buildingIds: best.ids };
+      boulevard = { symbol: best.symbol, cells, anchors: pts, buildingIds: best.ids };
     }
   }
 

@@ -3,16 +3,11 @@ import * as THREE from "three";
 // Shared GPU resources for every voxel mesh. Created lazily on the client.
 
 let boxGeo: THREE.BoxGeometry | null = null;
-let tileGeo: THREE.BoxGeometry | null = null;
 let noiseTex: THREE.DataTexture | null = null;
 let glowMat: THREE.MeshBasicMaterial | null = null;
 
 export function voxelGeometry() {
   return (boxGeo ??= new THREE.BoxGeometry(1, 1, 1));
-}
-
-export function roadTileGeometry() {
-  return (tileGeo ??= new THREE.BoxGeometry(0.92, 0.14, 0.92));
 }
 
 /** 8x8 grain texture, nearest-filtered, for the Minecraft-like block surface. */

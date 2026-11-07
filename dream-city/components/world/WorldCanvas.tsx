@@ -10,17 +10,15 @@ import { Effects } from "./Effects";
 import { CameraPublisher, LabelLayer } from "./Labels";
 import { Landmark } from "./Landmarks";
 import { Lighting } from "./Lighting";
+import { LinkLayer } from "./LinkLayer";
 import { Plaza } from "./Plaza";
-import { Boulevard, Road } from "./Roads";
 import { SelectionMarker } from "./SelectionMarker";
 import { Terrain } from "./Terrain";
-import { introDelay, markWorldMounted } from "./useRise";
+import { markWorldMounted } from "./useRise";
 
 function CityScene() {
   const model = useCity();
-  const justBuiltId = useCityStore((s) => s.justBuiltId);
   const city = model.world;
-  const introRoads = introDelay(model.allDreams.length + model.allWorks.length);
 
   return (
     <>
@@ -39,10 +37,6 @@ function CityScene() {
         }
         return <ConstructionSite key={b.id} b={b} />;
       })}
-      {city.boulevard && <Boulevard key={city.boulevard.symbol} cells={city.boulevard.cells} />}
-      {city.roads.map((r, i) => (
-        <Road key={r.id} road={r} delay={r.from === justBuiltId || r.to === justBuiltId ? 1700 : introRoads > 0 ? introRoads + i * 25 : 0} />
-      ))}
       {city.landmarks.map((l, i) => (
         <Landmark key={l.symbol} l={l} index={i} />
       ))}
@@ -79,6 +73,7 @@ export default function WorldCanvas() {
         <CityScene />
         <PostFX />
       </Canvas>
+      <LinkLayer />
       <LabelLayer />
     </>
   );
