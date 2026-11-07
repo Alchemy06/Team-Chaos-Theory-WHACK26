@@ -1,0 +1,154 @@
+[
+  {
+    "id": "continuity-schredl",
+    "claim": "The continuity hypothesis: dreams reflect waking-life experiences, and the more time spent on an activity, the more it tends to appear in dreams.",
+    "citation": "Schredl (2003), continuity hypothesis; summarised in Lambrecht, Schredl, Henley-Einion & Blagrove (2013), International Journal of Dream Research 6(1)",
+    "url": "https://orca.cardiff.ac.uk/114647",
+    "confidence": "Well replicated for thematic continuity; mechanisms debated",
+    "tags": [
+      "continuity",
+      "waking-life",
+      "media"
+    ]
+  },
+  {
+    "id": "media-2018",
+    "claim": "In an online study of 1,966 people, more consumption of each media type, and more emotional involvement with it, correlated with a higher share of dreams about that media.",
+    "citation": "Moverley, Schredl & Göritz (2018), Media dreaming and media consumption: an online study, International Journal of Dream Research 11(2), 127-134",
+    "url": "https://journals.ub.uni-heidelberg.de/index.php/IJoDR/article/view/46416",
+    "confidence": "Moderate: correlational and self-reported",
+    "tags": [
+      "media",
+      "continuity",
+      "involvement",
+      "books",
+      "films",
+      "games"
+    ]
+  },
+  {
+    "id": "uk-library-2013",
+    "claim": "Most of 1,375 UK library users said their dreams were affected by reading, TV and daily activities; the more time they spent on an activity, the more likely they reported an effect.",
+    "citation": "Lambrecht, Schredl, Henley-Einion & Blagrove (2013), International Journal of Dream Research 6(1), 41-44",
+    "url": "https://journals.ub.uni-heidelberg.de/index.php/IJoDR/article/view/9724",
+    "confidence": "Moderate: self-reported effects",
+    "tags": [
+      "reading",
+      "media",
+      "continuity",
+      "books"
+    ]
+  },
+  {
+    "id": "dreambank",
+    "claim": "DreamBank is a research archive of over 27,000 dream reports, used here as a rough baseline for how common each symbol is.",
+    "citation": "Domhoff & Schneider (2008), Studying dream content using the archive and search engine on DreamBank.net, Consciousness and Cognition 17(4), 1238-1247",
+    "url": "https://huggingface.co/datasets/gustavecortal/DreamBank-annotated",
+    "confidence": "Large archive, but skewed towards a few long-term dreamers and older US samples",
+    "tags": [
+      "baseline",
+      "symbols"
+    ]
+  },
+  {
+    "id": "dream-lag-2011",
+    "claim": "Features of waking events tend to reappear in dreams the next day (day-residue) and again 5 to 7 days later (dream-lag), a U-shaped pattern over a week. The study found the dream-lag effect in REM dreams but not in NREM stage 2 dreams.",
+    "citation": "Blagrove, Fouquet, Henley-Einion, Pace-Schott, Davies, Neuschaffer & Turnbull (2011), Assessing the dream-lag effect for REM and NREM stage 2 dreams, PLoS ONE",
+    "url": "https://orca.cardiff.ac.uk/114661/1/plos%20one%202011.PDF",
+    "confidence": "Moderate: lab study; effect seen for REM dreams only",
+    "tags": [
+      "timing",
+      "recency",
+      "memory",
+      "media"
+    ]
+  },
+  {
+    "id": "memory-sources-2014",
+    "claim": "Dreams usually contain fragments of personal waking experiences rather than replaying a whole episode: in two-week diaries from 32 people, over 80% of dreams showed low to moderate traces of autobiographical memory, and only 1 dream (0.5%) relived an episode.",
+    "citation": "Malinowski & Horton (2014), Memory sources of dreams: the incorporation of autobiographical rather than episodic experiences, Journal of Sleep Research 23(4), 441-447",
+    "url": "https://repository.uel.ac.uk/item/85qq2",
+    "confidence": "Moderate: small diary sample",
+    "tags": [
+      "memory",
+      "remixing",
+      "continuity"
+    ]
+  },
+  {
+    "id": "hvdc-norms",
+    "claim": "In the Hall and Van de Castle norms (500 dream reports each from male and female US college students), negative emotions made up 80% of all emotions reported, misfortunes appeared in about a third of dreams, and good fortunes in only 6%.",
+    "citation": "Hall & Van de Castle norms for American college students, as reported by DreamResearch.net (UC Santa Cruz)",
+    "url": "https://dreams.ucsc.edu/Library/fmid4.html",
+    "confidence": "Well established, but older US student samples",
+    "tags": [
+      "emotion",
+      "negative",
+      "norms",
+      "baseline"
+    ]
+  },
+  {
+    "id": "domhoff-continuity-2005",
+    "claim": "Dream content tends to be continuous with the dreamer's waking concerns, memories and behaviour; the Hall and Van de Castle system counts content categories as percentages so dreams of different lengths can be compared.",
+    "citation": "Domhoff (2005), The dreams of men and women: patterns of gender similarity and difference, DreamResearch.net (UC Santa Cruz)",
+    "url": "https://dreams.ucsc.edu/Library/domhoff_2005c.html",
+    "confidence": "Well supported by content-analysis research; unpublished paper",
+    "tags": [
+      "continuity",
+      "concerns",
+      "method"
+    ]
+  },
+  {
+    "id": "gaming-2012",
+    "claim": "Evidence suggests frequent video game play may modestly increase lucid dreaming, more strongly increases control over dreams, and is linked to finding nightmares less frightening.",
+    "citation": "Gackenbach (2012), Video game play and consciousness, chapter: Dreams and video game play",
+    "url": "https://roam.macewan.ca/items/8d467937-124f-4b2d-b15f-35e40c285e08/full",
+    "confidence": "Emerging: mostly correlational studies of gamers",
+    "tags": [
+      "games",
+      "lucid",
+      "nightmares",
+      "media"
+    ]
+  },
+  {
+    "id": "hvdc-emotions",
+    "claim": "The Hall and Van de Castle system codes five dream emotions: anger, apprehension (fear, anxiety, guilt, embarrassment), sadness, confusion and happiness. Emotions are scored only when the dreamer states them, or shows a clear physical reaction such as crying, and are not inferred from the setting.",
+    "citation": "Hall & Van de Castle coding rules for emotions, DreamResearch.net (UC Santa Cruz)",
+    "url": "https://dreams.ucsc.edu/Coding/emotions.html",
+    "confidence": "Standard method in dream content research",
+    "tags": [
+      "method",
+      "emotion",
+      "coding"
+    ]
+  },
+  {
+    "id": "llm-emotion-2023",
+    "claim": "On DreamBank reports with Hall and Van de Castle emotion codes, an off-the-shelf sentiment model matched human scores poorly (about 52-53 F1 on positive emotions), while a supervised BERT-large model reached about 85-87 F1 and held up on dream series it had not seen.",
+    "citation": "Bertolini, Elce, Michalak & Bernardi, Automatic scoring of dream reports' emotional content with large language models (arXiv preprint, 2023)",
+    "url": "https://arxiv.org/pdf/2302.14828",
+    "confidence": "Single study; supervised model, not a prompted chatbot",
+    "tags": [
+      "method",
+      "emotion",
+      "automation",
+      "validation"
+    ]
+  },
+  {
+    "id": "fogli-2020",
+    "claim": "A tool that automatically scores dream reports on the Hall and Van de Castle scale had an average error of 0.24 against hand-annotated reports, and applied to 24,000 reports it found support for the continuity hypothesis.",
+    "citation": "Fogli, Aiello & Quercia (2020), Our dreams, our selves: automatic analysis of dream reports, Royal Society Open Science",
+    "url": "https://www.doc.ic.ac.uk/~af6618/publication/our_dreams_our_selves_automatic_analysis_of_dream_reports/",
+    "confidence": "Peer-reviewed; rule-based tool rather than an LLM",
+    "tags": [
+      "method",
+      "automation",
+      "validation",
+      "continuity"
+    ]
+  }
+]

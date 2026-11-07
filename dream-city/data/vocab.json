@@ -1,0 +1,465 @@
+{
+  "_about": "Controlled vocabulary for coding dreams. Districts follow the five Hall and Van de Castle emotion classes plus Wonder (our addition). Streets are finer feelings taken from the wording of the Hall and Van de Castle emotion definitions where possible. Symbols are grouped by Hall and Van de Castle content categories. Themes describe what happens, never what it means.",
+  "emotions": {
+    "anger": [
+      "irritation",
+      "frustration",
+      "rage"
+    ],
+    "apprehension": [
+      "fear",
+      "anxiety",
+      "guilt",
+      "embarrassment"
+    ],
+    "sadness": [
+      "grief",
+      "loneliness",
+      "longing"
+    ],
+    "confusion": [
+      "uncertainty",
+      "bewilderment",
+      "indecision"
+    ],
+    "happiness": [
+      "contentment",
+      "joy",
+      "elation"
+    ],
+    "wonder": [
+      "awe",
+      "curiosity",
+      "nostalgia"
+    ]
+  },
+  "hvdc": {
+    "anger": "anger",
+    "apprehension": "apprehension",
+    "sadness": "sadness",
+    "confusion": "confusion",
+    "happiness": "happiness",
+    "wonder": "happiness"
+  },
+  "emotionDefinitions": {
+    "anger": "Irritation through to rage. (Hall and Van de Castle)",
+    "apprehension": "Fear, anxiety, guilt or embarrassment caused by a perceived threat of harm, punishment or social rejection. (Hall and Van de Castle)",
+    "sadness": "Any unhappy emotional state, not physical pain. (Hall and Van de Castle)",
+    "confusion": "Cognitive uncertainty or bewilderment, often from unexpected events or difficulty choosing. (Hall and Van de Castle)",
+    "happiness": "Any pleasant feeling, from mild contentment to elation. (Hall and Van de Castle)",
+    "wonder": "Awe, curiosity or nostalgia. Our addition; counts as happiness in Hall and Van de Castle terms."
+  },
+  "streetSource": {
+    "irritation": "hvdc",
+    "frustration": "ours",
+    "rage": "hvdc",
+    "fear": "hvdc",
+    "anxiety": "hvdc",
+    "guilt": "hvdc",
+    "embarrassment": "hvdc",
+    "grief": "ours",
+    "loneliness": "ours",
+    "longing": "ours",
+    "uncertainty": "hvdc",
+    "bewilderment": "hvdc",
+    "indecision": "hvdc",
+    "contentment": "hvdc",
+    "joy": "ours",
+    "elation": "hvdc",
+    "awe": "ours",
+    "curiosity": "ours",
+    "nostalgia": "ours"
+  },
+  "symbols": {
+    "water": [
+      "water",
+      "swim",
+      "swimming",
+      "swam",
+      "tide",
+      "river",
+      "lake",
+      "wet"
+    ],
+    "flood": [
+      "flood",
+      "flooded",
+      "flooding",
+      "drown",
+      "drowned",
+      "drowning"
+    ],
+    "ocean": [
+      "ocean",
+      "sea",
+      "beach",
+      "wave",
+      "waves",
+      "shore"
+    ],
+    "rain": [
+      "rain",
+      "raining",
+      "storm"
+    ],
+    "corridor": [
+      "corridor",
+      "hallway",
+      "hallways",
+      "hall",
+      "halls",
+      "passage"
+    ],
+    "door": [
+      "door",
+      "doors",
+      "doorway",
+      "gate"
+    ],
+    "stairs": [
+      "stairs",
+      "staircase",
+      "stairway",
+      "lift",
+      "elevator"
+    ],
+    "house": [
+      "house",
+      "home",
+      "flat",
+      "apartment",
+      "kitchen",
+      "bedroom"
+    ],
+    "building": [
+      "building",
+      "tower",
+      "skyscraper",
+      "office"
+    ],
+    "school": [
+      "school",
+      "classroom",
+      "teacher",
+      "lecture",
+      "university",
+      "college"
+    ],
+    "exam": [
+      "exam",
+      "exams",
+      "test",
+      "quiz"
+    ],
+    "library": [
+      "library",
+      "shelves",
+      "bookshelf"
+    ],
+    "book": [
+      "book",
+      "books",
+      "novel"
+    ],
+    "writing": [
+      "writing",
+      "note",
+      "notes",
+      "letter",
+      "handwriting"
+    ],
+    "city": [
+      "city",
+      "town",
+      "street",
+      "streets"
+    ],
+    "underground": [
+      "underground",
+      "cave",
+      "tunnel",
+      "basement",
+      "cellar"
+    ],
+    "falling": [
+      "fall",
+      "falling",
+      "fell"
+    ],
+    "flying": [
+      "fly",
+      "flying",
+      "flew",
+      "float",
+      "floating"
+    ],
+    "chase": [
+      "chase",
+      "chased",
+      "chasing",
+      "pursued"
+    ],
+    "train": [
+      "train",
+      "railway",
+      "station"
+    ],
+    "bus": [
+      "bus"
+    ],
+    "car": [
+      "car",
+      "driving",
+      "drove"
+    ],
+    "mountain": [
+      "mountain",
+      "cliff",
+      "climb",
+      "climbing",
+      "summit"
+    ],
+    "forest": [
+      "forest",
+      "woods",
+      "trees",
+      "tree"
+    ],
+    "garden": [
+      "garden",
+      "flowers"
+    ],
+    "darkness": [
+      "dark",
+      "darkness",
+      "shadow",
+      "shadows"
+    ],
+    "light": [
+      "light",
+      "glowing",
+      "sunlight",
+      "lamp"
+    ],
+    "sky": [
+      "sky",
+      "clouds",
+      "cloud",
+      "sunset"
+    ],
+    "space": [
+      "space",
+      "planet",
+      "stars",
+      "moon"
+    ],
+    "clock": [
+      "clock",
+      "late",
+      "deadline"
+    ],
+    "technology": [
+      "phone",
+      "laptop",
+      "computer",
+      "screen"
+    ],
+    "mirror": [
+      "mirror",
+      "reflection"
+    ],
+    "fire": [
+      "fire",
+      "burning",
+      "flames"
+    ],
+    "animal": [
+      "animal",
+      "cat",
+      "dog",
+      "fish",
+      "horse"
+    ],
+    "insect": [
+      "insect",
+      "bug",
+      "bugs",
+      "spider",
+      "bee"
+    ],
+    "bird": [
+      "bird",
+      "birds"
+    ],
+    "teeth": [
+      "teeth",
+      "tooth"
+    ],
+    "crowd": [
+      "crowd",
+      "party",
+      "audience"
+    ],
+    "stranger": [
+      "stranger",
+      "strangers",
+      "figure"
+    ],
+    "friend": [
+      "friend",
+      "friends"
+    ],
+    "partner": [
+      "boyfriend",
+      "girlfriend",
+      "partner",
+      "husband",
+      "wife"
+    ],
+    "mother": [
+      "mother",
+      "mum",
+      "mom"
+    ],
+    "father": [
+      "father",
+      "dad"
+    ],
+    "sibling": [
+      "sister",
+      "brother",
+      "sibling"
+    ],
+    "family": [
+      "family",
+      "grandad",
+      "grandma",
+      "grandfather",
+      "grandmother",
+      "uncle",
+      "aunt"
+    ],
+    "death": [
+      "death",
+      "dead",
+      "died",
+      "funeral",
+      "dying"
+    ],
+    "statue": [
+      "statue",
+      "statues"
+    ],
+    "lost": [
+      "lost"
+    ],
+    "baby": [
+      "baby"
+    ]
+  },
+  "symbolCategories": {
+    "characters": [
+      "mother",
+      "father",
+      "sibling",
+      "family",
+      "friend",
+      "partner",
+      "stranger",
+      "crowd",
+      "baby",
+      "animal",
+      "bird",
+      "insect"
+    ],
+    "settings": [
+      "house",
+      "school",
+      "building",
+      "library",
+      "city",
+      "corridor",
+      "stairs",
+      "underground",
+      "mountain",
+      "forest",
+      "garden",
+      "ocean",
+      "space",
+      "sky"
+    ],
+    "objects": [
+      "door",
+      "book",
+      "writing",
+      "technology",
+      "mirror",
+      "clock",
+      "train",
+      "bus",
+      "car",
+      "statue",
+      "teeth",
+      "water",
+      "flood",
+      "rain",
+      "fire",
+      "darkness",
+      "light"
+    ],
+    "activities": [
+      "falling",
+      "flying",
+      "chase",
+      "exam"
+    ],
+    "states": [
+      "lost",
+      "death"
+    ]
+  },
+  "themes": [
+    "being late",
+    "being trapped",
+    "being chased",
+    "being judged",
+    "being unheard",
+    "being invisible",
+    "pressure",
+    "performance",
+    "searching",
+    "getting lost",
+    "journey",
+    "exploration",
+    "discovery",
+    "escape",
+    "home",
+    "family",
+    "childhood",
+    "loss",
+    "memory",
+    "solitude",
+    "isolation",
+    "distance",
+    "waiting",
+    "repetition",
+    "time",
+    "change",
+    "transformation",
+    "survival",
+    "ruin",
+    "threat",
+    "celebration",
+    "relief",
+    "calm",
+    "comfort",
+    "identity",
+    "control",
+    "relationships",
+    "unfairness"
+  ],
+  "fixedQuestions": [
+    "How did you feel during the dream?",
+    "How intense did it feel, from 1 to 10?"
+  ]
+}
