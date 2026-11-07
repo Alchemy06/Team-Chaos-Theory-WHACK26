@@ -9,6 +9,9 @@
 --   symbol_labels   one row per symbol per user: the Yours / Common / Too early label, saved
 --   research_cards  shared, read-only research citations
 --   base_rates      shared, read-only DreamBank baseline
+--   journal_sessions one row per dream conversation (final markdown in conversation_md)
+--   journal_messages one row per question or answer in that conversation
+--   build_data       one row per completed session: what the AI read from the markdown for its building
 
 -- ---------- types ----------
 create type emotion as enum ('anger', 'apprehension', 'sadness', 'confusion', 'happiness', 'wonder');
@@ -102,6 +105,37 @@ create table base_rates (
   sample_size integer not null
 );
 
+-- ---------- journal: the question-and-answer conversation behind each dream ----------
+-- No user_id (no login yet). RLS is on with no policies, so only the server
+-- (service role key, lib/db.ts) can read or write these three tables.
+create table journal_sessions (
+  id              uuid primary key default gen_random_uuid(),
+  status          text not null default 'draft' check (status in ('draft', 'questioning', 'completed')),
+  conversation_md text,                                  -- final markdown journal
+  created_at      timestamptz not null default now(),
+  completed_at    timestamptz
+);
+
+create table journal_messages (
+  id          uuid primary key default gen_random_uuid(),
+  session_id  uuid not null references journal_sessions (id) on delete cascade,
+  sequence    integer not null,                          -- order within the session, from 0
+  role        text not null check (role in ('user', 'assistant')),
+  content     text not null,
+  reply_to_id uuid references journal_messages (id) on delete set null,  -- the question an answer replies to
+  created_at  timestamptz not null default now(),
+  unique (session_id, sequence)
+);
+
+create table build_data (
+  journal_id        uuid primary key references journal_sessions (id) on delete cascade,
+  main_emotion      emotion not null,
+  secondary_emotion emotion not null,
+  build_height      smallint not null check (build_height between 1 and 10),
+  hover_desc        text not null,                       -- one line for the hover tooltip
+  themes            text[] not null default '{}'         -- from data/vocab.json themes
+);
+
 -- ---------- indexes ----------
 create index dreams_user_date on dreams (user_id, dreamt_on);
 create index dreams_symbols on dreams using gin (symbols);
@@ -117,6 +151,9 @@ alter table links enable row level security;
 alter table symbol_labels enable row level security;
 alter table research_cards enable row level security;
 alter table base_rates enable row level security;
+alter table journal_sessions enable row level security;
+alter table journal_messages enable row level security;
+alter table build_data enable row level security;
 
 create policy "own dreams" on dreams for all
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
