@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dream City
 
-## Getting Started
+A map of your mind: dreams become a voxel night city you can explore.
+Districts are emotions, streets are micro-emotions, each dream is a building
+(height = intensity, lit windows = recency), and glowing roads link dreams to
+the books, films, songs and games that share their symbols.
 
-First, run the development server:
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+echo "GROQ_API_KEY=..." > .env.local   # optional: without it the app uses fallbacks
+npm run dev                            # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How the code is split
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Area | Folder | Notes |
+| --- | --- | --- |
+| Data | `data/` | demo persona, vocab, research cards, base rates |
+| Logic | `lib/` | types, `computeLinks`, `symbolStats`, deterministic `layoutCity`, prompts, checks |
+| API | `app/api/{followup,extract,insight}` | Groq-backed; server-side only |
+| State | `store/` | Zustand store (user dreams + insights persisted to `localStorage`) and `cityModel.ts`, which derives the city from `lib/` |
+| API client | `services/api.ts` | the only place the frontend calls the backend |
+| 3D world | `components/world/` | React Three Fiber, client-only (`next/dynamic`, `ssr: false`). `cityGeometry.ts` maps `layoutCity()` output onto the voxel grid |
+| HUD | `components/hud/` | Tailwind panels, record flow, time-lapse, legend (never imports three) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Recording a dream (frontend ↔ backend)
 
-## Learn More
+1. `POST /api/followup { transcript }` → three questions (Q1/Q2 fixed, Q3 by the AI).
+2. The answers become the `.md` entry via `lib/entry.ts#toMarkdown`.
+3. `POST /api/extract { markdown }` → `{ entry, extraction }` → a `Dream`.
+4. Links, honesty labels and the layout are recomputed in code; the building rises.
+5. `POST /api/insight { dream, links, works, dreams, stats }` → cited insight
+   (`[card:…]`, `[road:…]`, `[label:…]`, `[db:…]` render as chips).
 
-To learn more about Next.js, take a look at the following resources:
+Fallbacks: if follow-ups fail, the fixed questions are used; if extraction
+fails (e.g. no `GROQ_API_KEY`), the user can choose an **offline estimate**
+(`services/offline.ts`, keyword matching against the same vocab); the insight
+route always returns a checked template if the model fails.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 3D assets
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All voxel models are generated in code (`components/world/voxel.ts`). To use a
+Blender model instead, export a `.glb` on a 1-unit grid (origin at the
+footprint centre, ground at 0, Closest texture filtering), put it in
+`public/models/`, and render it with Drei's `useGLTF` inside the matching
+component's wrapper `group` so hover, selection and the rise animation still work.

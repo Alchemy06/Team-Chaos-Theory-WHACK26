@@ -1,89 +1,297 @@
 @import "tailwindcss";
 
+/* ---------- Design tokens (shared with src/lib/palette.ts) ---------- */
 :root {
-  --background: #070b18;
-  --foreground: #e6ebff;
+  --sky-0: #03050f;
+  --sky-1: #070b1e;
+  --sky-2: #121a3d;
+  --ink: #e9ecff;
+  --ink-dim: #a3abd6;
+  --ink-faint: #6a73a3;
+  --panel: #0c1230;
+  --panel-2: #121a40;
+  --line: #2b3670;
+  --line-hi: #4a58a8;
+  --shadow: #02030a;
+  --gold: #ffd27a;
+  --emo-anger: #f0545c;
+  --emo-apprehension: #9d7bff;
+  --emo-sadness: #3d8bff;
+  --emo-confusion: #19c2b0;
+  --emo-happiness: #f5b942;
+  --emo-wonder: #ec6fe0;
+  --yours: #f5b942;
+  --common: #8b93a7;
+  --early: #6b7390;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-line: var(--line);
+  --color-line-hi: var(--line-hi);
+  --color-gold: var(--gold);
+  --color-sky: var(--sky-1);
+  --font-display: var(--font-silkscreen);
+  --font-body: var(--font-pixelify);
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
-  background: radial-gradient(ellipse at 45% 40%, #111a38 0%, #070b18 65%);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--sky-1);
+  color: var(--ink);
+  font-family: var(--font-pixelify), ui-monospace, monospace;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Buildings grow up from the ground on load */
-.rise {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+/* Night sky with pixel stars behind the transparent WebGL canvas */
+.night-sky {
+  background:
+    radial-gradient(1px 1px at 12% 18%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 72% 12%, #cfd8ff 99%, transparent),
+    radial-gradient(2px 2px at 38% 8%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 88% 30%, #fff 99%, transparent),
+    radial-gradient(2px 2px at 58% 22%, #ffd98a 99%, transparent),
+    radial-gradient(1px 1px at 22% 40%, #cfd8ff 99%, transparent),
+    radial-gradient(1px 1px at 8% 62%, #fff 99%, transparent),
+    radial-gradient(2px 2px at 92% 58%, #cfd8ff 99%, transparent),
+    radial-gradient(1px 1px at 48% 4%, #fff 99%, transparent),
+    radial-gradient(ellipse 80% 60% at 50% 55%, #18235a 0%, var(--sky-1) 60%, var(--sky-0) 100%);
 }
-@keyframes rise {
+
+/* ---------- Pixel UI primitives ---------- */
+.pixel-panel {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 2px solid var(--line);
+  box-shadow:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.06),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.35),
+    4px 4px 0 0 var(--shadow);
+  image-rendering: pixelated;
+}
+
+.pixel-btn {
+  position: relative;
+  border: 2px solid var(--line-hi);
+  background: var(--panel-2);
+  color: var(--ink);
+  box-shadow:
+    inset 0 -3px 0 0 rgba(0, 0, 0, 0.35),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.08),
+    3px 3px 0 0 var(--shadow);
+  transition: transform 80ms steps(2), box-shadow 80ms steps(2), background 120ms;
+}
+.pixel-btn:hover {
+  background: #1a2456;
+}
+.pixel-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow:
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.35),
+    1px 1px 0 0 var(--shadow);
+}
+.pixel-btn:focus-visible,
+.pixel-focus:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.pixel-btn[aria-pressed="true"] {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.pixel-btn-primary {
+  border-color: #ffb3e3;
+  background: #c2408f;
+  color: #fff;
+}
+.pixel-btn-primary:hover {
+  background: #d24c9e;
+}
+
+.pixel-chip {
+  border: 2px solid currentColor;
+  box-shadow: 2px 2px 0 0 var(--shadow);
+}
+
+.pixel-input {
+  background: #070b22;
+  border: 2px solid var(--line);
+  color: var(--ink);
+  box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.5);
+}
+.pixel-input:focus {
+  outline: none;
+  border-color: var(--line-hi);
+}
+
+/* Pixel range slider */
+.pixel-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  background: #070b22;
+  border: 2px solid var(--line);
+}
+.pixel-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 20px;
+  background: var(--gold);
+  border: 2px solid #3a2a08;
+  box-shadow: 2px 2px 0 0 var(--shadow);
+  cursor: grab;
+}
+.pixel-range::-moz-range-thumb {
+  width: 14px;
+  height: 18px;
+  border-radius: 0;
+  background: var(--gold);
+  border: 2px solid #3a2a08;
+  cursor: grab;
+}
+
+.pixel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-hi) transparent;
+}
+
+/* ---------- Labels floating in the world ---------- */
+.world-label {
+  font-family: var(--font-silkscreen), monospace;
+  white-space: nowrap;
+  user-select: none;
+  text-shadow:
+    2px 2px 0 #02030a,
+    -1px -1px 0 #02030a;
+  transition: opacity 200ms steps(3);
+}
+.district-label {
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+.street-label {
+  font-size: 10px;
+  color: #c8cff5;
+  background: rgba(7, 11, 34, 0.7);
+  padding: 1px 4px;
+  border: 1px solid #2b3670;
+}
+.boulevard-label {
+  font-size: 11px;
+  color: var(--gold);
+  background: rgba(30, 22, 4, 0.75);
+  padding: 2px 6px;
+  border: 1px solid #7a5a1a;
+}
+.landmark-label {
+  font-size: 11px;
+  color: #e8e4ff;
+  text-transform: capitalize;
+}
+.site-label {
+  font-size: 10px;
+  color: #ffb36b;
+  opacity: 0.85;
+}
+html:not([data-zoom="near"]) .street-label,
+html[data-zoom="far"] .site-label,
+html[data-zoom="far"] .landmark-label {
+  opacity: 0;
+}
+html[data-zoom="near"] .district-label {
+  opacity: 0.35;
+}
+
+.hover-tag {
+  font-family: var(--font-pixelify), monospace;
+  background: rgba(7, 11, 34, 0.92);
+  border: 2px solid var(--line-hi);
+  box-shadow: 3px 3px 0 0 var(--shadow);
+  padding: 4px 8px;
+  white-space: nowrap;
+  transform: translateY(-8px);
+}
+.hover-tag-title {
+  font-size: 13px;
+  color: var(--ink);
+}
+.hover-tag-sub {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-family: var(--font-silkscreen), monospace;
+  text-transform: uppercase;
+}
+
+/* ---------- Loader ---------- */
+.pixel-loader {
+  display: flex;
+  gap: 6px;
+}
+.pixel-loader span {
+  width: 12px;
+  height: 12px;
+  background: var(--emo-wonder);
+  box-shadow: 3px 3px 0 0 var(--shadow);
+  animation: blink 900ms steps(2) infinite;
+}
+.pixel-loader span:nth-child(2) {
+  background: var(--emo-apprehension);
+  animation-delay: 150ms;
+}
+.pixel-loader span:nth-child(3) {
+  background: var(--emo-sadness);
+  animation-delay: 300ms;
+}
+@keyframes blink {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 640px) {
+  .district-label {
+    font-size: 11px;
+  }
+}
+
+@keyframes rise-in {
   from {
-    transform: scaleY(0);
+    transform: translateY(12px);
     opacity: 0;
   }
-  to {
-    transform: scaleY(1);
-    opacity: 1;
-  }
+}
+.anim-rise {
+  animation: rise-in 220ms steps(4) both;
 }
 
-.building {
-  cursor: pointer;
-}
-
-/* Roads flow gently */
-.road-flow {
-  stroke-dasharray: 6 9;
-  animation: flow 2.8s linear infinite;
-}
-@keyframes flow {
-  to {
-    stroke-dashoffset: -30;
-  }
-}
-
-/* Landmark beacons */
-.pulse {
-  animation: pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
+@keyframes rec-pulse {
   50% {
-    opacity: 1;
+    box-shadow:
+      0 0 0 6px rgba(255, 90, 79, 0.25),
+      3px 3px 0 0 var(--shadow);
   }
 }
-
-/* Stars */
-.twinkle {
-  animation: twinkle 4s ease-in-out infinite;
-  opacity: 0.25;
-}
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.6;
-  }
+.rec-pulse {
+  animation: rec-pulse 1s steps(3) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rise,
-  .road-flow,
-  .pulse,
-  .twinkle {
+  .anim-rise,
+  .rec-pulse,
+  .pixel-loader span {
     animation: none;
   }
 }
