@@ -105,7 +105,11 @@ export function dreamTower(id: string, emotion: Emotion, height: number, recency
       for (let z = -1; z <= 1; z++)
         if (rng() > 0.35) v.push({ x, y: height, z, c: shade("#2f6b45", (rng() - 0.5) * 0.3) });
   }
-  return { voxels: v, height: height + 3 };
+  // Every tower carries a glowing cap in its district colour, so each district's skyline reads at a glance.
+  const isCap = (q: Voxel) => q.y === top && Math.abs(q.x) === 1 && Math.abs(q.z) === 1;
+  const out = v.filter((q) => !isCap(q)); // replace, don't overlap (avoids z-fighting)
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) out.push({ x, y: top, z, c: accent, g: true });
+  return { voxels: out, height: height + 3 };
 }
 
 /** A library building for a book, film, song or game: lower, stone, with a kind motif on each face. */
