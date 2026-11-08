@@ -1,6 +1,7 @@
 // ── (ADDED) Create a session and save its dream and questions ──
 import { addMessage, createSession, db, setSessionStatus } from "@/lib/db";
 import { generateJournalQuestions } from "@/lib/journalQuestions";
+import { questionSequence } from "@/lib/journalSequence";
 import { z } from "zod";
 
 export async function POST(request: Request) {
@@ -14,12 +15,12 @@ export async function POST(request: Request) {
     const generated = await generateJournalQuestions(parsed.data.transcript);
     const session = await createSession();
     sessionId = session.id;
-    await addMessage(session.id, "user", parsed.data.transcript);
+    await addMessage(session.id, "user", parsed.data.transcript, null, 0);
 
     // ── (ADDED) Save sequentially so message order stays consistent ──
     const questions: { id: string; text: string }[] = [];
     for (const text of generated.questions.slice(0, 3)) {
-      const message = await addMessage(session.id, "assistant", text);
+      const message = await addMessage(session.id, "assistant", text, null, questionSequence(questions.length));
       questions.push({ id: message.id, text: message.content });
     }
     await setSessionStatus(session.id, "questioning");

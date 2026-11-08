@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Extraction, Selection } from "@/lib/types";
-import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer } from "@/services/api";
+import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
 import { offlineExtract } from "@/services/offline";
 import { playRiseTone, setAmbient } from "@/services/sound";
 import { computeModel } from "./cityModel";
@@ -188,6 +188,8 @@ export const useCityStore = create<State>()(
             if (!questionId) throw new Error("Missing saved question ID.");
             await saveJournalAnswer(record.sessionId, questionId, answer);
           }
+          // (added) Save every completed conversation as one Markdown document.
+          await finishJournal(record.sessionId);
         } catch (error) {
           set((s) => ({ record: { ...s.record, busy: false, step: "followups", error: error instanceof Error ? error.message : "Could not save answers." } }));
           return;
@@ -199,7 +201,7 @@ export const useCityStore = create<State>()(
           extraction = offlineExtract(entry);
         } else {
           try {
-            const res = await fetchExtraction(toMarkdown(entry));
+            const res = await fetchExtraction(toMarkdown(entry), record.sessionId ?? undefined);
             extraction = res.extraction;
             entryOut = res.entry;
           } catch (err) {
