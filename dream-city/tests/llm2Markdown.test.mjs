@@ -67,6 +67,9 @@ function harness({ session = { id, created_at: "2026-11-08T08:00:00Z", status: "
       if (mocks[specifier]) return mocks[specifier];
       if (!specifier.startsWith(".") && !specifier.startsWith("@/")) return require(specifier);
       const base = specifier.startsWith("@/") ? path.join(root, specifier.slice(2)) : path.resolve(path.dirname(filename), specifier);
+      // (added) Relative and alias imports must resolve to the same external-service mock.
+      const mockKey = "@/" + path.relative(root, base).split(path.sep).join("/");
+      if (mocks[mockKey]) return mocks[mockKey];
       if (base.endsWith(".json")) return JSON.parse(readFileSync(base, "utf8"));
       const target = existsSync(base) ? base : base + ".ts";
       return load(target);

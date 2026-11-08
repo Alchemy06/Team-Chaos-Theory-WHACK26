@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:smoke": "node --test tests/smoke.test.mjs",
-    "test": "node --experimental-strip-types --test tests/journalSequence.test.mjs tests/journalMarkdown.test.mjs",
+    "test": "node --experimental-strip-types --test tests/journalSequence.test.mjs tests/journalMarkdown.test.mjs tests/loadSavedDreams.test.mjs",
     "test:llm2": "node --test tests/llm2Markdown.test.mjs",
     "test:llm2:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/llm2Emotion.live.test.mjs",
     "test:insight:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/insight.live.test.mjs"

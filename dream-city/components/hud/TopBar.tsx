@@ -5,6 +5,7 @@ import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
 import { AddMediaButton } from "./AddMediaSheet";
 import { DistrictLegend } from "./DistrictLegend";
+import { BackgroundMusic } from "./BackgroundMusic";
 import { ThemePicker } from "./ThemePicker";
 import { IconButton, PixelPanel, cx } from "./ui/Pixel";
 
@@ -58,6 +59,7 @@ export function TopBar() {
       </div>
 
       <div className="pointer-events-auto relative flex gap-2">
+        <BackgroundMusic />
         <IconButton label="City-wide insights" aria-pressed={plazaOpen} onClick={() => select(plazaOpen ? null : { kind: "plaza" })}>
           ✦
         </IconButton>
@@ -99,6 +101,11 @@ export function TopBar() {
               ))}
             </ul>
             <p className="mt-2 text-[12px] leading-snug text-ink-faint">Turn off the pixel filter and glow on slower laptops.</p>
+            {/* ── (ADDED) Required attribution for background music ── */}
+            <div className="mt-3 border-t-2 border-line pt-2 text-[11px] leading-relaxed text-ink-faint">
+              Included track credit: <a className="underline" href="https://incompetech.com/music/royalty-free/index.html?Search=Search&isrc=USUAN1300046" target="_blank" rel="noreferrer">Dream Culture — Kevin MacLeod (incompetech.com)</a>.
+              {" "}<a className="underline" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Played on repeat.
+            </div>
 
           </PixelPanel>
         )}

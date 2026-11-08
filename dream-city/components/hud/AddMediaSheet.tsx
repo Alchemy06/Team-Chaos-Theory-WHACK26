@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { emotionLabel } from "@/lib/theme";
 import { useCityStore } from "@/store/useCityStore";
+import { QuestionSpeech } from "./QuestionSpeech";
 import { PixelButton, PixelPanel, cx } from "./ui/Pixel";
 
 type Kind = "book" | "film" | "song" | "game";
@@ -159,6 +160,8 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
               </div>
             ) : (
               <div className="space-y-4">
+                {/* ── (ADDED) Use the same narrator as dream journaling ── */}
+                <QuestionSpeech question="What have you been into?" />
                 <div>
                   <div className="mb-1.5 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Kind</div>
                   <div className="grid grid-cols-4 gap-1.5">
