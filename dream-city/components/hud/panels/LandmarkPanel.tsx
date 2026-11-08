@@ -17,7 +17,7 @@ function RateBar({ label, value, max, color }: { label: string; value: number; m
           {(value * 100).toFixed(1)}%
         </span>
       </div>
-      <div className="h-4 border-2 border-line bg-[#070b22]">
+      <div className="h-4 border-2 border-line bg-(--input)">
         <div className="h-full" style={{ width: `${Math.min(100, (value / max) * 100)}%`, background: `repeating-linear-gradient(90deg, ${color} 0 8px, transparent 8px 10px)` }} />
       </div>
     </div>
@@ -44,7 +44,7 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
           <p className="mt-2 border-2 border-dashed border-[var(--emo-happiness)]/60 p-2 text-[12px] leading-snug text-[var(--emo-happiness)]">{baseRates.note}</p>
         )}
       </section>
-      <section className="border-2 border-line bg-[#0a1030] p-3">
+      <section className="border-2 border-line bg-(--well) p-3">
         <SectionTitle>Why “{LABEL_TEXT[stat.label]}”</SectionTitle>
         <p className="text-[12px] leading-relaxed text-ink-faint">
           Fewer than {MIN_COUNT} appearances → Too early; at least {YOURS_MULTIPLIER}× the DreamBank rate → Yours; otherwise Common. The {YOURS_MULTIPLIER}× threshold is a heuristic,

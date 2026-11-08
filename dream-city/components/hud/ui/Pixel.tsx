@@ -52,7 +52,7 @@ export function BlockMeter({ value, max = 10, color, label }: { value: number; m
         <span
           key={i}
           className="h-3 w-[9px]"
-          style={{ background: i < filled ? color : "#1a2148", boxShadow: i < filled ? "inset 0 -2px 0 rgba(0,0,0,.3)" : "inset 0 0 0 1px #2b3670" }}
+          style={{ background: i < filled ? color : "var(--input)", boxShadow: i < filled ? "inset 0 -2px 0 rgba(0,0,0,.3)" : "inset 0 0 0 1px var(--line)" }}
         />
       ))}
     </div>

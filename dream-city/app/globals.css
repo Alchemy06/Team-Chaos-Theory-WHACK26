@@ -23,6 +23,107 @@
   --yours: #f5b942;
   --common: #8b93a7;
   --early: #6b7390;
+  /* surfaces and accents that themes recolour */
+  --well: #0a1030;
+  --input: #070b22;
+  --hover: #121a44;
+  --btn-hover: #1a2456;
+  --overlay: #02030a;
+  --sky-glow: #18235a;
+  --star: #cfd8ff;
+  --star-warm: #ffd98a;
+  --primary: #c2408f;
+  --primary-hi: #ffb3e3;
+  --primary-hover: #d24c9e;
+  --label-plate: rgba(5, 8, 24, 0.88);
+  --label-border: #3a4680;
+  --label-ink: #e3e7ff;
+}
+
+/* ---------- Themes (3D colours live in lib/themes.ts) ---------- */
+:root[data-theme="dusk"] {
+  --sky-0: #0d0618;
+  --sky-1: #1a0d2e;
+  --sky-2: #34194f;
+  --ink: #f6eaff;
+  --ink-dim: #c9b2e0;
+  --ink-faint: #8a72a8;
+  --panel: #1c0f30;
+  --panel-2: #26153f;
+  --line: #4a2d6e;
+  --line-hi: #7a52a8;
+  --shadow: #07030d;
+  --gold: #ffc69a;
+  --well: #1e1033;
+  --input: #150a26;
+  --hover: #2e1a4a;
+  --btn-hover: #3a2160;
+  --overlay: #07030d;
+  --sky-glow: #4a2464;
+  --star: #f3d6ff;
+  --star-warm: #ffc69a;
+  --primary: #b0458f;
+  --primary-hi: #ffb8e0;
+  --primary-hover: #c2549f;
+  --label-plate: rgba(18, 8, 32, 0.88);
+  --label-border: #5e3f88;
+  --label-ink: #f3e6ff;
+}
+:root[data-theme="aurora"] {
+  --sky-0: #020a0e;
+  --sky-1: #04141b;
+  --sky-2: #0a2a33;
+  --ink: #e4fff8;
+  --ink-dim: #9fd4c8;
+  --ink-faint: #5f9a90;
+  --panel: #071c22;
+  --panel-2: #0b262e;
+  --line: #16505a;
+  --line-hi: #2a8a8a;
+  --shadow: #010507;
+  --gold: #9dffcf;
+  --well: #08222a;
+  --input: #051419;
+  --hover: #0f3540;
+  --btn-hover: #134451;
+  --overlay: #010507;
+  --sky-glow: #0e4048;
+  --star: #c8fff0;
+  --star-warm: #9dffcf;
+  --primary: #1f9e8a;
+  --primary-hi: #8cf5df;
+  --primary-hover: #27b29c;
+  --label-plate: rgba(3, 16, 20, 0.88);
+  --label-border: #23656a;
+  --label-ink: #dcfff6;
+}
+:root[data-theme="dawn"] {
+  --sky-0: #160810;
+  --sky-1: #2a111c;
+  --sky-2: #4d2233;
+  --ink: #fff0ec;
+  --ink-dim: #e3bcb6;
+  --ink-faint: #a87c80;
+  --panel: #2a121d;
+  --panel-2: #361827;
+  --line: #66333f;
+  --line-hi: #a05566;
+  --shadow: #0d0408;
+  --gold: #ffd08a;
+  --well: #2d1420;
+  --input: #200d16;
+  --hover: #44202f;
+  --btn-hover: #55283a;
+  --overlay: #0d0408;
+  --sky-glow: #6a2c3c;
+  --star: #ffe4dc;
+  --star-warm: #ffd08a;
+  --primary: #d0566e;
+  --primary-hi: #ffc2c8;
+  --primary-hover: #e0687f;
+  --label-plate: rgba(32, 10, 20, 0.88);
+  --label-border: #84485a;
+  --label-ink: #ffeae4;
 }
 
 @theme inline {
@@ -48,6 +149,7 @@ body {
 
 body {
   background: var(--sky-1);
+  transition: background-color 300ms;
   color: var(--ink);
   font-family: var(--font-pixelify), ui-monospace, monospace;
   -webkit-font-smoothing: none;
@@ -58,15 +160,15 @@ body {
 .night-sky {
   background:
     radial-gradient(1px 1px at 12% 18%, #fff 99%, transparent),
-    radial-gradient(1px 1px at 72% 12%, #cfd8ff 99%, transparent),
+    radial-gradient(1px 1px at 72% 12%, var(--star) 99%, transparent),
     radial-gradient(2px 2px at 38% 8%, #fff 99%, transparent),
     radial-gradient(1px 1px at 88% 30%, #fff 99%, transparent),
-    radial-gradient(2px 2px at 58% 22%, #ffd98a 99%, transparent),
-    radial-gradient(1px 1px at 22% 40%, #cfd8ff 99%, transparent),
+    radial-gradient(2px 2px at 58% 22%, var(--star-warm) 99%, transparent),
+    radial-gradient(1px 1px at 22% 40%, var(--star) 99%, transparent),
     radial-gradient(1px 1px at 8% 62%, #fff 99%, transparent),
-    radial-gradient(2px 2px at 92% 58%, #cfd8ff 99%, transparent),
+    radial-gradient(2px 2px at 92% 58%, var(--star) 99%, transparent),
     radial-gradient(1px 1px at 48% 4%, #fff 99%, transparent),
-    radial-gradient(ellipse 80% 60% at 50% 55%, #18235a 0%, var(--sky-1) 60%, var(--sky-0) 100%);
+    radial-gradient(ellipse 80% 60% at 50% 55%, var(--sky-glow) 0%, var(--sky-1) 60%, var(--sky-0) 100%);
 }
 
 /* ---------- Pixel UI primitives ---------- */
@@ -92,7 +194,7 @@ body {
   transition: transform 80ms steps(2), box-shadow 80ms steps(2), background 120ms;
 }
 .pixel-btn:hover {
-  background: #1a2456;
+  background: var(--btn-hover);
 }
 .pixel-btn:active {
   transform: translate(2px, 2px);
@@ -111,12 +213,12 @@ body {
 }
 
 .pixel-btn-primary {
-  border-color: #ffb3e3;
-  background: #c2408f;
+  border-color: var(--primary-hi);
+  background: var(--primary);
   color: #fff;
 }
 .pixel-btn-primary:hover {
-  background: #d24c9e;
+  background: var(--primary-hover);
 }
 
 .pixel-chip {
@@ -125,7 +227,7 @@ body {
 }
 
 .pixel-input {
-  background: #070b22;
+  background: var(--input);
   border: 2px solid var(--line);
   color: var(--ink);
   box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.5);
@@ -140,7 +242,7 @@ body {
   -webkit-appearance: none;
   appearance: none;
   height: 10px;
-  background: #070b22;
+  background: var(--input);
   border: 2px solid var(--line);
 }
 .pixel-range::-webkit-slider-thumb {
@@ -167,57 +269,67 @@ body {
 }
 
 /* ---------- Labels floating in the world ---------- */
+/* Every label sits on a solid dark plate with a thin border, so it reads over
+   bright windows, glowing links and the cloud sea alike. */
 .world-label {
-  font-family: var(--font-silkscreen), monospace;
+  font-family: var(--font-pixelify), monospace;
   white-space: nowrap;
   user-select: none;
-  text-shadow:
-    2px 2px 0 #02030a,
-    -1px -1px 0 #02030a;
+  line-height: 1.15;
+  background: var(--label-plate);
+  border: 1px solid var(--label-border);
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  text-shadow: 1px 1px 0 #000;
   transition: opacity 200ms steps(3);
 }
 .district-label {
-  font-size: 18px;
-  letter-spacing: 0.06em;
+  font-family: var(--font-silkscreen), monospace;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.92;
+  padding: 3px 9px;
+  border: 2px solid currentColor;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.65);
 }
 .street-label {
-  font-size: 10px;
-  color: #c8cff5;
-  background: rgba(7, 11, 34, 0.7);
-  padding: 1px 4px;
-  border: 1px solid #2b3670;
+  font-size: 13px;
+  color: var(--label-ink);
 }
 .boulevard-label {
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--gold);
-  background: rgba(30, 22, 4, 0.75);
-  padding: 2px 6px;
-  border: 1px solid #7a5a1a;
+  background: rgba(28, 20, 3, 0.92);
+  border-color: #a57a22;
 }
 .landmark-label {
-  font-size: 11px;
-  color: #e8e4ff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1edff;
   text-transform: capitalize;
+  border-color: #6f5aa8;
 }
 .site-label {
-  font-size: 10px;
-  color: #ffb36b;
-  opacity: 0.85;
+  font-size: 12px;
+  color: #ffc085;
+  border-color: #8a5420;
+  border-style: dashed;
 }
 html:not([data-zoom="near"]) .street-label,
 html[data-zoom="far"] .site-label,
 html[data-zoom="far"] .landmark-label {
   opacity: 0;
 }
+/* Zoomed in, district names step back a little so they don't cover buildings. */
 html[data-zoom="near"] .district-label {
-  opacity: 0.35;
+  opacity: 0.7;
 }
 
 .hover-tag {
   font-family: var(--font-pixelify), monospace;
-  background: rgba(7, 11, 34, 0.92);
+  background: var(--label-plate);
   border: 2px solid var(--line-hi);
   box-shadow: 3px 3px 0 0 var(--shadow);
   padding: 4px 8px;
@@ -225,12 +337,12 @@ html[data-zoom="near"] .district-label {
   transform: translateY(-8px);
 }
 .hover-tag-title {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--ink);
 }
 .hover-tag-sub {
   font-size: 10px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-family: var(--font-silkscreen), monospace;
   text-transform: uppercase;
 }
@@ -263,7 +375,7 @@ html[data-zoom="near"] .district-label {
 
 @media (max-width: 640px) {
   .district-label {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 

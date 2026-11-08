@@ -5,6 +5,7 @@ import { useCity } from "@/store/useCity";
 import { useCityStore } from "@/store/useCityStore";
 import { ConstructionPanel } from "./ConstructionPanel";
 import { DreamPanel } from "./DreamPanel";
+import { IslandPanel } from "./IslandPanel";
 import { LandmarkPanel } from "./LandmarkPanel";
 import { PlazaPanel } from "./PlazaPanel";
 import { WorkPanel } from "./WorkPanel";
@@ -27,6 +28,8 @@ export function SelectionPanel() {
     if (r) body = <ConstructionPanel key={r.id} rec={r} model={model} />;
   } else if (selection.kind === "plaza") {
     body = <PlazaPanel model={model} />;
+  } else if (selection.kind === "island") {
+    body = <IslandPanel key={selection.id} emotion={selection.id} model={model} />;
   }
   if (!body) return null;
   return (

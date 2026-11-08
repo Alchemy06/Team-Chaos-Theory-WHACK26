@@ -4,23 +4,25 @@
 
 import baseRatesJson from "@/data/baseRates.json";
 import cardsJson from "@/data/researchCards.json";
-import demoJson from "@/data/demoCity.json";
 import { symbolStats } from "@/lib/honesty";
 import { layoutCity } from "@/lib/layout";
 import { computeLinks } from "@/lib/link";
-import type { DemoCity, Dream, Link, Recommendation, ResearchCard, SymbolStat, Work } from "@/lib/types";
+import type { Dream, Link, Recommendation, ResearchCard, SymbolStat, Work } from "@/lib/types";
 import { STREETS } from "@/lib/vocab";
 import { toWorldCity, type WorldCity } from "@/components/world/cityGeometry";
 import type { StoredInsight } from "./useCityStore";
 
-export const demo = demoJson as unknown as DemoCity;
 export const baseRates = baseRatesJson as { placeholder: boolean; note: string; n: number; rates: Record<string, number> };
 export const cards = new Map((cardsJson as ResearchCard[]).map((c) => [c.id, c]));
 
 const DAY = 86_400_000;
-export const TIMELINE_START = [...demo.dreams].map((d) => d.date).sort()[0];
-export const TIMELINE_DAYS = Math.round((Date.parse(demo.now) - Date.parse(TIMELINE_START)) / DAY);
-export const dayToDate = (day: number) => new Date(Date.parse(TIMELINE_START) + day * DAY).toISOString().slice(0, 10);
+// ── (ADDED) Timeline follows saved dreams, not the demo persona ──
+export function timelineRange(dreams: Dream[]) {
+  const dates = dreams.map((d) => d.date).sort();
+  const start = dates[0] ?? "1970-01-01";
+  return { start, days: Math.max(0, Math.round((Date.parse(dates.at(-1) ?? start) - Date.parse(start)) / DAY)) };
+}
+export const dayToDate = (day: number, start: string) => new Date(Date.parse(start) + day * DAY).toISOString().slice(0, 10);
 
 export type CityModel = {
   world: WorldCity;
@@ -42,26 +44,26 @@ let cache: { userDreams: Dream[]; day: number | null; insights: Record<string, S
 export function computeModel(userDreams: Dream[], day: number | null, insights: Record<string, StoredInsight>): CityModel {
   if (cache && cache.userDreams === userDreams && cache.day === day && cache.insights === insights) return cache.model;
 
-  const allDreams = [...demo.dreams, ...userDreams].map((d) => (insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d));
-  const allWorks = demo.works;
-  const cutoff = day === null ? null : dayToDate(day);
+  const allDreams = userDreams.map((d) => (insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d));
+  const allWorks: Work[] = [];
+  const cutoff = day === null ? null : dayToDate(day, timelineRange(allDreams).start);
   const dreams = cutoff ? allDreams.filter((d) => d.date <= cutoff) : allDreams;
   const works = cutoff ? allWorks.filter((w) => !w.consumedOn || w.consumedOn <= cutoff) : allWorks;
 
   const links = computeLinks(dreams, works);
   const statsList = symbolStats(dreams, baseRates.rates);
-  const latest = allDreams.reduce((m, d) => (d.date > m ? d.date : m), demo.now);
+  const latest = allDreams.reduce((m, d) => (d.date > m ? d.date : m), timelineRange(allDreams).start);
   // Layout uses every dream and work so positions stay put while the timeline scrubs.
   const city = layoutCity(allDreams, allWorks, links, STREETS, {
     now: Date.parse(cutoff ?? latest),
     symbolStats: statsList,
-    recommendations: demo.recommendations,
+    recommendations: [],
   });
   const dreamById = new Map(allDreams.map((d) => [d.id, d]));
   const workById = new Map(allWorks.map((w) => [w.id, w]));
-  const recById = new Map(demo.recommendations.map((r) => [r.id, r]));
+  const recById = new Map<string, Recommendation>();
   const world = toWorldCity(city, { dreams: dreamById, works: workById, recommendations: recById, stats: statsList });
-  const visible = new Set<string>([...dreams.map((d) => d.id), ...works.map((w) => w.id), ...demo.recommendations.map((r) => r.id)]);
+  const visible = new Set<string>([...dreams.map((d) => d.id), ...works.map((w) => w.id)]);
 
   const model: CityModel = {
     world,

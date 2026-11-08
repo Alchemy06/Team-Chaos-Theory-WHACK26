@@ -124,7 +124,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
   const showList = listOpen && !externalId && (suggestions.length > 0 || searching);
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-end bg-[#02030a]/55 sm:place-items-center sm:p-4">
+    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-end bg-(--overlay)/55 sm:place-items-center sm:p-4">
       <PixelPanel className="anim-rise w-full max-w-xl">
         <div role="dialog" aria-modal="true" aria-labelledby="media-title" className="flex max-h-[88dvh] flex-col">
           <div className="flex items-center justify-between border-b-2 border-line px-4 py-3">
@@ -148,7 +148,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {saved.themes.map((t) => (
-                    <span key={t} className="border-2 border-line bg-[#0a1030] px-2 py-0.5 text-[12px] text-ink-dim">
+                    <span key={t} className="border-2 border-line bg-(--well) px-2 py-0.5 text-[12px] text-ink-dim">
                       {t}
                     </span>
                   ))}
@@ -198,7 +198,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
                   />
                   {externalId && <span className="mt-1 block text-[11px] text-[var(--emo-confusion)]">✓ Matched</span>}
                   {showList && (
-                    <ul id="media-suggestions" role="listbox" className="pixel-scroll absolute inset-x-0 top-full z-50 mt-1 max-h-64 overflow-y-auto border-2 border-line-hi bg-[#070b22]">
+                    <ul id="media-suggestions" role="listbox" className="pixel-scroll absolute inset-x-0 top-full z-50 mt-1 max-h-64 overflow-y-auto border-2 border-line-hi bg-(--input)">
                       {searching && suggestions.length === 0 && <li className="px-3 py-2 text-[13px] text-ink-faint">Searching…</li>}
                       {suggestions.map((s, i) => (
                         <li
@@ -210,7 +210,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
                             pick(s);
                           }}
                           onMouseEnter={() => setActive(i)}
-                          className={cx("flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[14px]", i === active ? "bg-[#121a44] text-ink" : "text-ink-dim")}
+                          className={cx("flex cursor-pointer items-center gap-2 px-2 py-1.5 text-[14px]", i === active ? "bg-(--hover) text-ink" : "text-ink-dim")}
                         >
                           {s.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element

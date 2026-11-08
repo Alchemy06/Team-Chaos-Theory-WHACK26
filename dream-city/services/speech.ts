@@ -6,6 +6,7 @@ type RecognitionLike = {
   interimResults: boolean;
   start(): void;
   stop(): void;
+  onstart: (() => void) | null;
   onresult: ((e: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null;
   onerror: ((e: { error: string }) => void) | null;
   onend: (() => void) | null;
@@ -25,6 +26,7 @@ export function speechSupported() {
 
 export function startDictation(handlers: {
   onText: (finalText: string, interim: string) => void;
+  onStart?: () => void;
   onEnd: () => void;
   onError: (msg: string) => void;
 }) {
@@ -38,6 +40,15 @@ export function startDictation(handlers: {
   rec.continuous = true;
   rec.interimResults = true;
   let finalText = "";
+  // ── (ADDED) Finish dictation after a short pause, keeping the transcript ──
+  let pauseTimer: ReturnType<typeof setTimeout> | undefined;
+  let stopping = false;
+  const stop = () => {
+    clearTimeout(pauseTimer);
+    if (stopping) return;
+    stopping = true;
+    rec.stop();
+  };
   rec.onresult = (e) => {
     let interim = "";
     for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -46,9 +57,21 @@ export function startDictation(handlers: {
       else interim += r[0].transcript;
     }
     handlers.onText(finalText.trim(), interim);
+    if (!stopping && (finalText.trim() || interim.trim())) {
+      clearTimeout(pauseTimer);
+      pauseTimer = setTimeout(stop, 1500);
+    }
   };
-  rec.onerror = (e) => handlers.onError(e.error === "not-allowed" ? "Microphone permission was denied." : e.error);
-  rec.onend = handlers.onEnd;
+  rec.onerror = (e) => {
+    clearTimeout(pauseTimer);
+    handlers.onError(e.error === "not-allowed" ? "Microphone permission was denied." : e.error);
+  };
+  rec.onstart = () => handlers.onStart?.();
+  rec.onend = () => {
+    clearTimeout(pauseTimer);
+    stopping = true;
+    handlers.onEnd();
+  };
   rec.start();
-  return () => rec.stop();
+  return stop;
 }

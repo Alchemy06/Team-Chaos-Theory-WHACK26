@@ -8,7 +8,9 @@ import type { Vec2, WRoad } from "./cityGeometry";
 import { WORLD } from "./palette";
 
 // Links are thin, smooth, glowing curves (not voxels), so they read as
-// connections rather than more objects in the city. Each vertex carries its
+// connections rather than more objects in the city. Each one is a faint base
+// line with glowing motes flowing along it from dream to work (or dream to
+// dream), and it rises in a straight arc through the sky between the two. Each vertex carries its
 // position along the curve (aT) and its distance from the plaza (aR) so the
 // shader can animate a travelling pulse, reveal the line progressively, dash
 // weak links, fade near the centre and brighten on hover / selection.
@@ -48,19 +50,19 @@ const fragment = /* glsl */ `
     if (uDashed > 0.5 && fract(vT * uLength / 1.6) > 0.55) discard;
     // Outline pass: a dark sleeve behind the line, so it separates from the busy city underneath.
     if (uOutline > 0.5) {
-      gl_FragColor = vec4(0.012, 0.016, 0.04, mix(0.75, 0.0, uDim));
+      gl_FragColor = vec4(0.012, 0.016, 0.04, mix(0.35, 0.0, uDim));
       return;
     }
     float wave = fract(vT * uLength / 9.0 - uTime * 0.4);
     float pulse = smoothstep(0.0, 0.1, wave) * (1.0 - smoothstep(0.1, 0.3, wave));
     // Quiet at rest, fading toward the plaza; hover/selection brings a link back to full strength.
     float centre = mix(0.65, 1.0, smoothstep(uInner * 0.45, uInner, vR));
-    float rest = (0.62 + 0.3 * uStrength + pulse * 0.4) * centre;
+    float rest = (0.38 + 0.22 * uStrength + pulse * 0.25) * centre;
     float lit = 1.0 + pulse * 1.2;
     vec3 c = uColor * mix(rest, lit, uHighlight);
     float head = smoothstep(uReveal - 0.03, uReveal, vT) * step(uReveal, 0.999);
     // dimmed links fade out (transparent) rather than turning into dark wires
-    float alpha = mix(1.0, 0.12, uDim);
+    float alpha = mix(mix(0.7, 1.0, uHighlight), 0.1, uDim);
     gl_FragColor = vec4(c + uColor * head * 1.2, alpha);
   }
 `;
@@ -192,18 +194,82 @@ function Link({
   );
 }
 
-/** Lift a flat path into a gentle arch: higher for longer links, so they clear trees and ground. */
-function arc(path: Vec2[]) {
-  let len = 0;
-  for (let i = 1; i < path.length; i++) len += Math.hypot(path[i].x - path[i - 1].x, path[i].z - path[i - 1].z);
-  const peak = Math.min(9, Math.max(2, len * 0.14));
-  return path.map((p, i) => new THREE.Vector3(p.x, 0.6 + peak * Math.sin((Math.PI * i) / (path.length - 1)), p.z));
+/** Links lie along their path, just above the ground tiles (never z-fighting with them). */
+const LINK_Y = 0.35;
+const onPath = (path: Vec2[], lift: number[]) => path.map((p, i) => new THREE.Vector3(p.x, LINK_Y + (lift[i] ?? 0), p.z));
+
+/** Roughly how long a link takes to draw itself in (matches Link's reveal), in ms. */
+const revealMs = (length: number, speed = 1.1) => (Math.max(length, 30) / (speed * 30)) * 1000;
+
+const moteGeometry = new THREE.BoxGeometry(1, 1, 1);
+const dummy = new THREE.Object3D();
+
+/**
+ * Glowing cubes streaming along a link, start to end, so the direction of a
+ * connection is visible. Stronger links carry more, faster motes; focus makes
+ * them bigger and brighter, dimming fades them out.
+ */
+function Motes({
+  curve,
+  color,
+  strength,
+  highlight,
+  dimmed,
+  delay,
+}: {
+  curve: THREE.Curve<THREE.Vector3>;
+  color: string;
+  strength: number;
+  highlight: boolean;
+  dimmed: boolean;
+  delay: number;
+}) {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const matRef = useRef<THREE.MeshBasicMaterial>(null);
+  const length = useMemo(() => curve.getLength(), [curve]);
+  const count = Math.max(2, Math.round((length / 9) * (0.6 + strength)));
+  const speed = 2.2 + strength * 2.5; // world units per second
+  const start = useRef(-1);
+  const level = useRef(0); // eased 0..1: 0 hidden, 1 fully shown
+  const focus = useRef(0);
+  useFrame((state, dt) => {
+    const mesh = ref.current;
+    const mat = matRef.current;
+    if (!mesh || !mat) return;
+    if (start.current < 0) start.current = performance.now() + delay + revealMs(length);
+    const shown = performance.now() >= start.current;
+    const k = Math.min(1, dt * 6);
+    level.current += ((shown ? (dimmed ? 0.08 : 1) : 0) - level.current) * k;
+    focus.current += ((highlight ? 1 : 0) - focus.current) * k;
+    mat.opacity = level.current * (0.75 + focus.current * 0.25);
+    mesh.visible = level.current > 0.01;
+    if (!mesh.visible) return;
+    const t = state.clock.elapsedTime;
+    const size = 0.2 + strength * 0.08 + focus.current * 0.12;
+    for (let i = 0; i < count; i++) {
+      const u = (((t * speed) / length + i / count) % 1 + 1) % 1;
+      curve.getPointAt(u, dummy.position);
+      // fade in and out at the ends by shrinking, so motes emerge from and sink into buildings
+      const edge = Math.min(1, u / 0.06, (1 - u) / 0.06);
+      dummy.scale.setScalar(size * edge);
+      dummy.rotation.set(t + i, t * 0.7 + i, 0);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+  });
+  return (
+    <instancedMesh key={count} ref={ref} args={[moteGeometry, undefined, count]} frustumCulled={false} raycast={() => null}>
+      <meshBasicMaterial ref={matRef} color={color} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+    </instancedMesh>
+  );
 }
 
 /** The id the user is focusing on (hover wins over selection), if it is something links attach to. */
 function focusId(s: { hoverId: string | null; selection: { kind: string; id?: string } | null }) {
   const id = s.hoverId ?? (s.selection && "id" in s.selection ? s.selection.id : null);
-  return id && !id.startsWith("landmark:") && id !== "plaza" ? id : null;
+  if (s.selection?.kind === "island" && !s.hoverId) return null;
+  return id && !id.startsWith("landmark:") && !id.startsWith("island:") && id !== "plaza" ? id : null;
 }
 
 export const Road = memo(function Road({ road, delay, linked }: { road: WRoad; delay: number; linked: Set<string> }) {
@@ -213,30 +279,33 @@ export const Road = memo(function Road({ road, delay, linked }: { road: WRoad; d
     if (!f || !linked.has(f)) return "idle"; // focusing something without links leaves the web as it is
     return road.from === f || road.to === f ? "focus" : "dim";
   });
-  const curve = useMemo(() => new THREE.CatmullRomCurve3(arc(road.path)), [road.path]);
+  const curve = useMemo(() => new THREE.CatmullRomCurve3(onPath(road.path, road.lift), false, "centripetal"), [road.path, road.lift]);
   const isMedia = road.to.startsWith("w"); // dream -> work road (dream -> dream roads are recurring patterns)
   const color = isMedia ? (road.bright ? "#ffd27a" : "#d9a75a") : "#9db2ff";
   return (
-    <Link
-      curve={curve}
-      color={color}
-      strength={road.strength}
-      highlight={state === "focus"}
-      dimmed={state === "dim"}
-      radius={road.bright ? 0.13 : 0.09}
-      dashed={road.dotted}
-      revealDelay={delay}
-    />
+    <>
+      <Link
+        curve={curve}
+        color={color}
+        strength={road.strength}
+        highlight={state === "focus"}
+        dimmed={state === "dim"}
+        radius={road.bright ? 0.12 : 0.08}
+        dashed={road.dotted}
+        revealDelay={delay}
+      />
+      <Motes curve={curve} color={color} strength={road.strength} highlight={state === "focus"} dimmed={state === "dim"} delay={delay} />
+    </>
   );
 });
 
-/** The main boulevard: a smooth closed loop through the buildings that share its symbol. */
+/** The main boulevard: a smooth gold ring along the central island's ring road. */
 export function Boulevard({ anchors }: { anchors: Vec2[] }) {
-  // Slightly raised so it reads as a smooth ring over the ground; steps back while a building is in focus.
+  // Sits on the ring road; steps back while a building is in focus.
   const curve = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
-        anchors.map((p) => new THREE.Vector3(p.x, 0.6, p.z)),
+        anchors.map((p) => new THREE.Vector3(p.x, LINK_Y - 0.05, p.z)),
         true,
         "centripetal",
       ),

@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { demo } from "@/store/cityModel";
 import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
 import { AddMediaButton } from "./AddMediaSheet";
 import { DistrictLegend } from "./DistrictLegend";
+import { ThemePicker } from "./ThemePicker";
 import { IconButton, PixelPanel, cx } from "./ui/Pixel";
 
 const SETTING_LABELS: Record<keyof Settings, string> = {
   pixelation: "Pixel filter",
   bloom: "Glow (bloom)",
   labels: "Map labels",
-  sound: "Ambient sound",
 };
 
 function Logo() {
@@ -40,8 +39,6 @@ export function TopBar() {
   const toggle = useCityStore((s) => s.toggleSetting);
   const select = useCityStore((s) => s.select);
   const resetCamera = useCityStore((s) => s.resetCamera);
-  const removeUserDreams = useCityStore((s) => s.removeUserDreams);
-  const userCount = useCityStore((s) => s.userDreams.length);
   const plazaOpen = useCityStore((s) => s.selection?.kind === "plaza");
   const [menu, setMenu] = useState<"settings" | "legend" | null>(null);
 
@@ -51,7 +48,7 @@ export function TopBar() {
       <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
         <Logo />
         <div className="hidden border-l-2 border-line pl-4 sm:block">
-          <div className="text-[14px] leading-tight text-ink">{demo.persona.name}</div>
+          <div className="text-[14px] leading-tight text-ink">Saved dream city</div>
           <div className="text-[12px] leading-tight text-ink-dim">
             {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
           </div>
@@ -80,7 +77,9 @@ export function TopBar() {
         )}
         {menu === "settings" && (
           <PixelPanel className="anim-rise absolute right-0 top-12 z-40 w-64 p-3">
-            <div className="mb-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
+            <div className="mb-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Theme</div>
+            <ThemePicker />
+            <div className="mb-2 mt-3 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
             <ul className="space-y-1">
               {(Object.keys(SETTING_LABELS) as (keyof Settings)[]).map((k) => (
                 <li key={k}>
@@ -89,10 +88,10 @@ export function TopBar() {
                     role="switch"
                     aria-checked={settings[k]}
                     onClick={() => toggle(k)}
-                    className="pixel-focus flex w-full items-center justify-between px-1 py-1.5 text-left text-[14px] hover:bg-[#121a44]"
+                    className="pixel-focus flex w-full items-center justify-between px-1 py-1.5 text-left text-[14px] hover:bg-(--hover)"
                   >
                     {SETTING_LABELS[k]}
-                    <span className={cx("h-4 w-8 border-2", settings[k] ? "border-gold bg-gold/30" : "border-line bg-[#070b22]")}>
+                    <span className={cx("h-4 w-8 border-2", settings[k] ? "border-gold bg-gold/30" : "border-line bg-(--input)")}>
                       <span className={cx("block h-full w-3 transition-transform", settings[k] ? "translate-x-[14px] bg-gold" : "bg-line-hi")} />
                     </span>
                   </button>
@@ -100,18 +99,7 @@ export function TopBar() {
               ))}
             </ul>
             <p className="mt-2 text-[12px] leading-snug text-ink-faint">Turn off the pixel filter and glow on slower laptops.</p>
-            {userCount > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  removeUserDreams();
-                  setMenu(null);
-                }}
-                className="pixel-focus mt-3 w-full border-2 border-dashed border-line px-2 py-1.5 text-[13px] text-ink-dim hover:border-[var(--emo-anger)] hover:text-[var(--emo-anger)]"
-              >
-                Remove my {userCount} recorded dream{userCount === 1 ? "" : "s"}
-              </button>
-            )}
+
           </PixelPanel>
         )}
       </div>

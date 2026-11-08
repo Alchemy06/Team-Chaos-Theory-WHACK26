@@ -4,14 +4,12 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Emotion, Extraction, Selection, Work, WorkKind } from "@/lib/types";
-import { ApiError, fetchExtraction, fetchFollowUps, fetchInsight } from "@/services/api";
-import { offlineExtract } from "@/services/offline";
-import { playRiseTone, setAmbient } from "@/services/sound";
+import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
 import { computeModel } from "./cityModel";
 
-export type UISelection = Selection | { kind: "plaza" } | null;
+export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
-export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean; sound: boolean };
+export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
 
 export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo" };
 
@@ -26,10 +24,16 @@ type RecordState = {
   error: string | null;
   errorDetails: string[];
   canUseOffline: boolean;
+  // ── (ADDED) Journal session and question IDs ──
+  sessionId: string | null;
+  questionIds: string[];
 };
 
 type State = {
   userDreams: Dream[];
+  cityLoading: boolean;
+  cityError: string | null;
+  loadCity: () => Promise<void>;
   userWorks: Work[]; // media from Supabase (the + Media form); shown in a dream's panel, not as buildings
   loadMedia: () => Promise<void>;
   insights: Record<string, StoredInsight>;
@@ -73,6 +77,9 @@ const emptyRecord: RecordState = {
   error: null,
   errorDetails: [],
   canUseOffline: false,
+  // ── (ADDED) Empty IDs until a session starts ──
+  sessionId: null,
+  questionIds: [],
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -105,6 +112,20 @@ export const useCityStore = create<State>()(
           // offline or Supabase not set up: the city just shows the demo works
         }
       },
+      cityLoading: true,
+      cityError: null,
+      // ── (ADDED) Database is the sole source of map buildings ──
+      loadCity: async () => {
+        set({ cityLoading: true, cityError: null });
+        try {
+          const response = await fetch("/api/city", { cache: "no-store" });
+          if (!response.ok) throw new Error("Could not load saved buildings.");
+          const data = await response.json() as { dreams: Dream[] };
+          set({ userDreams: data.dreams, cityLoading: false, timelineDay: null });
+        } catch (error) {
+          set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
+        }
+      },
       insights: {},
       insightLoading: {},
       selection: null,
@@ -114,7 +135,7 @@ export const useCityStore = create<State>()(
       justBuiltId: null,
       cameraNonce: 0,
       citation: null,
-      settings: { pixelation: true, bloom: true, labels: true, sound: false },
+      settings: { pixelation: true, bloom: true, labels: true },
       record: emptyRecord,
 
       select: (selection) => set({ selection }),
@@ -122,12 +143,7 @@ export const useCityStore = create<State>()(
       setTimelineDay: (timelineDay) => set({ timelineDay }),
       setPlaying: (playing) => set({ playing }),
       resetCamera: () => set((s) => ({ cameraNonce: s.cameraNonce + 1, selection: null })),
-      toggleSetting: (k) =>
-        set((s) => {
-          const settings = { ...s.settings, [k]: !s.settings[k] };
-          if (k === "sound") setAmbient(settings.sound);
-          return { settings };
-        }),
+      toggleSetting: (k) => set((s) => ({ settings: { ...s.settings, [k]: !s.settings[k] } })),
       openCitation: (citation) => set({ citation }),
 
       // Ask the backend for a grounded insight for one dream (cached).
@@ -165,25 +181,31 @@ export const useCityStore = create<State>()(
         }),
 
       submitTranscript: async () => {
+        if (get().record.busy) return;
         const { transcript } = get().record;
         if (transcript.trim().length < 12) {
           set((s) => ({ record: { ...s.record, error: "Tell me a little more about the dream first." } }));
           return;
         }
         set((s) => ({ record: { ...s.record, busy: true, error: null } }));
-        let questions = ["How did you feel during the dream?", "How intense did it feel, from 1 to 10?", "Have you read, watched, played or listened to anything recently that this reminds you of?"];
-        let aiQuestion = false;
         try {
-          const res = await fetchFollowUps(transcript);
-          questions = res.questions;
-          aiQuestion = res.aiUsed;
-        } catch {
-          // keep the fixed questions so recording never blocks
+          // ── (ADDED) Store IDs returned by the saved journal session ──
+          const res = await startJournal(transcript);
+          if (!get().record.open || get().record.transcript !== transcript) return;
+          set((s) => ({ record: {
+            ...s.record, busy: false, step: "followups",
+            sessionId: res.sessionId,
+            questionIds: res.questions.map((q) => q.id),
+            questions: res.questions.map((q) => q.text),
+            answers: res.questions.map(() => ""), aiQuestion: res.aiUsed,
+          } }));
+        } catch (error) {
+          set((s) => ({ record: { ...s.record, busy: false, error: error instanceof Error ? error.message : "Could not start journal." } }));
         }
-        set((s) => ({ record: { ...s.record, busy: false, step: "followups", questions, aiQuestion, answers: questions.map(() => "") } }));
       },
 
-      buildDream: async (opts) => {
+      buildDream: async () => {
+        if (get().record.busy) return;
         const { record } = get();
         const entry: Entry = {
           date: today(),
@@ -192,13 +214,28 @@ export const useCityStore = create<State>()(
         };
         set((s) => ({ record: { ...s.record, busy: true, step: "building", error: null, errorDetails: [] } }));
 
+        // ── (ADDED) Save non-empty answers before processing the building ──
+        try {
+          if (!record.sessionId) throw new Error("Start a journal session before saving answers.");
+          for (let i = 0; i < record.questions.length; i++) {
+            const answer = record.answers[i]?.trim();
+            if (!answer) continue;
+            const questionId = record.questionIds[i];
+            if (!questionId) throw new Error("Missing saved question ID.");
+            await saveJournalAnswer(record.sessionId, questionId, answer);
+          }
+          // (added) Save every completed conversation as one Markdown document.
+          await finishJournal(record.sessionId);
+        } catch (error) {
+          set((s) => ({ record: { ...s.record, busy: false, step: "followups", error: error instanceof Error ? error.message : "Could not save answers." } }));
+          return;
+        }
+
         let extraction: Extraction;
         let entryOut: Entry = entry;
-        if (opts?.offline) {
-          extraction = offlineExtract(entry);
-        } else {
+        {
           try {
-            const res = await fetchExtraction(toMarkdown(entry));
+            const res = await fetchExtraction(toMarkdown(entry), record.sessionId ?? undefined);
             extraction = res.extraction;
             entryOut = res.entry;
           } catch (err) {
@@ -209,7 +246,7 @@ export const useCityStore = create<State>()(
                 step: "followups",
                 error: err instanceof ApiError ? err.message : "Could not read that dream.",
                 errorDetails: err instanceof ApiError ? err.details : [],
-                canUseOffline: true,
+                canUseOffline: false,
               },
             }));
             return;
@@ -219,20 +256,19 @@ export const useCityStore = create<State>()(
         const { newSymbols: _ignored, ...fields } = extraction;
         void _ignored; // kept server-side for review, not used in the city
         const dream: Dream = {
-          id: `u-${Date.now().toString(36)}`,
+          id: record.sessionId!,
           date: entryOut.date,
           transcript: entryOut.transcript,
           followUps: entryOut.followUps.filter((f) => f.a),
           ...fields,
         };
         set((s) => ({
-          userDreams: [...s.userDreams, dream],
+          userDreams: [...s.userDreams.filter((d) => d.id !== dream.id), dream],
           record: emptyRecord,
           justBuiltId: dream.id,
           selection: { kind: "dream", id: dream.id },
           timelineDay: null,
         }));
-        if (get().settings.sound) playRiseTone();
         setTimeout(() => {
           if (get().justBuiltId === dream.id) set({ justBuiltId: null });
         }, 4000);
@@ -244,15 +280,20 @@ export const useCityStore = create<State>()(
     {
       name: "dream-city-v2",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ userDreams: s.userDreams, settings: s.settings, insights: s.insights }),
+      partialize: (s) => ({ settings: s.settings, insights: s.insights }),
       skipHydration: true,
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<State>;
         return {
           ...current,
-          userDreams: Array.isArray(p.userDreams) ? p.userDreams : [],
+          userDreams: current.userDreams,
           insights: p.insights && typeof p.insights === "object" ? p.insights : {},
-          settings: { ...current.settings, ...(p.settings ?? {}), sound: false },
+          // only keep known settings (older saves may still carry the removed "sound" flag)
+          settings: {
+            pixelation: p.settings?.pixelation ?? current.settings.pixelation,
+            bloom: p.settings?.bloom ?? current.settings.bloom,
+            labels: p.settings?.labels ?? current.settings.labels,
+          },
         };
       },
     },

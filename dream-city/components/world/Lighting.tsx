@@ -1,15 +1,29 @@
 "use client";
 
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import type * as THREE from "three";
+import { useWorldTheme } from "@/store/useTheme";
+
 export function Lighting({ radius }: { radius: number }) {
   const r = radius + 12;
+  const t = useWorldTheme();
+  // The night "breathes": sky light and the warm city glow swell and settle very slowly.
+  const hemi = useRef<THREE.HemisphereLight>(null);
+  const fill = useRef<THREE.DirectionalLight>(null);
+  useFrame((s) => {
+    const breath = Math.sin((s.clock.elapsedTime / 18) * Math.PI * 2);
+    if (hemi.current) hemi.current.intensity = 0.85 * (1 + breath * 0.06);
+    if (fill.current) fill.current.intensity = 0.25 * (1 + breath * 0.25);
+  });
   return (
     <>
-      <hemisphereLight args={["#5b6fc4", "#0a0e1e", 0.85]} />
-      <ambientLight intensity={0.18} color="#8090ff" />
+      <hemisphereLight ref={hemi} args={[t.hemiSky, t.hemiGround, 0.85]} />
+      <ambientLight intensity={0.18} color={t.ambient} />
       <directionalLight
         position={[-32, 60, 26]}
         intensity={1.5}
-        color="#c4ceff"
+        color={t.sun}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0006}
@@ -22,7 +36,7 @@ export function Lighting({ radius }: { radius: number }) {
         shadow-camera-far={180}
       />
       {/* warm fill from the city glow */}
-      <directionalLight position={[30, 14, -30]} intensity={0.25} color="#ff9fd0" />
+      <directionalLight ref={fill} position={[30, 14, -30]} intensity={0.25} color={t.fill} />
     </>
   );
 }

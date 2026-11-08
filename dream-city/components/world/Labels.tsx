@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { EMOTION_LABELS } from "@/lib/theme";
+import type { Emotion } from "@/lib/types";
 import { useCity } from "@/store/useCity";
 import { useCityStore } from "@/store/useCityStore";
 import { cameraBus } from "./cameraBus";
@@ -28,12 +29,12 @@ export function CameraPublisher() {
   return null;
 }
 
-type Anchor = { key: string; x: number; y: number; z: number; className: string; text: string; color?: string };
+type Anchor = { key: string; x: number; y: number; z: number; className: string; text: string; color?: string; island?: Emotion };
 
 function anchorsFor(city: WorldCity, recTitle: (id: string) => string): Anchor[] {
   const out: Anchor[] = [];
   for (const d of city.districts)
-    out.push({ key: `d:${d.emotion}`, x: d.labelPos.x, y: 14, z: d.labelPos.z, className: "district-label", text: EMOTION_LABELS[d.emotion], color: EMOTION_COLOR[d.emotion] });
+    out.push({ key: `d:${d.emotion}`, x: d.labelPos.x, y: 14, z: d.labelPos.z, className: "district-label", text: EMOTION_LABELS[d.emotion], color: EMOTION_COLOR[d.emotion], island: d.emotion });
   for (const s of city.streets) out.push({ key: `s:${s.id}`, x: s.labelPos.x, y: 0.5, z: s.labelPos.z, className: "street-label", text: s.name });
   if (city.boulevard?.cells.length) {
     const c = city.boulevard.cells[Math.floor(city.boulevard.cells.length / 3)];
@@ -62,6 +63,9 @@ function HoverTagContent({ id }: { id: string }) {
   if (id === "plaza") {
     title = "The Plaza";
     sub = "City-wide insights";
+  } else if (id.startsWith("island:")) {
+    title = `${EMOTION_LABELS[id.slice(7) as Emotion] ?? id.slice(7)} island`;
+    sub = "Click to explore";
   } else if (id.startsWith("landmark:")) {
     title = `★ ${id.slice(9)}`;
     sub = "Landmark · recurring symbol";
@@ -131,8 +135,9 @@ export function LabelLayer() {
               if (el) refs.current.set(a.key, el);
               else refs.current.delete(a.key);
             }}
-            className={`world-label ${a.className} absolute left-0 top-0`}
+            className={`world-label ${a.className} absolute left-0 top-0${a.island ? " pointer-events-auto cursor-pointer" : ""}`}
             style={{ color: a.color, visibility: "hidden" }}
+            onClick={a.island ? () => useCityStore.getState().select({ kind: "island", id: a.island! }) : undefined}
           >
             {a.text}
           </div>

@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useCity } from "@/store/useCity";
 import { useCityStore } from "@/store/useCityStore";
 import { Ambience } from "./Ambience";
+import { Cosy } from "./Cosy";
 import { ConstructionSite, DreamBuilding, LibraryBuilding } from "./Buildings";
 import { CameraRig } from "./CameraRig";
 import { Effects } from "./Effects";
@@ -14,7 +15,9 @@ import { LinkLayer } from "./LinkLayer";
 import { Plaza } from "./Plaza";
 import { SelectionMarker } from "./SelectionMarker";
 import { Terrain } from "./Terrain";
+import { CloudBase } from "./CloudBase";
 import { markWorldMounted } from "./useRise";
+import { useWorldTheme } from "@/store/useTheme";
 
 function CityScene() {
   const model = useCity();
@@ -23,6 +26,7 @@ function CityScene() {
   return (
     <>
       <Lighting radius={city.radius} />
+      <CloudBase radius={city.radius} />
       <Terrain city={city} />
       <Plaza />
       {city.buildings.map((b) => {
@@ -43,6 +47,7 @@ function CityScene() {
       <SelectionMarker city={city} />
       <CameraPublisher />
       <Ambience radius={city.radius} />
+      <Cosy city={city} />
       <CameraRig layout={city} />
     </>
   );
@@ -59,6 +64,7 @@ markWorldMounted();
 
 export default function WorldCanvas() {
   const select = useCityStore((s) => s.select);
+  const background = useWorldTheme().background;
   return (
     <>
       <Canvas
@@ -69,7 +75,7 @@ export default function WorldCanvas() {
         onPointerMissed={() => select(null)}
       >
         {/* Opaque background so the post-processing chain composites correctly */}
-        <color attach="background" args={["#070b18"]} />
+        <color attach="background" args={[background]} />
         <CityScene />
         <PostFX />
       </Canvas>

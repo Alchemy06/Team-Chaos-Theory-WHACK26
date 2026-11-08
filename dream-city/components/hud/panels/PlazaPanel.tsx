@@ -2,7 +2,7 @@
 
 import { EMOTION_LIST } from "@/lib/vocab";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
-import { baseRates, cards, demo, type CityModel } from "@/store/cityModel";
+import { baseRates, cards, type CityModel } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
 import { HonestyBadge, SectionTitle } from "../ui/Pixel";
 import { PanelFrame } from "./PanelFrame";
@@ -24,7 +24,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
   const boulevard = model.world.boulevard;
 
   return (
-    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title={`${demo.persona.name}'s city`} meta={demo.persona.blurb}>
+    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title="Your dream city" meta="Built from saved database journals.">
       <p className="font-display text-[10px] uppercase tracking-wider text-ink-dim">
         {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
       </p>
@@ -36,7 +36,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
               <span className="w-28 shrink-0 truncate text-[13px]" style={{ color: EMOTION_COLORS[e] }}>
                 {EMOTION_LABELS[e]}
               </span>
-              <span className="h-3 flex-1 bg-[#070b22]">
+              <span className="h-3 flex-1 bg-(--input)">
                 <span className="block h-full" style={{ width: `${(n / max) * 100}%`, background: `repeating-linear-gradient(90deg, ${EMOTION_COLORS[e]} 0 8px, transparent 8px 10px)` }} />
               </span>
               <span className="w-5 text-right font-display text-[11px] text-ink-dim">{n}</span>

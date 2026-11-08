@@ -37,7 +37,8 @@ export function SelectionMarker({ city }: { city: WorldCity }) {
     bob.current.position.y = (hit?.top ?? 0) + 2.5 + Math.sin(s.clock.elapsedTime * 3) * 0.4;
     bob.current.rotation.y = s.clock.elapsedTime * 1.5;
   });
-  if (!hit) return null;
+  // islands are framed by the camera instead of a footprint ring
+  if (!hit || selection?.kind === "island") return null;
   return (
     <group position={[hit.pos.x, 0, hit.pos.z]}>
       <group scale={[1, 0.2, 1]}>

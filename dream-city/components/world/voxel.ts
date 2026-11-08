@@ -112,7 +112,7 @@ export function dreamTower(id: string, emotion: Emotion, height: number, recency
   return { voxels: out, height: height + 3 };
 }
 
-/** A library building for a book, film, song or game: lower, stone, with a kind motif on each face. */
+/** A library building for a book, film, song or game: a low stone hall with a pitched roof and a kind motif on each face. */
 export function libraryBuilding(id: string, kind: WorkKind, emotion: Emotion, height: number): VoxelModel {
   const rng = rngFor(id);
   const stone = "#3a3e58";
@@ -129,7 +129,7 @@ export function libraryBuilding(id: string, kind: WorkKind, emotion: Emotion, he
         const longFace = (Math.abs(z) === 1 && Math.abs(x) < 1) || (Math.abs(x) === 1 && Math.abs(z) < 1);
         let c = shade(stone, (rng() - 0.5) * 0.12);
         let g = false;
-        if (longFace && y > 1 && y < top) {
+        if (longFace && y >= 1 && y < top) {
           if (kind === "book") {
             // book spines: vertical stripes of muted colours
             const spines = ["#c2553f", "#d9a441", "#4f7cc4", "#5e9e6e", "#9b5fc0", accent];
@@ -156,10 +156,13 @@ export function libraryBuilding(id: string, kind: WorkKind, emotion: Emotion, he
         if (y === top) c = shade(district, -0.45);
         v.push({ x, y, z, c, g: g || undefined });
       }
-  // overhanging roof slab and a glowing sign
-  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) v.push({ x, y: height, z, c: shade(stone, -0.25) });
-  v.push({ x: 0, y: height, z: 0, c: district, g: true });
-  return { voxels: v, height: height + 1 };
+  // Pitched roof, so libraries read as low halls rather than towers: a full
+  // slab, then a ridge running along x with a glowing district-coloured lantern in the middle.
+  const roof = shade(stone, -0.3);
+  for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) v.push({ x, y: height, z, c: z === 0 ? shade(roof, 0.12) : roof });
+  for (const x of [-1, 1]) v.push({ x, y: height + 1, z: 0, c: shade(roof, 0.2) });
+  v.push({ x: 0, y: height + 1, z: 0, c: district, g: true });
+  return { voxels: v, height: height + 2 };
 }
 
 /** A landmark obelisk for a "Yours" symbol, crowned by a beacon. */
