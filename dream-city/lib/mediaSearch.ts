@@ -2,13 +2,14 @@
 //   film -> TMDB        (TMDB_TOKEN)
 //   book -> Open Library (no key)
 //   song -> iTunes Search (no key)
-//   game -> RAWG        (RAWG_KEY, free at rawg.io/apidocs)
+//   game -> RAWG        (RAWG_KEY, free at rawg.io/apidocs), else the Steam store (no key)
 import { searchFilms } from "./tmdb";
+import { searchSteam } from "./steam";
 
 export type Kind = "book" | "film" | "song" | "game";
 
 export type Suggestion = {
-  externalId: string; // e.g. "tmdb:603", "ol:OL82563W", "itunes:1440857781", "rawg:3328"
+  externalId: string; // e.g. "tmdb:603", "ol:OL82563W", "itunes:1440857781", "rawg:3328", "steam:367520"
   title: string;
   subtitle: string | null; // author / artist / year
   imageUrl: string | null;
@@ -45,9 +46,7 @@ async function songs(q: string, limit: number): Promise<Suggestion[]> {
   }));
 }
 
-async function games(q: string, limit: number): Promise<Suggestion[]> {
-  const key = process.env.RAWG_KEY;
-  if (!key) throw new Error("Set RAWG_KEY in .env.local (free key from rawg.io/apidocs) and restart the dev server.");
+async function rawgGames(q: string, limit: number, key: string): Promise<Suggestion[]> {
   const d = await getJSON<{ results: { id: number; name: string; released?: string; background_image?: string | null }[] }>(
     `https://api.rawg.io/api/games?key=${key}&search=${encodeURIComponent(q)}&page_size=${limit}`
   );
@@ -57,6 +56,23 @@ async function games(q: string, limit: number): Promise<Suggestion[]> {
     subtitle: g.released ? g.released.slice(0, 4) : null,
     imageUrl: g.background_image ?? null,
   }));
+}
+
+async function steamGames(q: string, limit: number): Promise<Suggestion[]> {
+  return (await searchSteam(q, limit)).map((g) => ({ externalId: `steam:${g.id}`, title: g.name, subtitle: "Steam", imageUrl: g.imageUrl }));
+}
+
+// RAWG when a key is set and it answers; otherwise the Steam store, which needs no key.
+async function games(q: string, limit: number): Promise<Suggestion[]> {
+  const key = process.env.RAWG_KEY;
+  if (key) {
+    try {
+      return await rawgGames(q, limit, key);
+    } catch (err) {
+      console.warn("RAWG search failed, using Steam:", err instanceof Error ? err.message : err);
+    }
+  }
+  return steamGames(q, limit);
 }
 
 async function films(q: string, limit: number): Promise<Suggestion[]> {

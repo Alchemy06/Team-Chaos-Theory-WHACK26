@@ -1,0 +1,2693 @@
+{
+  "_about": "Fictional demo people for Dream City (scripts/seedPersonas.mjs). Every field is what LLM 2a and the media tagger would store, written by hand so the demo needs no API calls. Maya comes from data/demoCity.json.",
+  "people": [
+    {
+      "key": "maya",
+      "name": "Maya",
+      "blurb": "A second-year student logging dreams through exam season, 8 October to 6 November 2026. Fictional demo data.",
+      "dreams": [
+        {
+          "key": "d01",
+          "date": "2026-10-08",
+          "transcript": "I was in the exam hall but the paper was in a language I didn't know. The clock on the wall kept skipping forward.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Tense, like I'd already failed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            }
+          ],
+          "summary": "An exam paper in an unknown language while the clock skips ahead.",
+          "description": "An exam paper in an unknown language while the clock skips ahead.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "exam",
+            "school",
+            "clock"
+          ],
+          "places": [
+            "exam hall"
+          ],
+          "themes": [
+            "performance",
+            "pressure"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d02",
+          "date": "2026-10-09",
+          "transcript": "I was running down the corridor to an exam I was already late for. Every door I opened led to another identical corridor.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Panicky and stressed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            }
+          ],
+          "summary": "Late for an exam, every door opens onto another corridor.",
+          "description": "Late for an exam, every door opens onto another corridor.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "corridor",
+            "door",
+            "exam",
+            "school",
+            "clock"
+          ],
+          "places": [
+            "school corridor"
+          ],
+          "themes": [
+            "being late",
+            "being trapped"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d03",
+          "date": "2026-10-10",
+          "transcript": "I was cooking with my mum in our old kitchen. The window was open and it smelled like rain.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Safe and warm."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "4"
+            }
+          ],
+          "summary": "Cooking with Mum in the old kitchen, rain outside.",
+          "description": "Cooking with Mum in the old kitchen, rain outside.",
+          "primaryEmotion": "happiness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "contentment",
+          "intensity": 4,
+          "intensitySource": "self",
+          "symbols": [
+            "mother",
+            "house",
+            "rain"
+          ],
+          "places": [
+            "childhood kitchen"
+          ],
+          "themes": [
+            "home",
+            "comfort"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d04",
+          "date": "2026-10-11",
+          "transcript": "I was trying to get home but the bus kept changing its route. The city outside looked like my town mixed with London.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Confused, I couldn't work out where I was."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            }
+          ],
+          "summary": "A bus that keeps changing route through a mixed-up city.",
+          "description": "A bus that keeps changing route through a mixed-up city.",
+          "primaryEmotion": "confusion",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "bewilderment",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "bus",
+            "city",
+            "lost",
+            "house"
+          ],
+          "places": [
+            "bus",
+            "hybrid city"
+          ],
+          "themes": [
+            "getting lost",
+            "change"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d05",
+          "date": "2026-10-12",
+          "transcript": "My group project partner deleted all our slides and laughed about it. I shouted but no sound came out.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Furious, and frustrated that nobody heard me."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "A teammate deletes the project; shouting makes no sound.",
+          "description": "A teammate deletes the project; shouting makes no sound.",
+          "primaryEmotion": "anger",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "frustration",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "friend",
+            "school",
+            "technology"
+          ],
+          "places": [
+            "seminar room"
+          ],
+          "themes": [
+            "unfairness",
+            "being unheard"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d06",
+          "date": "2026-10-13",
+          "transcript": "I was at a party where everyone I knew was there, but no one could see me. I sat on the stairs and watched.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Lonely. Like I didn't matter."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "Invisible at a party, watching from the stairs.",
+          "description": "Invisible at a party, watching from the stairs.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "loneliness",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "crowd",
+            "stairs",
+            "friend"
+          ],
+          "places": [
+            "house party"
+          ],
+          "themes": [
+            "being invisible",
+            "isolation"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d07",
+          "date": "2026-10-14",
+          "transcript": "There was something under the floor of my flat, tapping. I kept checking and finding only darkness.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Scared, but I kept looking."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            }
+          ],
+          "summary": "Tapping under the floor, only darkness below.",
+          "description": "Tapping under the floor, only darkness below.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "fear",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "house",
+            "darkness",
+            "underground"
+          ],
+          "places": [
+            "student flat"
+          ],
+          "themes": [
+            "threat"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d08",
+          "date": "2026-10-15",
+          "transcript": "I was climbing a mountain to reach the exam room at the summit. The path kept crumbling and I knew I'd fall.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Afraid I'd fall."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Did you reach the top?",
+              "a": "No, I woke up just as the path went."
+            }
+          ],
+          "summary": "Climbing a crumbling mountain path to an exam at the summit.",
+          "description": "Climbing a crumbling mountain path to an exam at the summit.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "fear",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "mountain",
+            "falling",
+            "exam"
+          ],
+          "places": [
+            "mountain path"
+          ],
+          "themes": [
+            "pressure"
+          ],
+          "typicalDreams": [
+            "tdq-37"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d09",
+          "date": "2026-10-16",
+          "transcript": "I found a door in my bedroom wall that led into a library with no ceiling. The shelves went up into clouds.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Curious and excited."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            }
+          ],
+          "summary": "A hidden door into a library whose shelves reach the clouds.",
+          "description": "A hidden door into a library whose shelves reach the clouds.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "curiosity",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "door",
+            "library",
+            "book",
+            "sky",
+            "house"
+          ],
+          "places": [
+            "bedroom",
+            "endless library"
+          ],
+          "themes": [
+            "discovery"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d10",
+          "date": "2026-10-17",
+          "transcript": "My grandad was alive again and showing me his garden. When I tried to hug him he turned into falling leaves.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Sad, but glad to see him."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            }
+          ],
+          "summary": "Grandad alive in his garden, turning into falling leaves.",
+          "description": "Grandad alive in his garden, turning into falling leaves.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "grief",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "family",
+            "death",
+            "garden"
+          ],
+          "places": [
+            "grandad's garden"
+          ],
+          "themes": [
+            "loss",
+            "memory"
+          ],
+          "typicalDreams": [
+            "tdq-35"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d11",
+          "date": "2026-10-18",
+          "transcript": "I was being chased through school by someone I couldn't see. I hid in a toilet cubicle and my phone had no signal.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Terrified."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "9"
+            }
+          ],
+          "summary": "Chased through school by an unseen figure; no phone signal.",
+          "description": "Chased through school by an unseen figure; no phone signal.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "fear",
+          "intensity": 9,
+          "intensitySource": "self",
+          "symbols": [
+            "chase",
+            "school",
+            "technology",
+            "stranger"
+          ],
+          "places": [
+            "school"
+          ],
+          "themes": [
+            "threat"
+          ],
+          "typicalDreams": [
+            "tdq-01",
+            "tdq-30",
+            "tdq-31"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d12",
+          "date": "2026-10-19",
+          "transcript": "The days were repeating. Every time I woke up in the dream it was the same morning and I had to sit the same exam.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Bewildered, and a bit stuck."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "The same morning and the same exam, over and over.",
+          "description": "The same morning and the same exam, over and over.",
+          "primaryEmotion": "confusion",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "bewilderment",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "exam",
+            "clock",
+            "school"
+          ],
+          "places": [
+            "exam hall"
+          ],
+          "themes": [
+            "repetition"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d13",
+          "date": "2026-10-22",
+          "transcript": "My house was flooded up to the second floor but the water was clear and calm. I swam through endless halls full of statues.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Peaceful and amazed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Was anyone else there?",
+              "a": "No, just me and the statues. It felt peaceful."
+            }
+          ],
+          "summary": "A calm flooded house with endless halls of statues.",
+          "description": "A calm flooded house with endless halls of statues.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "water",
+            "flood",
+            "house",
+            "corridor",
+            "statue"
+          ],
+          "places": [
+            "flooded house"
+          ],
+          "themes": [
+            "solitude",
+            "exploration"
+          ],
+          "typicalDreams": [
+            "tdq-07",
+            "tdq-21"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d14",
+          "date": "2026-10-23",
+          "transcript": "I was walking through tidal halls looking for someone who had left me notes. The notes were in my own handwriting.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Curious, a little uneasy."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "Searching tidal halls for whoever left notes in my handwriting.",
+          "description": "Searching tidal halls for whoever left notes in my handwriting.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "curiosity",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "water",
+            "corridor",
+            "writing"
+          ],
+          "places": [
+            "tidal halls"
+          ],
+          "themes": [
+            "searching",
+            "identity"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d15",
+          "date": "2026-10-24",
+          "transcript": "I was on a beach at night waiting for a friend who had moved away. The waves came closer but never touched me.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Sad and lonely, missing her."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "Waiting on a night beach for a friend who moved away.",
+          "description": "Waiting on a night beach for a friend who moved away.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "longing",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "ocean",
+            "water",
+            "friend",
+            "darkness"
+          ],
+          "places": [
+            "night beach"
+          ],
+          "themes": [
+            "distance",
+            "waiting"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d16",
+          "date": "2026-10-25",
+          "transcript": "I was deep underground in a ruined city lit by glowing bugs. I had to find my way out before the lights went out.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Anxious the whole time."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            }
+          ],
+          "summary": "Escaping a ruined underground city lit by glowing bugs.",
+          "description": "Escaping a ruined underground city lit by glowing bugs.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "underground",
+            "city",
+            "insect",
+            "darkness",
+            "lost"
+          ],
+          "places": [
+            "ruined underground city"
+          ],
+          "themes": [
+            "survival",
+            "ruin"
+          ],
+          "typicalDreams": [
+            "tdq-24"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d17",
+          "date": "2026-10-26",
+          "transcript": "I got my exam results and I'd passed everything. My friends and I ran into the sea in our clothes.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "So relieved and happy."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            }
+          ],
+          "summary": "Passing every exam and running into the sea with friends.",
+          "description": "Passing every exam and running into the sea with friends.",
+          "primaryEmotion": "happiness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "elation",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "exam",
+            "friend",
+            "ocean",
+            "water"
+          ],
+          "places": [
+            "beach"
+          ],
+          "themes": [
+            "relief",
+            "celebration"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d18",
+          "date": "2026-10-28",
+          "transcript": "I was on a train gliding over water with no tracks. The other passengers were shadows, and the sunset never ended.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Calm. In awe of it."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Did you know where the train was going?",
+              "a": "No, but I wasn't worried."
+            }
+          ],
+          "summary": "A trackless train over water, shadow passengers, an endless sunset.",
+          "description": "A trackless train over water, shadow passengers, an endless sunset.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "train",
+            "water",
+            "stranger",
+            "sky"
+          ],
+          "places": [
+            "train over water"
+          ],
+          "themes": [
+            "journey"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d19",
+          "date": "2026-10-29",
+          "transcript": "I was in a building where every floor was a different year of my life. The lift wouldn't let me choose.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Unsure, like I'd lost control."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            }
+          ],
+          "summary": "A building of floors for each year of life; the lift chooses for me.",
+          "description": "A building of floors for each year of life; the lift chooses for me.",
+          "primaryEmotion": "confusion",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "uncertainty",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "building",
+            "stairs",
+            "clock"
+          ],
+          "places": [
+            "tower block"
+          ],
+          "themes": [
+            "time",
+            "memory",
+            "control"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d20",
+          "date": "2026-10-31",
+          "transcript": "I was in a courtroom being accused of something no one would explain. The corridor outside went on forever.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Guilty, even though I didn't know what I'd done."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            }
+          ],
+          "summary": "Accused in a courtroom of something unexplained; an endless corridor.",
+          "description": "Accused in a courtroom of something unexplained; an endless corridor.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "guilt",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "corridor",
+            "crowd",
+            "stranger",
+            "building"
+          ],
+          "places": [
+            "courtroom"
+          ],
+          "themes": [
+            "being judged"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d21",
+          "date": "2026-11-01",
+          "transcript": "My old cat was waiting for me at the door of my childhood home. I knew she was gone but I let her in anyway.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Sad, but comforted."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "Letting my old cat in at the door of my childhood home.",
+          "description": "Letting my old cat in at the door of my childhood home.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "grief",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "animal",
+            "house",
+            "death",
+            "door"
+          ],
+          "places": [
+            "childhood home"
+          ],
+          "themes": [
+            "loss",
+            "home"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d22",
+          "date": "2026-11-03",
+          "transcript": "I was back at primary school but it was flooded and filled with fish. My old teacher was swimming and told me I was late, but kindly.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Nostalgic and fond."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            }
+          ],
+          "summary": "A flooded primary school full of fish; a kind teacher says I'm late.",
+          "description": "A flooded primary school full of fish; a kind teacher says I'm late.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "nostalgia",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "school",
+            "water",
+            "flood",
+            "animal",
+            "clock"
+          ],
+          "places": [
+            "primary school"
+          ],
+          "themes": [
+            "childhood",
+            "memory"
+          ],
+          "typicalDreams": [
+            "tdq-07",
+            "tdq-21",
+            "tdq-31"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d23",
+          "date": "2026-11-04",
+          "transcript": "My sibling borrowed my laptop and wiped my dissertation notes. I kept trying to explain how much it mattered.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Irritated that he didn't get it."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            }
+          ],
+          "summary": "A sibling wipes my dissertation notes and doesn't understand.",
+          "description": "A sibling wipes my dissertation notes and doesn't understand.",
+          "primaryEmotion": "anger",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "irritation",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "sibling",
+            "technology",
+            "writing"
+          ],
+          "places": [
+            "family home"
+          ],
+          "themes": [
+            "being unheard"
+          ],
+          "typicalDreams": [
+            "tdq-03"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "d24",
+          "date": "2026-11-06",
+          "transcript": "I was floating in space above an ocean planet. Huge waves rose slowly like mountains and I wasn't scared at all.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Calm and amazed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "9"
+            },
+            {
+              "q": "What did it feel like?",
+              "a": "Huge but calm. Like I was allowed to just watch."
+            }
+          ],
+          "summary": "Floating above an ocean planet with mountain-sized waves, unafraid.",
+          "description": "Floating above an ocean planet with mountain-sized waves, unafraid.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 9,
+          "intensitySource": "self",
+          "symbols": [
+            "space",
+            "ocean",
+            "water",
+            "mountain",
+            "flying"
+          ],
+          "places": [
+            "above an ocean planet"
+          ],
+          "themes": [
+            "exploration",
+            "calm"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        }
+      ],
+      "media": [
+        {
+          "key": "w01",
+          "kind": "book",
+          "title": "Piranesi",
+          "creator": "Susanna Clarke",
+          "consumed_on": "2026-10-20",
+          "main_emotion": "wonder",
+          "themes": [
+            "solitude",
+            "exploration",
+            "searching",
+            "memory"
+          ],
+          "symbols": [
+            "water",
+            "flood",
+            "corridor",
+            "statue",
+            "writing",
+            "ocean"
+          ],
+          "user_note": "Couldn't stop thinking about the drowned halls and the statues."
+        },
+        {
+          "key": "w02",
+          "kind": "film",
+          "title": "Spirited Away",
+          "creator": "Hayao Miyazaki",
+          "consumed_on": "2026-10-27",
+          "main_emotion": "wonder",
+          "themes": [
+            "journey",
+            "transformation"
+          ],
+          "symbols": [
+            "train",
+            "water",
+            "stranger",
+            "building",
+            "animal"
+          ],
+          "user_note": "The train over the water is the most peaceful scene in any film."
+        },
+        {
+          "key": "w03",
+          "kind": "game",
+          "title": "Outer Wilds",
+          "creator": "Mobius Digital",
+          "consumed_on": "2026-10-17",
+          "main_emotion": "wonder",
+          "themes": [
+            "repetition",
+            "exploration",
+            "discovery"
+          ],
+          "symbols": [
+            "space",
+            "ocean",
+            "clock",
+            "flying",
+            "water"
+          ],
+          "user_note": "The time loop got under my skin."
+        },
+        {
+          "key": "w04",
+          "kind": "game",
+          "title": "Hollow Knight",
+          "creator": "Team Cherry",
+          "consumed_on": "2026-10-24",
+          "main_emotion": "apprehension",
+          "themes": [
+            "ruin",
+            "survival",
+            "isolation"
+          ],
+          "symbols": [
+            "underground",
+            "city",
+            "insect",
+            "darkness",
+            "lost"
+          ],
+          "user_note": "Lonely and beautiful. Kept getting lost."
+        },
+        {
+          "key": "w05",
+          "kind": "game",
+          "title": "Celeste",
+          "creator": "Maddy Makes Games",
+          "consumed_on": "2026-10-12",
+          "main_emotion": "apprehension",
+          "themes": [
+            "pressure"
+          ],
+          "symbols": [
+            "mountain",
+            "falling",
+            "mirror"
+          ],
+          "user_note": "A game about anxiety that actually gets it."
+        },
+        {
+          "key": "w06",
+          "kind": "film",
+          "title": "Interstellar",
+          "creator": "Christopher Nolan",
+          "consumed_on": "2026-10-21",
+          "main_emotion": "wonder",
+          "themes": [
+            "time",
+            "distance",
+            "family"
+          ],
+          "symbols": [
+            "space",
+            "ocean",
+            "water",
+            "clock",
+            "family",
+            "mountain"
+          ],
+          "user_note": "The water planet waves were terrifying."
+        },
+        {
+          "key": "w07",
+          "kind": "book",
+          "title": "The Trial",
+          "creator": "Franz Kafka",
+          "consumed_on": "2026-10-30",
+          "main_emotion": "apprehension",
+          "themes": [
+            "being judged",
+            "being trapped"
+          ],
+          "symbols": [
+            "corridor",
+            "building",
+            "crowd",
+            "stranger",
+            "door"
+          ],
+          "user_note": "Nobody ever tells K. what he did."
+        },
+        {
+          "key": "w08",
+          "kind": "book",
+          "title": "Normal People",
+          "creator": "Sally Rooney",
+          "consumed_on": "2026-10-10",
+          "main_emotion": "sadness",
+          "themes": [
+            "distance",
+            "being unheard"
+          ],
+          "symbols": [
+            "school",
+            "friend",
+            "partner",
+            "house"
+          ],
+          "user_note": "So much said in silences."
+        },
+        {
+          "key": "w09",
+          "kind": "book",
+          "title": "Never Let Me Go",
+          "creator": "Kazuo Ishiguro",
+          "consumed_on": "2026-10-15",
+          "main_emotion": "sadness",
+          "themes": [
+            "loss",
+            "memory",
+            "childhood"
+          ],
+          "symbols": [
+            "school",
+            "death",
+            "friend"
+          ],
+          "user_note": "Quietly devastating."
+        },
+        {
+          "key": "w10",
+          "kind": "song",
+          "title": "Weird Fishes/Arpeggi",
+          "creator": "Radiohead",
+          "consumed_on": "2026-10-23",
+          "main_emotion": "sadness",
+          "themes": [
+            "escape",
+            "exploration",
+            "distance"
+          ],
+          "symbols": [
+            "ocean",
+            "water",
+            "falling",
+            "animal"
+          ],
+          "user_note": "On repeat all week."
+        },
+        {
+          "key": "w11",
+          "kind": "song",
+          "title": "Motion Sickness",
+          "creator": "Phoebe Bridgers",
+          "consumed_on": "2026-10-11",
+          "main_emotion": "anger",
+          "themes": [
+            "unfairness",
+            "relationships"
+          ],
+          "symbols": [
+            "partner",
+            "car"
+          ],
+          "user_note": "Angry and sad at the same time."
+        },
+        {
+          "key": "w12",
+          "kind": "film",
+          "title": "Paprika",
+          "creator": "Satoshi Kon",
+          "consumed_on": "2026-10-29",
+          "main_emotion": "confusion",
+          "themes": [
+            "identity",
+            "time"
+          ],
+          "symbols": [
+            "crowd",
+            "building",
+            "city",
+            "mirror"
+          ],
+          "user_note": "A film about dreams leaking into reality. Felt very on the nose."
+        }
+      ]
+    },
+    {
+      "key": "theo",
+      "name": "Theo",
+      "blurb": "An A&E nurse on night shifts, logging dreams from 12 October to 7 November 2026. Fictional demo data.",
+      "dreams": [
+        {
+          "key": "t01",
+          "date": "2026-10-12",
+          "transcript": "I was running down a hospital corridor that kept getting longer, pushing an empty trolley. Every door I opened led back to the same ward.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Stressed, like I was late for something."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "An endless hospital corridor where every door leads back to the same ward.",
+          "description": "An endless hospital corridor where every door leads back to the same ward.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "corridor",
+            "door",
+            "building"
+          ],
+          "places": [
+            "hospital"
+          ],
+          "themes": [
+            "repetition",
+            "being late",
+            "pressure"
+          ],
+          "typicalDreams": [
+            "tdq-03"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t02",
+          "date": "2026-10-13",
+          "transcript": "Huge glass shapes hung in the sky above the hospital car park and drew circles of black ink. Nobody else seemed to notice them.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Amazed, a bit uneasy."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "I watched Arrival on Saturday."
+            }
+          ],
+          "summary": "Glass shapes drawing ink circles above the car park.",
+          "description": "Glass shapes drawing ink circles above the car park.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "apprehension",
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "sky",
+            "writing",
+            "alien"
+          ],
+          "places": [
+            "car park"
+          ],
+          "themes": [
+            "discovery",
+            "isolation"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Arrival"
+          ]
+        },
+        {
+          "key": "t03",
+          "date": "2026-10-15",
+          "transcript": "I was planting rows of strawberries outside my nan's old house and the chickens followed me around. It was sunny and nothing went wrong.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Calm. Properly rested for once."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "4"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Been playing Stardew Valley on my days off."
+            }
+          ],
+          "summary": "Planting strawberries at nan's house with chickens following.",
+          "description": "Planting strawberries at nan's house with chickens following.",
+          "primaryEmotion": "happiness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "contentment",
+          "intensity": 4,
+          "intensitySource": "self",
+          "symbols": [
+            "garden",
+            "house",
+            "animal",
+            "family"
+          ],
+          "places": [],
+          "themes": [
+            "calm",
+            "home",
+            "comfort"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Stardew Valley"
+          ]
+        },
+        {
+          "key": "t04",
+          "date": "2026-10-17",
+          "transcript": "A patient I lost last month was sitting up in bed, chatting to me like nothing had happened, and asked why I looked so tired.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Sad and confused."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "A patient who died last month, alive and chatting in bed.",
+          "description": "A patient who died last month, alive and chatting in bed.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": "confusion",
+          "emotionStated": true,
+          "microEmotion": "grief",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "death",
+            "building"
+          ],
+          "places": [
+            "ward"
+          ],
+          "themes": [
+            "loss",
+            "memory"
+          ],
+          "typicalDreams": [
+            "tdq-35"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t05",
+          "date": "2026-10-20",
+          "transcript": "My flat had a new room behind the bathroom that I had never seen, full of sunlight, with an old robot sitting by the window.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Curious and a bit sad."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Reading Klara and the Sun at the moment."
+            }
+          ],
+          "summary": "A sunlit hidden room in the flat with a robot by the window.",
+          "description": "A sunlit hidden room in the flat with a robot by the window.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "sadness",
+          "emotionStated": true,
+          "microEmotion": "curiosity",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "house",
+            "door",
+            "light"
+          ],
+          "places": [],
+          "themes": [
+            "discovery",
+            "solitude"
+          ],
+          "typicalDreams": [
+            "tdq-53"
+          ],
+          "mentionedWorks": [
+            "Klara and the Sun"
+          ]
+        },
+        {
+          "key": "t06",
+          "date": "2026-10-23",
+          "transcript": "I was swimming in dark sea water at night and something big brushed past my legs. I couldn't see the shore.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Terrified."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "9"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Watched Jaws with my flatmate last night."
+            }
+          ],
+          "summary": "Swimming in a dark sea as something big brushes past.",
+          "description": "Swimming in a dark sea as something big brushes past.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "fear",
+          "intensity": 9,
+          "intensitySource": "self",
+          "symbols": [
+            "ocean",
+            "water",
+            "darkness",
+            "animal"
+          ],
+          "places": [],
+          "themes": [
+            "threat",
+            "survival"
+          ],
+          "typicalDreams": [
+            "tdq-07"
+          ],
+          "mentionedWorks": [
+            "Jaws"
+          ]
+        },
+        {
+          "key": "t07",
+          "date": "2026-10-24",
+          "transcript": "I was doing CPR on someone in a supermarket and every time I stopped they faded a bit more. Nobody would call an ambulance.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Panicked, and angry that no one helped."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "9"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "CPR in a supermarket while nobody calls an ambulance.",
+          "description": "CPR in a supermarket while nobody calls an ambulance.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": "anger",
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 9,
+          "intensitySource": "self",
+          "symbols": [
+            "crowd",
+            "death"
+          ],
+          "places": [
+            "supermarket"
+          ],
+          "themes": [
+            "pressure",
+            "being unheard",
+            "survival"
+          ],
+          "typicalDreams": [
+            "tdq-03"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t08",
+          "date": "2026-10-27",
+          "transcript": "I was walking alone across snowy mountains with a heavy parcel on my back. It started raining and I kept going.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Lonely but determined."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Playing Death Stranding a lot."
+            }
+          ],
+          "summary": "Carrying a heavy parcel alone across mountains in the rain.",
+          "description": "Carrying a heavy parcel alone across mountains in the rain.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "loneliness",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "mountain",
+            "rain"
+          ],
+          "places": [],
+          "themes": [
+            "journey",
+            "isolation",
+            "solitude"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Death Stranding"
+          ]
+        },
+        {
+          "key": "t09",
+          "date": "2026-10-29",
+          "transcript": "I missed the bus to my shift and ran after it, then realised I was in my pyjamas in the middle of town.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Embarrassed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Chasing the bus to work in pyjamas through town.",
+          "description": "Chasing the bus to work in pyjamas through town.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "embarrassment",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "bus",
+            "city",
+            "clothes"
+          ],
+          "places": [],
+          "themes": [
+            "being late",
+            "being exposed"
+          ],
+          "typicalDreams": [
+            "tdq-06",
+            "tdq-13"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t10",
+          "date": "2026-11-01",
+          "transcript": "I fell from the hospital roof but floated down slowly over the car park lights and landed softly.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Free, oddly calm."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Falling from the roof and floating softly down.",
+          "description": "Falling from the roof and floating softly down.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "happiness",
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "falling",
+            "flying",
+            "building",
+            "light"
+          ],
+          "places": [],
+          "themes": [
+            "relief",
+            "escape"
+          ],
+          "typicalDreams": [
+            "tdq-12",
+            "tdq-11"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t11",
+          "date": "2026-11-02",
+          "transcript": "The pond at the end of my grandparents' lane was actually an ocean, and I was seven again, scared of something in the hedge.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Nostalgic and scared."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Just finished The Ocean at the End of the Lane."
+            }
+          ],
+          "summary": "Seven again, by a pond that is really an ocean.",
+          "description": "Seven again, by a pond that is really an ocean.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "apprehension",
+          "emotionStated": true,
+          "microEmotion": "nostalgia",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "ocean",
+            "water",
+            "family"
+          ],
+          "places": [],
+          "themes": [
+            "childhood",
+            "memory",
+            "threat"
+          ],
+          "typicalDreams": [
+            "tdq-50"
+          ],
+          "mentionedWorks": [
+            "The Ocean at the End of the Lane"
+          ]
+        },
+        {
+          "key": "t12",
+          "date": "2026-11-04",
+          "transcript": "My mum and my manager were arguing in the staff room about whether I was allowed to go home. I couldn't speak.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Frustrated."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Mum and my manager arguing over whether I can go home.",
+          "description": "Mum and my manager arguing over whether I can go home.",
+          "primaryEmotion": "anger",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "frustration",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "mother",
+            "building"
+          ],
+          "places": [],
+          "themes": [
+            "being unheard",
+            "control",
+            "family"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "t13",
+          "date": "2026-11-05",
+          "transcript": "A crowd of little versions of me were running a control room, all shouting different instructions at once.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Overwhelmed, but it was funny."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Watched Inside Out 2 last night."
+            }
+          ],
+          "summary": "Tiny versions of me shouting orders in a control room.",
+          "description": "Tiny versions of me shouting orders in a control room.",
+          "primaryEmotion": "confusion",
+          "secondaryEmotion": "happiness",
+          "emotionStated": true,
+          "microEmotion": "bewilderment",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "crowd",
+            "building"
+          ],
+          "places": [],
+          "themes": [
+            "identity",
+            "control"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Inside Out 2"
+          ]
+        },
+        {
+          "key": "t14",
+          "date": "2026-11-07",
+          "transcript": "I was on a night bus across the city that never stopped at my street. The other passengers were all asleep.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Lonely and tired."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "A night bus that never stops at my street.",
+          "description": "A night bus that never stops at my street.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "loneliness",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "bus",
+            "city",
+            "darkness",
+            "crowd"
+          ],
+          "places": [],
+          "themes": [
+            "journey",
+            "isolation",
+            "waiting"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        }
+      ],
+      "media": [
+        {
+          "key": "arrival",
+          "kind": "film",
+          "title": "Arrival",
+          "creator": "Denis Villeneuve",
+          "consumed_on": "2026-10-11",
+          "main_emotion": "wonder",
+          "themes": [
+            "memory",
+            "loss",
+            "time"
+          ],
+          "symbols": [
+            "alien",
+            "writing",
+            "sky"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "stardew",
+          "kind": "game",
+          "title": "Stardew Valley",
+          "creator": "ConcernedApe",
+          "consumed_on": "2026-10-14",
+          "main_emotion": "happiness",
+          "themes": [
+            "home",
+            "calm",
+            "comfort"
+          ],
+          "symbols": [
+            "garden",
+            "house",
+            "animal"
+          ],
+          "user_note": "My days-off game."
+        },
+        {
+          "key": "klara",
+          "kind": "book",
+          "title": "Klara and the Sun",
+          "creator": "Kazuo Ishiguro",
+          "consumed_on": "2026-10-18",
+          "main_emotion": "sadness",
+          "themes": [
+            "loss",
+            "memory",
+            "solitude"
+          ],
+          "symbols": [
+            "light",
+            "house",
+            "sky"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "jaws",
+          "kind": "film",
+          "title": "Jaws",
+          "creator": "Steven Spielberg",
+          "consumed_on": "2026-10-22",
+          "main_emotion": "apprehension",
+          "themes": [
+            "threat",
+            "survival"
+          ],
+          "symbols": [
+            "ocean",
+            "water",
+            "animal"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "holocene",
+          "kind": "song",
+          "title": "Holocene",
+          "creator": "Bon Iver",
+          "consumed_on": "2026-10-25",
+          "main_emotion": "sadness",
+          "themes": [
+            "solitude",
+            "distance",
+            "calm"
+          ],
+          "symbols": [
+            "mountain",
+            "sky"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "stranding",
+          "kind": "game",
+          "title": "Death Stranding",
+          "creator": "Kojima Productions",
+          "consumed_on": "2026-10-26",
+          "main_emotion": "wonder",
+          "themes": [
+            "journey",
+            "isolation",
+            "solitude"
+          ],
+          "symbols": [
+            "rain",
+            "mountain",
+            "death"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "ocean",
+          "kind": "book",
+          "title": "The Ocean at the End of the Lane",
+          "creator": "Neil Gaiman",
+          "consumed_on": "2026-11-01",
+          "main_emotion": "wonder",
+          "themes": [
+            "childhood",
+            "memory",
+            "threat"
+          ],
+          "symbols": [
+            "ocean",
+            "house",
+            "monster"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "insideout",
+          "kind": "film",
+          "title": "Inside Out 2",
+          "creator": "Kelsey Mann",
+          "consumed_on": "2026-11-04",
+          "main_emotion": "happiness",
+          "themes": [
+            "identity",
+            "change",
+            "family"
+          ],
+          "symbols": [
+            "crowd",
+            "building"
+          ],
+          "user_note": null
+        }
+      ]
+    },
+    {
+      "key": "priya",
+      "name": "Priya",
+      "blurb": "A graduate analyst on a London trading desk, logging dreams through her first quarter-end, 11 October to 6 November 2026. Fictional demo data.",
+      "dreams": [
+        {
+          "key": "p01",
+          "date": "2026-10-11",
+          "transcript": "The trading floor was flooding and the screens kept showing the same red number while everyone carried on typing.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Anxious, like I'd caused it."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Watched Margin Call the night before."
+            }
+          ],
+          "summary": "A flooding trading floor where everyone keeps typing.",
+          "description": "A flooding trading floor where everyone keeps typing.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "guilt",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "flood",
+            "water",
+            "technology",
+            "building",
+            "crowd"
+          ],
+          "places": [
+            "trading floor"
+          ],
+          "themes": [
+            "pressure",
+            "threat",
+            "ruin"
+          ],
+          "typicalDreams": [
+            "tdq-21"
+          ],
+          "mentionedWorks": [
+            "Margin Call"
+          ]
+        },
+        {
+          "key": "p02",
+          "date": "2026-10-13",
+          "transcript": "I was sitting my maths finals again but every question was about bonds I'd never heard of, and the clock had no hands.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Panicked."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Maths finals full of unknown bonds and a clock with no hands.",
+          "description": "Maths finals full of unknown bonds and a clock with no hands.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "exam",
+            "school",
+            "clock"
+          ],
+          "places": [
+            "exam hall"
+          ],
+          "themes": [
+            "performance",
+            "pressure",
+            "time"
+          ],
+          "typicalDreams": [
+            "tdq-31"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "p03",
+          "date": "2026-10-14",
+          "transcript": "I found a suitcase full of cash in the office lift and didn't know whether to hand it in. Every floor I pressed took me to the basement.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Confused and guilty."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Reading The Big Short."
+            }
+          ],
+          "summary": "A suitcase of cash in a lift that only goes to the basement.",
+          "description": "A suitcase of cash in a lift that only goes to the basement.",
+          "primaryEmotion": "confusion",
+          "secondaryEmotion": "apprehension",
+          "emotionStated": true,
+          "microEmotion": "indecision",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "money",
+            "stairs",
+            "underground",
+            "building"
+          ],
+          "places": [],
+          "themes": [
+            "control",
+            "repetition"
+          ],
+          "typicalDreams": [
+            "tdq-10"
+          ],
+          "mentionedWorks": [
+            "The Big Short"
+          ]
+        },
+        {
+          "key": "p04",
+          "date": "2026-10-17",
+          "transcript": "I was playing cards against my manager for betting chips and every hand turned into jokers that laughed at me.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Annoyed, but kind of fun."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "5"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Too much Balatro."
+            }
+          ],
+          "summary": "Cards against my manager where every hand turns to jokers.",
+          "description": "Cards against my manager where every hand turns to jokers.",
+          "primaryEmotion": "anger",
+          "secondaryEmotion": "happiness",
+          "emotionStated": true,
+          "microEmotion": "irritation",
+          "intensity": 5,
+          "intensitySource": "self",
+          "symbols": [
+            "money"
+          ],
+          "places": [],
+          "themes": [
+            "being judged",
+            "repetition",
+            "control"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Balatro"
+          ]
+        },
+        {
+          "key": "p05",
+          "date": "2026-10-20",
+          "transcript": "I was on a train over the sea at night, and a faceless stranger sat next to me eating gold coins.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Strange but peaceful."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Rewatched Spirited Away at the weekend."
+            }
+          ],
+          "summary": "A night train over the sea beside a faceless stranger eating gold.",
+          "description": "A night train over the sea beside a faceless stranger eating gold.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "confusion",
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "train",
+            "ocean",
+            "water",
+            "stranger",
+            "money",
+            "food"
+          ],
+          "places": [],
+          "themes": [
+            "journey",
+            "transformation"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Spirited Away"
+          ]
+        },
+        {
+          "key": "p06",
+          "date": "2026-10-22",
+          "transcript": "My teeth started falling out during a client call and I had to keep talking with my hand over my mouth.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Mortified."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Teeth falling out mid client call.",
+          "description": "Teeth falling out mid client call.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "embarrassment",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "teeth",
+            "technology"
+          ],
+          "places": [],
+          "themes": [
+            "being judged",
+            "performance"
+          ],
+          "typicalDreams": [
+            "tdq-18"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "p07",
+          "date": "2026-10-24",
+          "transcript": "I was driving through a city of neon at night with the windows down, and every street turned into a motorway.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Free and happy."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Midnight City on repeat."
+            }
+          ],
+          "summary": "Driving through a neon city with the windows down.",
+          "description": "Driving through a neon city with the windows down.",
+          "primaryEmotion": "happiness",
+          "secondaryEmotion": "wonder",
+          "emotionStated": true,
+          "microEmotion": "elation",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "car",
+            "city",
+            "light"
+          ],
+          "places": [],
+          "themes": [
+            "journey",
+            "exploration",
+            "relief"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Midnight City"
+          ]
+        },
+        {
+          "key": "p08",
+          "date": "2026-10-26",
+          "transcript": "Someone chased me through the office at night and I couldn't find the stairs. My badge wouldn't open any door.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Terrified."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "9"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Chased through the dark office with a badge that opens nothing.",
+          "description": "Chased through the dark office with a badge that opens nothing.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "fear",
+          "intensity": 9,
+          "intensitySource": "self",
+          "symbols": [
+            "chase",
+            "building",
+            "door",
+            "stairs",
+            "darkness"
+          ],
+          "places": [],
+          "themes": [
+            "being chased",
+            "being trapped",
+            "escape"
+          ],
+          "typicalDreams": [
+            "tdq-01"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "p09",
+          "date": "2026-10-29",
+          "transcript": "I was back at boarding school with friends I haven't seen in years. Everyone knew something about us that I didn't.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Sad and left out."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "6"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Reading Never Let Me Go."
+            }
+          ],
+          "summary": "Back at boarding school, the only one not told a secret.",
+          "description": "Back at boarding school, the only one not told a secret.",
+          "primaryEmotion": "sadness",
+          "secondaryEmotion": "confusion",
+          "emotionStated": true,
+          "microEmotion": "loneliness",
+          "intensity": 6,
+          "intensitySource": "self",
+          "symbols": [
+            "school",
+            "friend"
+          ],
+          "places": [],
+          "themes": [
+            "memory",
+            "isolation",
+            "identity"
+          ],
+          "typicalDreams": [
+            "tdq-31"
+          ],
+          "mentionedWorks": [
+            "Never Let Me Go"
+          ]
+        },
+        {
+          "key": "p10",
+          "date": "2026-10-31",
+          "transcript": "I was climbing a snowy mountain at night and kept slipping off the edge, then starting again from the bottom.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Frustrated but determined."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Started Celeste on Thursday."
+            }
+          ],
+          "summary": "Slipping off a snowy mountain and starting again each time.",
+          "description": "Slipping off a snowy mountain and starting again each time.",
+          "primaryEmotion": "anger",
+          "secondaryEmotion": "apprehension",
+          "emotionStated": true,
+          "microEmotion": "frustration",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "mountain",
+            "falling"
+          ],
+          "places": [],
+          "themes": [
+            "repetition",
+            "survival",
+            "pressure"
+          ],
+          "typicalDreams": [
+            "tdq-03",
+            "tdq-37"
+          ],
+          "mentionedWorks": [
+            "Celeste"
+          ]
+        },
+        {
+          "key": "p11",
+          "date": "2026-11-02",
+          "transcript": "My dad and I were floating in a spaceship watching Earth through a window, and he was getting younger while I got older.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Awe, then sad."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": "Watched Interstellar again last night."
+            }
+          ],
+          "summary": "Floating in a spaceship with dad as he grows younger.",
+          "description": "Floating in a spaceship with dad as he grows younger.",
+          "primaryEmotion": "wonder",
+          "secondaryEmotion": "sadness",
+          "emotionStated": true,
+          "microEmotion": "awe",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "father",
+            "space",
+            "flying"
+          ],
+          "places": [],
+          "themes": [
+            "time",
+            "family",
+            "distance"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": [
+            "Interstellar"
+          ]
+        },
+        {
+          "key": "p12",
+          "date": "2026-11-03",
+          "transcript": "I lost all the money in my account in one click and the banking app just showed a smiley face.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Panic, then numb."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "8"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "All my money gone in one click, and a smiley face.",
+          "description": "All my money gone in one click, and a smiley face.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 8,
+          "intensitySource": "self",
+          "symbols": [
+            "money",
+            "technology"
+          ],
+          "places": [],
+          "themes": [
+            "ruin",
+            "control",
+            "loss"
+          ],
+          "typicalDreams": [],
+          "mentionedWorks": []
+        },
+        {
+          "key": "p13",
+          "date": "2026-11-05",
+          "transcript": "I was late for the quarter-end meeting and the corridor kept stretching, with clocks on every wall.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Stressed."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Late for quarter-end down a stretching corridor of clocks.",
+          "description": "Late for quarter-end down a stretching corridor of clocks.",
+          "primaryEmotion": "apprehension",
+          "secondaryEmotion": null,
+          "emotionStated": true,
+          "microEmotion": "anxiety",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "corridor",
+            "clock",
+            "building"
+          ],
+          "places": [],
+          "themes": [
+            "being late",
+            "pressure",
+            "time"
+          ],
+          "typicalDreams": [
+            "tdq-06"
+          ],
+          "mentionedWorks": []
+        },
+        {
+          "key": "p14",
+          "date": "2026-11-06",
+          "transcript": "I was at a beach party with my team and suddenly I could fly above the waves while everyone cheered.",
+          "followUps": [
+            {
+              "q": "How did you feel during the dream?",
+              "a": "Elated."
+            },
+            {
+              "q": "How intense did it feel, from 1 to 10?",
+              "a": "7"
+            },
+            {
+              "q": "Have you read, watched, played or listened to anything recently that this reminds you of?",
+              "a": ""
+            }
+          ],
+          "summary": "Flying over the waves at a beach party while the team cheers.",
+          "description": "Flying over the waves at a beach party while the team cheers.",
+          "primaryEmotion": "happiness",
+          "secondaryEmotion": "wonder",
+          "emotionStated": true,
+          "microEmotion": "elation",
+          "intensity": 7,
+          "intensitySource": "self",
+          "symbols": [
+            "ocean",
+            "crowd",
+            "flying"
+          ],
+          "places": [],
+          "themes": [
+            "celebration",
+            "relief"
+          ],
+          "typicalDreams": [
+            "tdq-11"
+          ],
+          "mentionedWorks": []
+        }
+      ],
+      "media": [
+        {
+          "key": "margin",
+          "kind": "film",
+          "title": "Margin Call",
+          "creator": "J. C. Chandor",
+          "consumed_on": "2026-10-10",
+          "main_emotion": "apprehension",
+          "themes": [
+            "pressure",
+            "threat",
+            "ruin"
+          ],
+          "symbols": [
+            "building",
+            "clock",
+            "technology"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "bigshort",
+          "kind": "book",
+          "title": "The Big Short",
+          "creator": "Michael Lewis",
+          "consumed_on": "2026-10-13",
+          "main_emotion": "anger",
+          "themes": [
+            "unfairness",
+            "ruin",
+            "pressure"
+          ],
+          "symbols": [
+            "money",
+            "building",
+            "crowd"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "balatro",
+          "kind": "game",
+          "title": "Balatro",
+          "creator": "LocalThunk",
+          "consumed_on": "2026-10-16",
+          "main_emotion": "happiness",
+          "themes": [
+            "repetition",
+            "celebration",
+            "control"
+          ],
+          "symbols": [
+            "money",
+            "light"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "spirited",
+          "kind": "film",
+          "title": "Spirited Away",
+          "creator": "Hayao Miyazaki",
+          "consumed_on": "2026-10-19",
+          "main_emotion": "wonder",
+          "themes": [
+            "journey",
+            "transformation",
+            "identity"
+          ],
+          "symbols": [
+            "train",
+            "water",
+            "food"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "midnight",
+          "kind": "song",
+          "title": "Midnight City",
+          "creator": "M83",
+          "consumed_on": "2026-10-23",
+          "main_emotion": "wonder",
+          "themes": [
+            "journey",
+            "exploration"
+          ],
+          "symbols": [
+            "city",
+            "light",
+            "car"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "nevergo",
+          "kind": "book",
+          "title": "Never Let Me Go",
+          "creator": "Kazuo Ishiguro",
+          "consumed_on": "2026-10-27",
+          "main_emotion": "sadness",
+          "themes": [
+            "loss",
+            "memory",
+            "identity"
+          ],
+          "symbols": [
+            "school",
+            "house"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "celeste",
+          "kind": "game",
+          "title": "Celeste",
+          "creator": "Maddy Makes Games",
+          "consumed_on": "2026-10-30",
+          "main_emotion": "apprehension",
+          "themes": [
+            "survival",
+            "identity",
+            "pressure"
+          ],
+          "symbols": [
+            "mountain",
+            "falling"
+          ],
+          "user_note": null
+        },
+        {
+          "key": "interstellar",
+          "kind": "film",
+          "title": "Interstellar",
+          "creator": "Christopher Nolan",
+          "consumed_on": "2026-11-01",
+          "main_emotion": "wonder",
+          "themes": [
+            "time",
+            "distance",
+            "family"
+          ],
+          "symbols": [
+            "space",
+            "clock",
+            "water"
+          ],
+          "user_note": null
+        }
+      ]
+    }
+  ]
+}

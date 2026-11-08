@@ -12,6 +12,22 @@ export function VoiceQuestionAnswer({ question, index, aiQuestion }: {
 }) {
   const answer = useCityStore((s) => s.record.answers[index] ?? "");
   const setAnswer = useCityStore((s) => s.setAnswer);
+  return <VoiceAnswerInput question={question} index={index} aiQuestion={aiQuestion}
+    value={answer} onChange={(value) => setAnswer(index, value)} />;
+}
+
+// (added) Share the same narrator and input modes without sharing journal answer state.
+export function VoiceAnswerInput({ question, index, aiQuestion, value, onChange, maxLength, allowRating = true }: {
+  question: string; index: number; aiQuestion: boolean; value: string;
+  onChange: (value: string) => void; maxLength?: number; allowRating?: boolean;
+}) {
+  const answer = value;
+  const latest = useRef({ value, onChange });
+  useEffect(() => { latest.current = { value, onChange }; }, [value, onChange]);
+  const setAnswer = (_index: number, next: string) => {
+    latest.current.value = next;
+    latest.current.onChange(next);
+  };
   const [supported] = useState(speechSupported);
   const [mode, setMode] = useState<"voice" | "type">(() => speechSupported() ? "voice" : "type");
   const modeRef = useRef(mode);
@@ -24,7 +40,7 @@ export function VoiceQuestionAnswer({ question, index, aiQuestion }: {
   const handoffRetries = useRef(0);
   // ── (ADDED) Cancel pending automatic listening when changing mode or question ──
   const handoff = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isIntensity = /intens|rate|rating|out of (?:10|ten)/i.test(question);
+  const isIntensity = allowRating && /intens|rate|rating|out of (?:10|ten)/i.test(question);
   // ── (ADDED) Rating follows the same speak → listen handoff as every question ──
   const spokenQuestion = question;
 
@@ -60,7 +76,7 @@ export function VoiceQuestionAnswer({ question, index, aiQuestion }: {
     stopListening();
     setError("");
     const token = ++run.current;
-    const base = useCityStore.getState().record.answers[index]?.trim() ?? "";
+    const base = latest.current.value.trim();
     setStarting(true);
     try {
       stop.current = startDictation({
@@ -130,14 +146,23 @@ export function VoiceQuestionAnswer({ question, index, aiQuestion }: {
         </div>
       ) : isIntensity ? <div id={`answer-${index}`} className="flex flex-wrap gap-1" role="group" aria-label="Intensity from 1 to 10">
         {Array.from({ length: 10 }, (_, n) => String(n + 1)).map((n) => <button key={n} type="button" aria-pressed={answer === n} onClick={() => { stopListening(); setAnswer(index, answer === n ? "" : n); }} className="pixel-btn h-8 w-8 font-display text-[11px]">{n}</button>)}
-      </div> : <textarea id={`answer-${index}`} value={answer} readOnly={mode === "voice"} rows={3}
+      </div> : <textarea id={`answer-${index}`} value={answer} readOnly={mode === "voice"} rows={3} maxLength={maxLength}
         onChange={(e) => setAnswer(index, e.target.value)} className="pixel-input w-full resize-none px-3 py-2 text-[15px]"
         placeholder={mode === "voice" ? "Your spoken answer appears here…" : "Type your answer…"} />}
       {mode === "voice" && <div className="flex items-center justify-between gap-3">
         <p role="status" className="text-[12px] text-ink-faint">{starting ? "Opening microphone… allow access if prompted." : listening ? (isIntensity ? "Listening… say a number from 1 to 10." : "Listening… tell me your answer.") : "The microphone starts when the question finishes. Tap Mic to retry."}{isIntensity && spokenNumber ? ` Heard: ${spokenNumber}` : ""}</p>
         <button type="button" className={cx("pixel-btn shrink-0 px-3 py-1.5 text-[12px]", listening && "rec-pulse !text-[var(--emo-anger)]")}
           aria-label={listening ? "Stop answer microphone" : "Start answer microphone"} aria-pressed={listening}
-          onClick={() => { if (listening || starting) stopListening(); else { window.speechSynthesis?.cancel(); startListening(); } }}>
+          onClick={() => {
+            if (listening || starting) stopListening();
+            else {
+              // (added) Only a manual microphone retry starts with a blank answer.
+              window.speechSynthesis?.cancel();
+              setAnswer(index, "");
+              setSpokenNumber("");
+              startListening();
+            }
+          }}>
           {listening || starting ? "Stop mic" : "Mic"}
         </button>
       </div>}

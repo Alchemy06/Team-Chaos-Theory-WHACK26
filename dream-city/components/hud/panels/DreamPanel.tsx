@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { computeLinks } from "@/lib/link";
 import { TDQ_SOURCE, byPrevalence } from "@/lib/typicalDreams";
-import type { Dream } from "@/lib/types";
+import type { Dream, InsightSupport } from "@/lib/types";
 import { EMOTION_COLORS, EMOTION_LABELS, emotionLabel } from "@/lib/theme";
 import type { CityModel } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
@@ -28,7 +28,7 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
   const requestInsight = useCityStore(s => s.requestInsight);
   const openEntry = useCityStore(s => s.openEntry);
   const loading = useCityStore(s => !!s.insightLoading[dream.id]);
-  const source = useCityStore(s => s.insights[dream.id]?.source);
+  const source = dream.insightSource;
   const [showAllLinks, setShowAllLinks] = useState(false);
   const color = EMOTION_COLORS[dream.primaryEmotion];
   const links = model.links.filter(l => l.from === dream.id || l.to === dream.id).sort((a,b) => b.strength-a.strength);
@@ -49,9 +49,15 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
       </span>}>
       <div className="dream-detail">
         <section>
-          <SectionTitle aside={source === "fallback" ? <span className="font-display text-[8px] text-ink-faint">Basic reflection</span> : undefined}>Your reflection</SectionTitle>
+          <SectionTitle aside={<span className="flex items-center gap-2">
+            {source === "fallback" && <span className="font-display text-[8px] text-ink-faint">Basic reflection</span>}
+            {dream.insight && <button type="button" disabled={loading} onClick={() => void requestInsight(dream.id, { force: true })}
+              className="pixel-focus font-display text-[9px] uppercase tracking-wider text-ink-dim hover:text-gold disabled:opacity-50">
+              {loading ? "Rewriting…" : "Rewrite"}
+            </button>}
+          </span>}>Your reflection</SectionTitle>
           <div className="dream-reflection" style={{ borderLeftColor: color }}>
-            {dream.insight ? <CitedText text={dream.insight} className="dream-reading text-ink" />
+            {dream.insight ? <><CitedText text={dream.insight} className="dream-reading text-ink" /><SupportNote support={dream.insightSupport} source={source} /></>
               : loading ? <p role="status" className="dream-reading animate-pulse text-ink-dim">Gathering the threads of this dream…</p>
               : <div className="space-y-3"><p className="dream-reading text-ink-dim">Discover what connects this dream to your journal.</p>
                 <PixelButton className="px-3 py-2 text-[11px]" onClick={() => void requestInsight(dream.id)}>Generate reflection</PixelButton></div>}
@@ -107,6 +113,20 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         </details>
       </div>
     </PanelFrame>
+  );
+}
+
+function SupportNote({ support, source }: { support?: InsightSupport; source?: string }) {
+  if (source === "fallback")
+    return <p className="mt-2 text-[11px] leading-snug text-ink-faint">Template: every sentence is filled in from the evidence by code.</p>;
+  if (!support) return null;
+  if (!support.checked) return <p className="mt-2 text-[11px] leading-snug text-ink-faint">Code-checked citations; second check not run.</p>;
+  const ok = support.unsupported === 0;
+  return (
+    <p className="mt-2 text-[11px] leading-snug text-ink-faint" title={support.sentences.map((x) => `${x.verdict}: ${x.reason}`).join("\n")}>
+      <span className={ok ? "text-[var(--common)]" : "text-gold"}>{ok ? "✓" : "!"}</span> Checked by a second AI: {support.supported} of {support.total} claim
+      {support.total === 1 ? "" : "s"} fully backed by the cited evidence{support.partial ? `, ${support.partial} partly` : ""}.
+    </p>
   );
 }
 

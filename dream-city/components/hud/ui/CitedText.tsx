@@ -9,17 +9,18 @@ const chip = "pixel-focus mx-0.5 inline-flex -translate-y-px items-center border
 
 /**
  * Renders backend insight text. Citations look like [card:media-2018],
- * [road:w01], [label:water], [db:water], [typical:tdq-01] or [dream] (see lib/prompts.ts).
+ * [road:w01], [road:media:<id>], [label:water], [db:water], [typical:tdq-01] or [dream] (see lib/prompts.ts).
  */
 export function CitedText({ text, className }: { text: string; className?: string }) {
   const openCitation = useCityStore((s) => s.openCitation);
   const select = useCityStore((s) => s.select);
   const { workById, dreamById } = useCity();
+  const media = useCityStore((s) => s.userWorks); // logged media: links to these are listed, not drawn as buildings
   const parts = text.split(/(\[[^\]]+\])/g);
   return (
     <p className={className ?? "text-[15px] leading-relaxed text-ink"}>
       {parts.map((part, i) => {
-        const m = part.match(/^\[(card|road|label|db|dream|typical)(?::([a-z0-9_-]+))?\]$/i);
+        const m = part.match(/^\[(card|road|label|db|dream|typical)(?::([a-z0-9_:-]+))?\]$/i);
         if (!m) return <span key={i}>{part}</span>;
         const [, kind, id = ""] = m;
         if (kind === "dream") return null;
@@ -43,6 +44,14 @@ export function CitedText({ text, className }: { text: string; className?: strin
             >
               typical · {t?.label ?? id}
             </button>
+          );
+        }
+        if (kind === "road" && id.startsWith("media:") && !workById.has(id)) {
+          const w = media.find((x) => x.id === id);
+          return (
+            <span key={i} title={w ? `${w.kind}${w.creator ? ` · ${w.creator}` : ""}` : undefined} className={`${chip} border-line-hi bg-panel-2 text-ink`}>
+              link · {w?.title ?? "your media"}
+            </span>
           );
         }
         if (kind === "road") {

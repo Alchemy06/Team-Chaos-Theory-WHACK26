@@ -18,12 +18,12 @@ function parseJSON(text: string): unknown {
 export async function groqJSON(
   system: string,
   user: string,
-  opts: { temperature?: number; maxTokens?: number; signal?: AbortSignal } = {}
+  opts: { temperature?: number; maxTokens?: number; signal?: AbortSignal; model?: string } = {}
 ): Promise<unknown> {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new GroqError("GROQ_API_KEY is not set. Add it to .env.local and restart the dev server.");
   const body = {
-    model: process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
+    model: opts.model ?? process.env.GROQ_MODEL ?? "openai/gpt-oss-120b",
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },

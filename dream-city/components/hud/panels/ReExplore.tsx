@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Exploration } from "@/lib/reexplore";
 import { useCityStore } from "@/store/useCityStore";
 import { PixelButton, SectionTitle } from "../ui/Pixel";
+import { ReExploreDialog } from "./ReExploreDialog";
 
 type SaveResult = { saved: boolean; updated: boolean; message?: string };
 
@@ -28,7 +29,6 @@ export function ReExplore({ dreamId, color }: { dreamId: string; color: string }
   const [notice, setNotice] = useState("");
   const [retryRound, setRetryRound] = useState<Exploration | null>(null);
   const active = useRef(false);
-  const firstAnswer = useRef<HTMLTextAreaElement>(null);
   const url = `/api/journal/${dreamId}/reexplore`;
 
   useEffect(() => {
@@ -44,7 +44,6 @@ export function ReExplore({ dreamId, color }: { dreamId: string; color: string }
     return () => { disposed = true; };
   }, [url]);
 
-  useEffect(() => { if (open) firstAnswer.current?.focus(); }, [open, round?.id]);
 
   async function start() {
     if (active.current) return;
@@ -97,31 +96,12 @@ export function ReExplore({ dreamId, color }: { dreamId: string; color: string }
     <section className="dream-reexplore">
       <SectionTitle aside={<span className="font-display text-[9px]" style={{ color }}>3 questions</span>}>Continue your exploration</SectionTitle>
       <p className="dream-reading mb-4 text-ink-dim">Return to a detail. Notice what comes back. Your original dream stays in its history.</p>
-      {!open && <PixelButton className="w-full border px-3 py-3 text-[10px]" style={{ color, borderColor: color }} disabled={busy || !!retryRound} onClick={() => void start()}>
+      {<PixelButton className="w-full border px-3 py-3 text-[10px]" style={{ color, borderColor: color }} disabled={busy || open || !!retryRound} onClick={() => void start()}>
         {busy ? "Preparing questions…" : round ? "Continue re-exploring ↗" : "Re-explore this dream ↗"}
       </PixelButton>}
-      {open && round && (
-        <form className="space-y-4" onSubmit={(event) => { event.preventDefault(); void save(round, answers); }}>
-          {round.questions.map((question, index) => (
-            <label key={index} className="block">
-              <span className="mb-1 block font-display text-[9px] uppercase tracking-wider" style={{ color }}>Question {index + 1} / 3</span>
-              <span className="dream-reading mb-2 block text-ink">{question}</span>
-              <textarea ref={index === 0 ? firstAnswer : undefined} required maxLength={4000} rows={3}
-                disabled={busy} value={answers[index]} onChange={(event) => updateAnswer(index, event.target.value)}
-                placeholder="Whatever you remember. “I don’t know” is okay."
-                className="pixel-input w-full resize-y border px-3 py-2 font-sans text-[14px] leading-relaxed" />
-            </label>
-          ))}
-          <p className="font-sans text-[12px] leading-relaxed text-ink-faint">These answers join your saved journal. Earlier questions and answers stay unchanged.</p>
-          <div className="flex flex-wrap gap-2">
-            <PixelButton type="submit" variant="primary" className="flex-1 px-3 py-2" disabled={busy || answers.some((answer) => !answer.trim())}>
-              {busy ? "Saving your second look…" : "Save & refresh dream"}
-            </PixelButton>
-            <PixelButton className="px-3 py-2" disabled={busy} onClick={() => setOpen(false)}>Later</PixelButton>
-          </div>
-        </form>
-      )}
-      {error && <p role="alert" className="mt-3 text-[13px] text-[var(--emo-anger)]">{error}</p>}
+      {open && round && <ReExploreDialog questions={round.questions} answers={answers} busy={busy} error={error}
+        color={color} onAnswer={updateAnswer} onClose={() => setOpen(false)} onSave={() => void save(round, answers)} />}
+      {error && !open && <p role="alert" className="mt-3 text-[13px] text-[var(--emo-anger)]">{error}</p>}
       {notice && <p role="status" className="mt-3 text-[13px] text-ink-dim">{notice}</p>}
       {retryRound && <div className="mt-3 space-y-2">
         {!notice && <p className="text-[13px] text-ink-dim">Your last answers are saved. The building still needs to refresh.</p>}

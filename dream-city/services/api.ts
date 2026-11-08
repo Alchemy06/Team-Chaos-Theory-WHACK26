@@ -2,7 +2,7 @@
 // to the backend through these functions.
 
 import type { Entry } from "@/lib/entry";
-import type { Dream, Extraction, Link, SymbolStat, Work } from "@/lib/types";
+import type { Dream, Extraction, InsightSupport, Link, SymbolStat, Work } from "@/lib/types";
 
 export class ApiError extends Error {
   constructor(
@@ -38,12 +38,12 @@ export function fetchExtraction(markdown: string, sessionId?: string) {
 
 /** LLM 2b: grounded insight; the route returns a checked template if the model fails. */
 export function fetchInsight(body: { dream: Dream; links: Link[]; works: Work[]; dreams: Dream[]; stats: SymbolStat[] }) {
-  return post<{ insight: string; cited: string[]; source: "ai" | "fallback"; problems: string[] }>("/api/insight", body);
+  return post<{ insight: string; cited: string[]; source: "ai" | "fallback"; problems: string[]; support: InsightSupport; saved: boolean }>("/api/insight", body);
 }
 
 // ── (ADDED) Start a saved journal and return database IDs ──
-export function startJournal(transcript: string) {
-  return post<{ sessionId: string; questions: { id: string; text: string }[]; aiUsed: boolean }>("/api/journal", { transcript });
+export function startJournal(transcript: string, cityId: string | null = null) {
+  return post<{ sessionId: string; questions: { id: string; text: string }[]; aiUsed: boolean }>("/api/journal", { transcript, cityId });
 }
 
 // ── (ADDED) Send an answer to its saved question ──

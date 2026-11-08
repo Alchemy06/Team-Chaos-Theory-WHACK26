@@ -102,14 +102,15 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
       const res = await fetch("/api/media", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ kind, title, consumed_on: consumedOn, user_note: note, external_id: externalId }),
+        // saved in the city on screen (null = "My city")
+        body: JSON.stringify({ kind, title, consumed_on: consumedOn, user_note: note, external_id: externalId, cityId: useCityStore.getState().cityId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Save failed (${res.status})`);
       setSaved(data as Saved);
       const icon = KINDS.find((k) => k.kind === kind)?.icon ?? "";
       useCityStore.getState().showNotice({ title: "Added to your library", body: `${icon} ${(data as Saved).title || title}`.trim() });
-      void useCityStore.getState().loadMedia(); // refresh the Related media lists
+      void useCityStore.getState().loadMedia(); // refresh the library buildings and Related media lists
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

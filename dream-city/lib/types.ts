@@ -26,7 +26,17 @@ export type Dream = {
   typicalDreams?: string[]; // Typical Dreams Questionnaire ids, e.g. "tdq-01" (data/typicalDreams.json)
   journalMarkdown?: string; // the saved journal_sessions.conversation_md, for the full-entry view
   insight?: string; // short reflection; cites evidence ids like [card:media-2018]
+  insightSource?: InsightSource; // saved with the insight (LLM 2b)
+  insightSupport?: InsightSupport;
 };
+
+// LLM 2b: where an insight came from, and what the second-model support check found.
+export type InsightSource = "ai" | "fallback";
+export type SupportVerdict = "supported" | "partial" | "unsupported";
+export type InsightSupport =
+  | { checked: true; judgeModel: string; total: number; supported: number; partial: number; unsupported: number;
+      sentences: { text: string; cited: string[]; verdict: SupportVerdict; reason: string }[] }
+  | { checked: false; reason: string };
 
 export type Work = {
   id: string;
@@ -67,6 +77,7 @@ export type SymbolStat = {
   userRate: number; // share of the user's dreams containing it
   baseRate: number | null; // share of DreamBank reports containing it
   label: HonestyLabel;
+  pValue?: number | null; // one-sided binomial test of the user's count against the base rate
 };
 
 export type ResearchCard = {

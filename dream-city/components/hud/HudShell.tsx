@@ -23,9 +23,12 @@ export function HudShell() {
   const hasSelection = useCityStore((s) => s.selection !== null);
 
   useEffect(() => {
-    void useCityStore.persist.rehydrate();
-    void useCityStore.getState().loadCity();
-    void useCityStore.getState().loadMedia();
+    // Load after the saved settings are restored, so the remembered city is the one fetched
+    void Promise.resolve(useCityStore.persist.rehydrate()).then(() => {
+      void useCityStore.getState().loadCity();
+      void useCityStore.getState().loadMedia();
+      void useCityStore.getState().loadCities();
+    });
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       const s = useCityStore.getState();
@@ -35,7 +38,11 @@ export function HudShell() {
       else s.select(null);
     };
     // ── (ADDED) Pick up database changes when returning to the map ──
-    const refreshCity = () => { if (!useCityStore.getState().record.open) void useCityStore.getState().loadCity(); };
+    const refreshCity = () => {
+      if (useCityStore.getState().record.open) return;
+      void useCityStore.getState().loadCity();
+      void useCityStore.getState().loadMedia();
+    };
     window.addEventListener("focus", refreshCity);
     window.addEventListener("keydown", onKey);
     return () => {

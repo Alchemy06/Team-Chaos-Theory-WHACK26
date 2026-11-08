@@ -94,10 +94,16 @@ function RecordDreamDialog() {
     setInputMode("keyboard");
   };
 
-  const toggleMic = () => {
+  const toggleMic = (retry = false) => {
     if (listening) return stopMic();
     setMicError(null);
-    baseRef.current = record.transcript ? record.transcript.trim() + " " : "";
+    // (added) Button retries replace the dream text; automatic listening preserves it.
+    if (retry) {
+      setTranscript("");
+      interimRef.current = "";
+      setInterim("");
+    }
+    baseRef.current = !retry && record.transcript ? record.transcript.trim() + " " : "";
     const run = ++speechRun.current;
     setListening(true);
     try {
@@ -160,7 +166,7 @@ function RecordDreamDialog() {
                     <div className="flex flex-col items-center gap-3 py-3 text-center">
                       <button
                         type="button"
-                        onClick={toggleMic}
+                        onClick={() => toggleMic(true)}
                         disabled={record.busy}
                         className={cx("pixel-btn grid h-20 w-20 place-items-center text-3xl", listening && "rec-pulse !border-[var(--emo-anger)] !text-[var(--emo-anger)]")}
                         aria-label={listening ? "Stop dictation" : "Speak your dream"}
