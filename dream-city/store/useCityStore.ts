@@ -45,6 +45,7 @@ type State = {
   justBuiltId: string | null;
   cameraNonce: number;
   citation: string | null;
+  entryOpen: string | null; // dream id whose full journal entry is open
   settings: Settings;
   record: RecordState;
 
@@ -55,6 +56,7 @@ type State = {
   resetCamera: () => void;
   toggleSetting: (k: keyof Settings) => void;
   openCitation: (id: string | null) => void;
+  openEntry: (dreamId: string | null) => void;
   requestInsight: (dreamId: string) => Promise<void>;
 
   openRecord: () => void;
@@ -135,6 +137,7 @@ export const useCityStore = create<State>()(
       justBuiltId: null,
       cameraNonce: 0,
       citation: null,
+      entryOpen: null,
       settings: { pixelation: true, bloom: true, labels: true },
       record: emptyRecord,
 
@@ -145,6 +148,7 @@ export const useCityStore = create<State>()(
       resetCamera: () => set((s) => ({ cameraNonce: s.cameraNonce + 1, selection: null })),
       toggleSetting: (k) => set((s) => ({ settings: { ...s.settings, [k]: !s.settings[k] } })),
       openCitation: (citation) => set({ citation }),
+      openEntry: (entryOpen) => set({ entryOpen }),
 
       // Ask the backend for a grounded insight for one dream (cached).
       requestInsight: async (dreamId) => {
@@ -233,11 +237,14 @@ export const useCityStore = create<State>()(
 
         let extraction: Extraction;
         let entryOut: Entry = entry;
+        let journalMarkdown: string | undefined;
         {
           try {
+            // LLM 2a reads LLM 1's saved output (the dream and its Q&A) and stores every field in build_data
             const res = await fetchExtraction(toMarkdown(entry), record.sessionId ?? undefined);
             extraction = res.extraction;
             entryOut = res.entry;
+            journalMarkdown = res.markdown;
           } catch (err) {
             set((s) => ({
               record: {
@@ -259,8 +266,9 @@ export const useCityStore = create<State>()(
           id: record.sessionId!,
           date: entryOut.date,
           transcript: entryOut.transcript,
-          followUps: entryOut.followUps.filter((f) => f.a),
-          ...fields,
+          followUps: entryOut.followUps, // every question, answered or not (same as /api/city)
+          ...fields, // includes description, secondaryEmotion, mentionedWorks and typicalDreams
+          journalMarkdown,
         };
         set((s) => ({
           userDreams: [...s.userDreams.filter((d) => d.id !== dream.id), dream],

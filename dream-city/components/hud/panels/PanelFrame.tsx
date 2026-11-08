@@ -5,7 +5,23 @@ import { useCityStore } from "@/store/useCityStore";
 
 export const fmtDate = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
 
-export function PanelFrame({ color, kicker, title, meta, children }: { color: string; kicker: string; title: string; meta?: ReactNode; children: ReactNode }) {
+export function PanelFrame({
+  color,
+  kicker,
+  title,
+  meta,
+  children,
+  onTitleClick,
+  titleHint,
+}: {
+  color: string;
+  kicker: string;
+  title: string;
+  meta?: ReactNode;
+  children: ReactNode;
+  onTitleClick?: () => void; // makes the title a button (e.g. open the full journal entry)
+  titleHint?: string;
+}) {
   const select = useCityStore((s) => s.select);
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -15,7 +31,20 @@ export function PanelFrame({ color, kicker, title, meta, children }: { color: st
           <div className="font-display text-[10px] uppercase tracking-[0.16em]" style={{ color }}>
             {kicker}
           </div>
-          <h2 className="mt-1 text-xl leading-tight text-ink">{title}</h2>
+          <h2 className="mt-1 text-xl leading-tight text-ink">
+            {onTitleClick ? (
+              <button
+                type="button"
+                onClick={onTitleClick}
+                title={titleHint}
+                className="pixel-focus text-left decoration-dotted underline-offset-4 hover:text-gold hover:underline"
+              >
+                {title}
+              </button>
+            ) : (
+              title
+            )}
+          </h2>
           {meta && <div className="mt-1.5 text-[13px] text-ink-dim">{meta}</div>}
         </div>
         <button type="button" onClick={() => select(null)} aria-label="Close panel" className="pixel-btn grid h-8 w-8 shrink-0 place-items-center font-display text-xs">

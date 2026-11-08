@@ -128,13 +128,29 @@ create table journal_messages (
   unique (session_id, sequence)
 );
 
+-- One row per building: everything LLM 2a read from the session (lib/buildData.ts, lib/extraction.ts).
+-- Existing databases: run supabase/migrations/003_build_data_llm2a.sql instead of recreating the table.
 create table build_data (
   journal_id        uuid primary key references journal_sessions (id) on delete cascade,
-  main_emotion      emotion not null,
-  secondary_emotion emotion not null,
+  main_emotion      emotion not null,                    -- district
+  secondary_emotion emotion,                             -- a second stated feeling; null if none
   build_height      smallint not null check (build_height between 1 and 10),
-  hover_desc        text not null,                       -- one line for the hover tooltip
-  themes            text[] not null default '{}'         -- from data/vocab.json themes
+  hover_desc        text not null,                       -- one line: building title and hover label
+  themes            text[] not null default '{}',        -- from data/vocab.json themes
+  description       text,                                -- up to two sentences on what happened
+  micro_emotion     text,                                -- street, from data/vocab.json emotions
+  symbols           text[] not null default '{}',        -- from data/vocab.json symbols (roads, labels, towers)
+  new_symbols       text[] not null default '{}',        -- not in the vocab; kept for review
+  places            text[] not null default '{}',
+  emotion_stated    boolean,                             -- Hall and Van de Castle: only stated emotions are coded
+  hvdc_emotion      text check (hvdc_emotion in ('anger', 'apprehension', 'sadness', 'confusion', 'happiness')),
+  intensity_source  text check (intensity_source in ('self', 'ai')),
+  mentioned_works   text[] not null default '{}',        -- titles the dreamer named, checked against the entry
+  typical_dreams    text[] not null default '{}',        -- Typical Dreams Questionnaire ids, data/typicalDreams.json
+  constraint build_data_secondary_differs check (secondary_emotion is distinct from main_emotion),
+  constraint build_data_typical_ids check (
+    array_to_string(typical_dreams, ',') ~ '^(tdq-(0[1-9]|[1-4][0-9]|5[0-5])(,tdq-(0[1-9]|[1-4][0-9]|5[0-5]))*)?$'
+  )
 );
 
 -- ---------- media: what the user recently read, watched, played or listened to ----------
@@ -162,6 +178,8 @@ create index links_user_dream on links (user_id, dream_id);
 create index links_to on links (to_id);
 create index media_consumed_on on media (consumed_on desc);
 create index media_themes on media using gin (themes);
+create index build_data_symbols on build_data using gin (symbols);
+create index build_data_typical on build_data using gin (typical_dreams);
 
 -- ---------- row-level security ----------
 alter table dreams enable row level security;

@@ -1,0 +1,949 @@
+{
+  "_about": "The 55 themes of the Typical Dreams Questionnaire (TDQ). prevalence = lifetime prevalence: the percentage of 1,181 Canadian first-year university students who said they had EVER dreamed about this. It is not how often it appears per dream. Factors are the 16 groups from the paper's factor analysis. sensitive items are tagged neutrally like every other item but are not singled out in the UI or the insight. keywords are only for the offline fallback; the AI reads the full item text.",
+  "source": {
+    "cardId": "tdq-2003",
+    "citation": "Nielsen, Zadra, Simard, Saucier, Stenstrom, Smith & Kuiken (2003). The typical dreams of Canadian university students. Dreaming 13(4), 211-235.",
+    "sampleSize": 1181,
+    "measure": "lifetime prevalence (%)"
+  },
+  "items": [
+    {
+      "id": "tdq-01",
+      "item": 1,
+      "text": "Chased or pursued, not physically injured",
+      "label": "Being chased",
+      "prevalence": 81.5,
+      "factor": "Chase-fear",
+      "sensitive": false,
+      "keywords": [
+        "chased",
+        "chasing",
+        "chase",
+        "pursued",
+        "running from",
+        "ran from",
+        "hunted"
+      ],
+      "rank": 1
+    },
+    {
+      "id": "tdq-02",
+      "item": 2,
+      "text": "Physically attacked (beaten, stabbed, raped)",
+      "label": "Being attacked",
+      "prevalence": 42.4,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "attacked",
+        "beaten",
+        "stabbed",
+        "punched",
+        "assaulted",
+        "hit me"
+      ],
+      "rank": 12
+    },
+    {
+      "id": "tdq-03",
+      "item": 3,
+      "text": "Trying again and again to do something",
+      "label": "Trying again and again",
+      "prevalence": 53.5,
+      "factor": "Paralysis-presence",
+      "sensitive": false,
+      "keywords": [
+        "again and again",
+        "over and over",
+        "kept trying",
+        "tried again",
+        "kept failing"
+      ],
+      "rank": 8
+    },
+    {
+      "id": "tdq-04",
+      "item": 4,
+      "text": "Being frozen with fright",
+      "label": "Frozen with fright",
+      "prevalence": 40.7,
+      "factor": "Chase-fear",
+      "sensitive": false,
+      "keywords": [
+        "frozen",
+        "froze",
+        "couldn't move from fear",
+        "paralysed with fear",
+        "paralyzed with fear"
+      ],
+      "rank": 13
+    },
+    {
+      "id": "tdq-05",
+      "item": 5,
+      "text": "Eating delicious foods",
+      "label": "Eating delicious food",
+      "prevalence": 30.7,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "delicious",
+        "feast",
+        "eating",
+        "ate"
+      ],
+      "rank": 23
+    },
+    {
+      "id": "tdq-06",
+      "item": 6,
+      "text": "Arriving too late, e.g. missing a train",
+      "label": "Arriving too late",
+      "prevalence": 59.5,
+      "factor": "Failure",
+      "sensitive": false,
+      "keywords": [
+        "too late",
+        "missed the train",
+        "missed the bus",
+        "missed my",
+        "running late",
+        "was late",
+        "be late"
+      ],
+      "rank": 5
+    },
+    {
+      "id": "tdq-07",
+      "item": 7,
+      "text": "Swimming",
+      "label": "Swimming",
+      "prevalence": 34.3,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "swimming",
+        "swam",
+        "swim"
+      ],
+      "rank": 17
+    },
+    {
+      "id": "tdq-08",
+      "item": 8,
+      "text": "Being locked up",
+      "label": "Being locked up",
+      "prevalence": 24.0,
+      "factor": "Inhibition",
+      "sensitive": false,
+      "keywords": [
+        "locked up",
+        "locked in",
+        "prison",
+        "jail",
+        "trapped in a room"
+      ],
+      "rank": 31
+    },
+    {
+      "id": "tdq-09",
+      "item": 9,
+      "text": "Snakes",
+      "label": "Snakes",
+      "prevalence": 22.1,
+      "factor": "Snakes-insects",
+      "sensitive": false,
+      "keywords": [
+        "snake",
+        "snakes",
+        "serpent",
+        "python",
+        "cobra",
+        "viper"
+      ],
+      "rank": 34
+    },
+    {
+      "id": "tdq-10",
+      "item": 10,
+      "text": "Finding money",
+      "label": "Finding money",
+      "prevalence": 25.7,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "found money",
+        "finding money",
+        "found cash",
+        "found coins",
+        "found a wallet"
+      ],
+      "rank": 26
+    },
+    {
+      "id": "tdq-11",
+      "item": 11,
+      "text": "Flying or soaring through the air",
+      "label": "Flying",
+      "prevalence": 48.3,
+      "factor": "Falling-flying",
+      "sensitive": false,
+      "keywords": [
+        "flying",
+        "flew",
+        "fly",
+        "soaring",
+        "soared",
+        "floating in the air"
+      ],
+      "rank": 9
+    },
+    {
+      "id": "tdq-12",
+      "item": 12,
+      "text": "Falling",
+      "label": "Falling",
+      "prevalence": 73.8,
+      "factor": "Falling-flying",
+      "sensitive": false,
+      "keywords": [
+        "falling",
+        "fell",
+        "fall"
+      ],
+      "rank": 3
+    },
+    {
+      "id": "tdq-13",
+      "item": 13,
+      "text": "Being inappropriately dressed",
+      "label": "Inappropriately dressed",
+      "prevalence": 32.5,
+      "factor": "Nudity-sex",
+      "sensitive": false,
+      "keywords": [
+        "wrong clothes",
+        "inappropriately dressed",
+        "in my pyjamas",
+        "in my underwear",
+        "half dressed",
+        "wearing the wrong"
+      ],
+      "rank": 20
+    },
+    {
+      "id": "tdq-14",
+      "item": 14,
+      "text": "Being nude",
+      "label": "Being nude",
+      "prevalence": 32.6,
+      "factor": "Nudity-sex",
+      "sensitive": false,
+      "keywords": [
+        "naked",
+        "nude",
+        "no clothes"
+      ],
+      "rank": 19
+    },
+    {
+      "id": "tdq-15",
+      "item": 15,
+      "text": "Being tied, unable to move",
+      "label": "Tied up, unable to move",
+      "prevalence": 21.4,
+      "factor": "Inhibition",
+      "sensitive": false,
+      "keywords": [
+        "tied up",
+        "tied down",
+        "couldn't move",
+        "could not move",
+        "unable to move",
+        "restrained"
+      ],
+      "rank": 35
+    },
+    {
+      "id": "tdq-16",
+      "item": 16,
+      "text": "Having superior knowledge or mental ability",
+      "label": "Superior knowledge",
+      "prevalence": 24.4,
+      "factor": "Magic-myth",
+      "sensitive": false,
+      "keywords": [
+        "knew everything",
+        "read minds",
+        "read their mind",
+        "genius",
+        "telepathy",
+        "telepathic"
+      ],
+      "rank": 28
+    },
+    {
+      "id": "tdq-17",
+      "item": 17,
+      "text": "Creatures, part animal, part human",
+      "label": "Part-animal, part-human creatures",
+      "prevalence": 16.8,
+      "factor": "Beasts",
+      "sensitive": false,
+      "keywords": [
+        "half human",
+        "part human",
+        "half animal",
+        "part animal",
+        "werewolf",
+        "centaur",
+        "mermaid"
+      ],
+      "rank": 41
+    },
+    {
+      "id": "tdq-18",
+      "item": 18,
+      "text": "Your teeth falling out / losing your teeth",
+      "label": "Teeth falling out",
+      "prevalence": 18.8,
+      "factor": "Loss of control",
+      "sensitive": false,
+      "keywords": [
+        "teeth falling",
+        "teeth fell",
+        "tooth fell",
+        "losing my teeth",
+        "lost my teeth",
+        "teeth crumbling"
+      ],
+      "rank": 38
+    },
+    {
+      "id": "tdq-19",
+      "item": 19,
+      "text": "Seeing yourself in a mirror",
+      "label": "Seeing yourself in a mirror",
+      "prevalence": 15.9,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "mirror",
+        "my reflection"
+      ],
+      "rank": 42
+    },
+    {
+      "id": "tdq-20",
+      "item": 20,
+      "text": "Having magical powers (other than flying)",
+      "label": "Magical powers",
+      "prevalence": 24.9,
+      "factor": "Magic-myth",
+      "sensitive": false,
+      "keywords": [
+        "magic",
+        "magical",
+        "superpower",
+        "superpowers",
+        "powers",
+        "spell"
+      ],
+      "rank": 27
+    },
+    {
+      "id": "tdq-21",
+      "item": 21,
+      "text": "Floods or tidal waves",
+      "label": "Floods or tidal waves",
+      "prevalence": 12.4,
+      "factor": "Disaster",
+      "sensitive": false,
+      "keywords": [
+        "flood",
+        "flooded",
+        "flooding",
+        "tidal wave",
+        "tsunami"
+      ],
+      "rank": 45
+    },
+    {
+      "id": "tdq-22",
+      "item": 22,
+      "text": "Tornadoes or strong winds",
+      "label": "Tornadoes or strong winds",
+      "prevalence": 17.7,
+      "factor": "Disaster",
+      "sensitive": false,
+      "keywords": [
+        "tornado",
+        "hurricane",
+        "strong wind",
+        "strong winds",
+        "gale",
+        "whirlwind"
+      ],
+      "rank": 39
+    },
+    {
+      "id": "tdq-23",
+      "item": 23,
+      "text": "Earthquakes",
+      "label": "Earthquakes",
+      "prevalence": 10.8,
+      "factor": "Disaster",
+      "sensitive": false,
+      "keywords": [
+        "earthquake",
+        "earthquakes",
+        "tremor",
+        "quake"
+      ],
+      "rank": 50
+    },
+    {
+      "id": "tdq-24",
+      "item": 24,
+      "text": "Insects or spiders",
+      "label": "Insects or spiders",
+      "prevalence": 33.8,
+      "factor": "Snakes-insects",
+      "sensitive": false,
+      "keywords": [
+        "insect",
+        "insects",
+        "spider",
+        "spiders",
+        "bug",
+        "bugs",
+        "bees",
+        "wasps",
+        "cockroach",
+        "ants"
+      ],
+      "rank": 18
+    },
+    {
+      "id": "tdq-25",
+      "item": 25,
+      "text": "Being a member of the opposite sex",
+      "label": "Being the opposite sex",
+      "prevalence": 11.9,
+      "factor": "Self-transformation",
+      "sensitive": false,
+      "keywords": [
+        "opposite sex",
+        "was a woman",
+        "was a man",
+        "became a girl",
+        "became a boy"
+      ],
+      "rank": 48
+    },
+    {
+      "id": "tdq-26",
+      "item": 26,
+      "text": "Being an object (e.g. a tree or rock)",
+      "label": "Being an object",
+      "prevalence": 3.5,
+      "factor": "Self-transformation",
+      "sensitive": false,
+      "keywords": [
+        "i was a tree",
+        "i was a rock",
+        "became a tree",
+        "became a rock",
+        "turned into a"
+      ],
+      "rank": 55
+    },
+    {
+      "id": "tdq-27",
+      "item": 27,
+      "text": "Being killed",
+      "label": "Being killed",
+      "prevalence": 34.5,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "killed me",
+        "i was killed",
+        "i died",
+        "murdered me",
+        "shot me"
+      ],
+      "rank": 16
+    },
+    {
+      "id": "tdq-28",
+      "item": 28,
+      "text": "Seeing yourself as dead",
+      "label": "Seeing yourself dead",
+      "prevalence": 23.8,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "saw myself dead",
+        "my own body",
+        "my own funeral",
+        "i was dead"
+      ],
+      "rank": 32
+    },
+    {
+      "id": "tdq-29",
+      "item": 29,
+      "text": "Vividly sensing a presence in the room",
+      "label": "Sensing a presence",
+      "prevalence": 48.3,
+      "factor": "Paralysis-presence",
+      "sensitive": false,
+      "keywords": [
+        "presence",
+        "someone in the room",
+        "something in the room",
+        "felt someone watching",
+        "being watched"
+      ],
+      "rank": 10
+    },
+    {
+      "id": "tdq-30",
+      "item": 30,
+      "text": "Being unable to find, or embarrassed about using, a toilet",
+      "label": "Toilet trouble",
+      "prevalence": 19.2,
+      "factor": "Nudity-sex",
+      "sensitive": false,
+      "keywords": [
+        "toilet",
+        "toilets",
+        "bathroom",
+        "loo"
+      ],
+      "rank": 37
+    },
+    {
+      "id": "tdq-31",
+      "item": 31,
+      "text": "School, teachers, studying",
+      "label": "School, teachers, studying",
+      "prevalence": 67.1,
+      "factor": "Inhibition",
+      "sensitive": false,
+      "keywords": [
+        "school",
+        "teacher",
+        "teachers",
+        "studying",
+        "classroom",
+        "lesson",
+        "homework"
+      ],
+      "rank": 4
+    },
+    {
+      "id": "tdq-32",
+      "item": 32,
+      "text": "Sexual experiences",
+      "label": "Sexual experiences",
+      "prevalence": 76.5,
+      "factor": "Nudity-sex",
+      "sensitive": true,
+      "keywords": [
+        "sex",
+        "sexual"
+      ],
+      "rank": 2
+    },
+    {
+      "id": "tdq-33",
+      "item": 33,
+      "text": "Losing control of a vehicle",
+      "label": "Losing control of a vehicle",
+      "prevalence": 32.0,
+      "factor": "Loss of control",
+      "sensitive": false,
+      "keywords": [
+        "lost control",
+        "brakes failed",
+        "brakes didn't work",
+        "crashed the car",
+        "car crash",
+        "couldn't steer"
+      ],
+      "rank": 22
+    },
+    {
+      "id": "tdq-34",
+      "item": 34,
+      "text": "Fire",
+      "label": "Fire",
+      "prevalence": 27.3,
+      "factor": "Disaster",
+      "sensitive": false,
+      "keywords": [
+        "fire",
+        "burning",
+        "flames",
+        "on fire"
+      ],
+      "rank": 24
+    },
+    {
+      "id": "tdq-35",
+      "item": 35,
+      "text": "A person now dead as alive",
+      "label": "Someone who has died, alive",
+      "prevalence": 38.4,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "late grandmother",
+        "late grandfather",
+        "who died",
+        "who passed away",
+        "passed away",
+        "alive again"
+      ],
+      "rank": 14
+    },
+    {
+      "id": "tdq-36",
+      "item": 36,
+      "text": "A person now alive as dead",
+      "label": "Someone living, dead",
+      "prevalence": 54.1,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "was dead",
+        "had died",
+        "their funeral",
+        "his funeral",
+        "her funeral"
+      ],
+      "rank": 7
+    },
+    {
+      "id": "tdq-37",
+      "item": 37,
+      "text": "Being on the verge of falling",
+      "label": "On the verge of falling",
+      "prevalence": 57.7,
+      "factor": "Falling-flying",
+      "sensitive": false,
+      "keywords": [
+        "edge of a cliff",
+        "about to fall",
+        "almost fell",
+        "nearly fell",
+        "on the edge",
+        "ledge"
+      ],
+      "rank": 6
+    },
+    {
+      "id": "tdq-38",
+      "item": 38,
+      "text": "Failing an examination",
+      "label": "Failing an exam",
+      "prevalence": 45.0,
+      "factor": "Failure",
+      "sensitive": false,
+      "keywords": [
+        "failed the exam",
+        "failing the exam",
+        "failed my exam",
+        "failed the test",
+        "failing an exam",
+        "failed an exam"
+      ],
+      "rank": 11
+    },
+    {
+      "id": "tdq-39",
+      "item": 39,
+      "text": "Being smothered, unable to breathe",
+      "label": "Unable to breathe",
+      "prevalence": 24.2,
+      "factor": "Inhibition",
+      "sensitive": false,
+      "keywords": [
+        "couldn't breathe",
+        "could not breathe",
+        "unable to breathe",
+        "smothered",
+        "suffocating",
+        "choking",
+        "drowning"
+      ],
+      "rank": 30
+    },
+    {
+      "id": "tdq-40",
+      "item": 40,
+      "text": "Wild, violent beasts",
+      "label": "Wild, violent beasts",
+      "prevalence": 15.9,
+      "factor": "Beasts",
+      "sensitive": false,
+      "keywords": [
+        "beast",
+        "beasts",
+        "wolf",
+        "wolves",
+        "lion",
+        "tiger",
+        "monster",
+        "monsters"
+      ],
+      "rank": 43
+    },
+    {
+      "id": "tdq-41",
+      "item": 41,
+      "text": "Being at a movie",
+      "label": "Being at a movie",
+      "prevalence": 16.9,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "cinema",
+        "at a movie",
+        "watching a movie",
+        "movie theatre",
+        "movie theater"
+      ],
+      "rank": 40
+    },
+    {
+      "id": "tdq-42",
+      "item": 42,
+      "text": "Killing someone",
+      "label": "Killing someone",
+      "prevalence": 24.3,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "i killed",
+        "killed someone",
+        "killed him",
+        "killed her",
+        "murdered someone"
+      ],
+      "rank": 29
+    },
+    {
+      "id": "tdq-43",
+      "item": 43,
+      "text": "Lunatics or insane people",
+      "label": "Lunatics or insane people",
+      "prevalence": 20.0,
+      "factor": "Death-murder",
+      "sensitive": false,
+      "keywords": [
+        "lunatic",
+        "insane",
+        "madman",
+        "psycho"
+      ],
+      "rank": 36
+    },
+    {
+      "id": "tdq-44",
+      "item": 44,
+      "text": "Being half awake and paralysed in bed",
+      "label": "Half awake, paralysed in bed",
+      "prevalence": 27.2,
+      "factor": "Paralysis-presence",
+      "sensitive": false,
+      "keywords": [
+        "sleep paralysis",
+        "paralysed in bed",
+        "paralyzed in bed",
+        "couldn't move in bed",
+        "stuck in bed"
+      ],
+      "rank": 25
+    },
+    {
+      "id": "tdq-45",
+      "item": 45,
+      "text": "Seeing a face very close to you",
+      "label": "A face very close to you",
+      "prevalence": 23.5,
+      "factor": "Paralysis-presence",
+      "sensitive": false,
+      "keywords": [
+        "face close",
+        "face right next to",
+        "face inches",
+        "face very close",
+        "staring face"
+      ],
+      "rank": 33
+    },
+    {
+      "id": "tdq-46",
+      "item": 46,
+      "text": "Seeing a UFO",
+      "label": "Seeing a UFO",
+      "prevalence": 7.7,
+      "factor": "Alien life",
+      "sensitive": false,
+      "keywords": [
+        "ufo",
+        "flying saucer",
+        "spaceship"
+      ],
+      "rank": 53
+    },
+    {
+      "id": "tdq-47",
+      "item": 47,
+      "text": "Seeing extra-terrestrials",
+      "label": "Seeing aliens",
+      "prevalence": 9.5,
+      "factor": "Alien life",
+      "sensitive": false,
+      "keywords": [
+        "alien",
+        "aliens",
+        "extraterrestrial",
+        "extra-terrestrial"
+      ],
+      "rank": 51
+    },
+    {
+      "id": "tdq-48",
+      "item": 48,
+      "text": "Traveling to another planet or universe",
+      "label": "Another planet or universe",
+      "prevalence": 12.3,
+      "factor": "Alien life",
+      "sensitive": false,
+      "keywords": [
+        "another planet",
+        "other planet",
+        "another universe",
+        "other universe",
+        "another world",
+        "outer space"
+      ],
+      "rank": 47
+    },
+    {
+      "id": "tdq-49",
+      "item": 49,
+      "text": "Being an animal",
+      "label": "Being an animal",
+      "prevalence": 8.0,
+      "factor": "Self-transformation",
+      "sensitive": false,
+      "keywords": [
+        "i was a cat",
+        "i was a dog",
+        "i was a bird",
+        "i was an animal",
+        "turned into an animal",
+        "became an animal"
+      ],
+      "rank": 52
+    },
+    {
+      "id": "tdq-50",
+      "item": 50,
+      "text": "Being a child again",
+      "label": "Being a child again",
+      "prevalence": 36.7,
+      "factor": "Positive themes",
+      "sensitive": false,
+      "keywords": [
+        "child again",
+        "a kid again",
+        "was a child",
+        "was little again",
+        "childhood home"
+      ],
+      "rank": 15
+    },
+    {
+      "id": "tdq-51",
+      "item": 51,
+      "text": "Seeing an angel",
+      "label": "Seeing an angel",
+      "prevalence": 12.4,
+      "factor": "Epiphany",
+      "sensitive": false,
+      "keywords": [
+        "angel",
+        "angels"
+      ],
+      "rank": 46
+    },
+    {
+      "id": "tdq-52",
+      "item": 52,
+      "text": "Encountering God in some form",
+      "label": "Encountering God",
+      "prevalence": 11.2,
+      "factor": "Epiphany",
+      "sensitive": false,
+      "keywords": [
+        "god",
+        "divine"
+      ],
+      "rank": 49
+    },
+    {
+      "id": "tdq-53",
+      "item": 53,
+      "text": "Discovering a new room at home",
+      "label": "Discovering a new room",
+      "prevalence": 32.3,
+      "factor": "Loss of control",
+      "sensitive": false,
+      "keywords": [
+        "new room",
+        "secret room",
+        "hidden room",
+        "room i'd never seen",
+        "room i had never seen",
+        "extra room"
+      ],
+      "rank": 21
+    },
+    {
+      "id": "tdq-54",
+      "item": 54,
+      "text": "Seeing a flying object crash (e.g. an aeroplane)",
+      "label": "A flying object crashing",
+      "prevalence": 12.8,
+      "factor": "Disaster",
+      "sensitive": false,
+      "keywords": [
+        "plane crash",
+        "plane crashed",
+        "crashed plane",
+        "helicopter crash",
+        "crashing plane"
+      ],
+      "rank": 44
+    },
+    {
+      "id": "tdq-55",
+      "item": 55,
+      "text": "Someone having an abortion",
+      "label": "Someone having an abortion",
+      "prevalence": 5.1,
+      "factor": "Beasts",
+      "sensitive": true,
+      "keywords": [
+        "abortion"
+      ],
+      "rank": 54
+    }
+  ]
+}

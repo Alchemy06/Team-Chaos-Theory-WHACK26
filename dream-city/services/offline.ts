@@ -5,6 +5,7 @@
 import { selfRatedIntensity, type Entry } from "@/lib/entry";
 import type { Emotion, Extraction } from "@/lib/types";
 import { EMOTION_LIST, STREETS, THEMES, VOCAB, hvdcFor } from "@/lib/vocab";
+import { TYPICAL_DREAMS } from "@/lib/typicalDreams";
 
 const EMOTION_WORDS: Record<Emotion, string[]> = {
   anger: ["angry", "furious", "annoyed", "irritated", "rage", "shout", "unfair", "frustrat"],
@@ -16,6 +17,8 @@ const EMOTION_WORDS: Record<Emotion, string[]> = {
 };
 
 const count = (text: string, words: string[]) => words.reduce((n, w) => n + (text.includes(w) ? 1 : 0), 0);
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const hasPhrase = (text: string, phrase: string) => new RegExp(`\\b${escape(phrase.toLowerCase())}\\b`).test(text);
 
 export function offlineExtract(entry: Entry): Extraction {
   const feeling = entry.followUps.find((f) => /feel/i.test(f.q))?.a ?? "";
@@ -41,9 +44,17 @@ export function offlineExtract(entry: Entry): Extraction {
   const emotionStated = feeling.trim().length > 0;
   const first = entry.transcript.split(/(?<=[.!?])\s/)[0].trim();
 
+  const summary = first.length > 90 ? first.slice(0, 87) + "…" : first;
+  // Typical dreams by keyword phrase: a rough estimate; the AI reads the full questionnaire wording
+  const typicalDreams = TYPICAL_DREAMS.filter((t) => t.keywords.some((k) => hasPhrase(text, k)))
+    .map((t) => t.id)
+    .slice(0, 4);
+
   return {
-    summary: first.length > 90 ? first.slice(0, 87) + "…" : first,
+    summary,
+    description: summary,
     primaryEmotion,
+    secondaryEmotion: null,
     hvdcEmotion: emotionStated ? hvdcFor(primaryEmotion) : null,
     emotionStated,
     microEmotion,
@@ -53,5 +64,7 @@ export function offlineExtract(entry: Entry): Extraction {
     newSymbols: [],
     places: [],
     themes: THEMES.filter((t) => text.includes(t)).slice(0, 3),
+    mentionedWorks: [],
+    typicalDreams,
   };
 }

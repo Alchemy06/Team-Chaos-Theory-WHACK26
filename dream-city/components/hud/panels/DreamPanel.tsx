@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { computeLinks } from "@/lib/link";
+import { TDQ_SOURCE, byPrevalence } from "@/lib/typicalDreams";
 import type { Dream } from "@/lib/types";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import type { CityModel } from "@/store/cityModel";
@@ -16,6 +17,7 @@ import { PanelFrame, fmtDate } from "./PanelFrame";
 export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel }) {
   const select = useCityStore((s) => s.select);
   const requestInsight = useCityStore((s) => s.requestInsight);
+  const openEntry = useCityStore((s) => s.openEntry);
   const loading = useCityStore((s) => !!s.insightLoading[dream.id]);
   const source = useCityStore((s) => s.insights[dream.id]?.source);
   const color = EMOTION_COLORS[dream.primaryEmotion];
@@ -33,14 +35,24 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
       color={color}
       kicker={`${EMOTION_LABELS[dream.primaryEmotion]} district · ${dream.microEmotion}`}
       title={dream.summary}
+      onTitleClick={() => openEntry(dream.id)}
+      titleHint="Read the full journal entry"
       meta={
         <span>
           {fmtDate(dream.date)}
+          {dream.secondaryEmotion && <> · also {EMOTION_LABELS[dream.secondaryEmotion].toLowerCase()}</>}
           {dream.hvdcEmotion && dream.hvdcEmotion !== dream.primaryEmotion && <> · coded as {dream.hvdcEmotion} (Hall &amp; Van de Castle)</>}
           {!dream.emotionStated && <> · feeling not stated</>}
         </span>
       }
     >
+      {dream.description && dream.description !== dream.summary && (
+        <section>
+          <SectionTitle>What happened</SectionTitle>
+          <p className="text-[15px] leading-relaxed text-ink-dim">{dream.description}</p>
+        </section>
+      )}
+
       <section>
         <SectionTitle aside={<span className="font-display text-[10px] text-ink-dim">{dream.intensity}/10 · {dream.intensitySource === "self" ? "self-rated" : "AI estimate"}</span>}>
           Intensity · building height
@@ -49,8 +61,26 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
       </section>
 
       <section>
-        <SectionTitle aside={source === "fallback" ? <span className="font-display text-[9px] uppercase text-ink-faint">template</span> : undefined}>Insight</SectionTitle>
-        <div className="border-2 border-line bg-(--well) p-3">
+        <SectionTitle
+          aside={
+            <span className="flex items-baseline gap-2">
+              {source === "fallback" && <span className="font-display text-[9px] uppercase text-ink-faint">template</span>}
+              <button type="button" onClick={() => openEntry(dream.id)} className="pixel-focus font-display text-[9px] uppercase tracking-wider text-ink-dim hover:text-gold">
+                Full entry →
+              </button>
+            </span>
+          }
+        >
+          Insight
+        </SectionTitle>
+        {/* Clicking the insight (but not a citation chip inside it) opens the full journal entry */}
+        <div
+          className={`border-2 border-line bg-(--well) p-3 ${dream.insight ? "cursor-pointer hover:border-line-hi" : ""}`}
+          title={dream.insight ? "Read the full journal entry" : undefined}
+          onClick={(e) => {
+            if (dream.insight && !(e.target as HTMLElement).closest("button, a")) openEntry(dream.id);
+          }}
+        >
           {dream.insight ? (
             <CitedText text={dream.insight} />
           ) : loading ? (
@@ -85,7 +115,12 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
             {dream.themes.length > 0 && <>Themes: {dream.themes.map((t) => `#${t}`).join(" ")}</>}
           </p>
         )}
+        {(dream.mentionedWorks?.length ?? 0) > 0 && (
+          <p className="mt-1 text-[13px] text-ink-dim">You mentioned: {dream.mentionedWorks!.join(", ")}</p>
+        )}
       </section>
+
+      <TypicalDreams ids={dream.typicalDreams ?? []} />
 
       <section>
         <SectionTitle>Roads from this building</SectionTitle>
@@ -133,6 +168,49 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         )}
       </section>
     </PanelFrame>
+  );
+}
+
+// Which of the 55 Typical Dreams Questionnaire themes this dream contains, with how many people
+// have ever had one (Nielsen et al. 2003). Sensitive items are listed plainly, last, with no bar.
+function TypicalDreams({ ids }: { ids: string[] }) {
+  const openCitation = useCityStore((s) => s.openCitation);
+  const items = byPrevalence(ids).sort((a, b) => Number(a.sensitive) - Number(b.sensitive));
+  if (items.length === 0) return null;
+  return (
+    <section>
+      <SectionTitle
+        aside={
+          <button
+            type="button"
+            onClick={() => openCitation(TDQ_SOURCE.cardId)}
+            className="pixel-focus border-2 border-[#7a5a1a] bg-[#2a1f06] px-1 font-display text-[9px] uppercase leading-[14px] tracking-wider text-gold hover:bg-[#3b2c0a]"
+          >
+            {TDQ_SOURCE.cardId}
+          </button>
+        }
+      >
+        Typical dreams
+      </SectionTitle>
+      <ul className="space-y-1.5">
+        {items.map((t) => (
+          <li key={t.id} className="border-2 border-line bg-(--well) px-2 py-1.5" title={t.text}>
+            <div className="flex items-baseline gap-2 text-[14px] text-ink">
+              <span className="min-w-0 flex-1 truncate">{t.label}</span>
+              <span className="shrink-0 font-display text-[10px] text-ink-dim">{t.prevalence}%</span>
+            </div>
+            {!t.sensitive && (
+              <div className="mt-1 h-1.5 w-full bg-(--input)" aria-hidden>
+                <div className="h-full bg-ink-faint" style={{ width: `${t.prevalence}%` }} />
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1.5 text-[12px] leading-snug text-ink-faint">
+        % of {TDQ_SOURCE.sampleSize.toLocaleString("en-GB")} university students who had ever had a dream like this. Common themes are shared by most people, so they say little on their own.
+      </p>
+    </section>
   );
 }
 

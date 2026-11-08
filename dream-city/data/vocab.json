@@ -1,5 +1,5 @@
 {
-  "_about": "Controlled vocabulary for coding dreams. Districts follow the five Hall and Van de Castle emotion classes plus Wonder (our addition). Streets are finer feelings taken from the wording of the Hall and Van de Castle emotion definitions where possible. Symbols are grouped by Hall and Van de Castle content categories. Themes describe what happens, never what it means.",
+  "_about": "Controlled vocabulary for coding dreams. Districts follow the five Hall and Van de Castle emotion classes plus Wonder (our addition). Streets are finer feelings taken from the wording of the Hall and Van de Castle emotion definitions where possible. Symbols are grouped by Hall and Van de Castle content categories. Themes describe what happens, never what it means. The 2026-11 additions (snake, monster, alien, angel, presence, toilet, cinema, money, food, plane, storm, earthquake, clothes; themes being attacked, failure, unable to move, being exposed, special powers, spiritual encounter, otherworldly, intimacy) close gaps against the 55 Typical Dreams Questionnaire items (Nielsen et al. 2003, data/typicalDreams.json).",
   "emotions": {
     "anger": [
       "irritation",
@@ -100,7 +100,7 @@
     "rain": [
       "rain",
       "raining",
-      "storm"
+      "drizzle"
     ],
     "corridor": [
       "corridor",
@@ -355,6 +355,106 @@
     ],
     "baby": [
       "baby"
+    ],
+    "snake": [
+      "snake",
+      "snakes",
+      "serpent",
+      "python",
+      "cobra",
+      "viper"
+    ],
+    "monster": [
+      "monster",
+      "monsters",
+      "creature",
+      "creatures",
+      "beast",
+      "beasts",
+      "demon",
+      "zombie",
+      "zombies"
+    ],
+    "alien": [
+      "alien",
+      "aliens",
+      "ufo",
+      "extraterrestrial",
+      "spaceship"
+    ],
+    "angel": [
+      "angel",
+      "angels",
+      "god",
+      "heaven"
+    ],
+    "presence": [
+      "presence",
+      "ghost",
+      "ghosts",
+      "spirit"
+    ],
+    "toilet": [
+      "toilet",
+      "toilets",
+      "bathroom",
+      "loo"
+    ],
+    "cinema": [
+      "cinema",
+      "movie",
+      "theatre",
+      "theater"
+    ],
+    "money": [
+      "money",
+      "cash",
+      "coin",
+      "coins",
+      "wallet",
+      "banknote"
+    ],
+    "food": [
+      "food",
+      "eating",
+      "ate",
+      "meal",
+      "feast",
+      "cake",
+      "dinner"
+    ],
+    "plane": [
+      "plane",
+      "aeroplane",
+      "airplane",
+      "aircraft",
+      "jet",
+      "airport"
+    ],
+    "storm": [
+      "storm",
+      "tornado",
+      "hurricane",
+      "wind",
+      "winds",
+      "thunder",
+      "lightning"
+    ],
+    "earthquake": [
+      "earthquake",
+      "tremor",
+      "quake"
+    ],
+    "clothes": [
+      "clothes",
+      "clothing",
+      "dressed",
+      "outfit",
+      "pyjamas",
+      "pajamas",
+      "underwear",
+      "naked",
+      "nude"
     ]
   },
   "symbolCategories": {
@@ -370,7 +470,12 @@
       "baby",
       "animal",
       "bird",
-      "insect"
+      "insect",
+      "snake",
+      "monster",
+      "alien",
+      "angel",
+      "presence"
     ],
     "settings": [
       "house",
@@ -386,7 +491,9 @@
       "garden",
       "ocean",
       "space",
-      "sky"
+      "sky",
+      "toilet",
+      "cinema"
     ],
     "objects": [
       "door",
@@ -405,7 +512,13 @@
       "rain",
       "fire",
       "darkness",
-      "light"
+      "light",
+      "money",
+      "food",
+      "plane",
+      "storm",
+      "earthquake",
+      "clothes"
     ],
     "activities": [
       "falling",
@@ -456,7 +569,15 @@
     "identity",
     "control",
     "relationships",
-    "unfairness"
+    "unfairness",
+    "being attacked",
+    "failure",
+    "unable to move",
+    "being exposed",
+    "special powers",
+    "spiritual encounter",
+    "otherworldly",
+    "intimacy"
   ],
   "fixedQuestions": [
     "How did you feel during the dream?",

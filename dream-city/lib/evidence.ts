@@ -3,6 +3,7 @@
 
 import type { Dream, Link, ResearchCard, SymbolStat, Work } from "./types";
 import { explainStat } from "./honesty";
+import { TDQ_SOURCE, byPrevalence } from "./typicalDreams";
 
 export type EvidenceItem = { id: string; text: string };
 export type EvidencePack = {
@@ -34,7 +35,7 @@ export function buildEvidencePack(args: {
 
   items.push({
     id: "dream",
-    text: `The dream (${dream.date}): ${dream.summary} Main emotion: ${dream.primaryEmotion}${dream.emotionStated ? " (stated by the dreamer)" : " (not stated)"}, intensity ${dream.intensity}/10${dream.intensitySource === "self" ? " (self-rated)" : ""}. Symbols: ${dream.symbols.join(", ") || "none"}.`,
+    text: `The dream (${dream.date}): ${dream.description || dream.summary} Main emotion: ${dream.primaryEmotion}${dream.emotionStated ? " (stated by the dreamer)" : " (not stated)"}, intensity ${dream.intensity}/10${dream.intensitySource === "self" ? " (self-rated)" : ""}. Symbols: ${dream.symbols.join(", ") || "none"}.${dream.secondaryEmotion ? ` Second emotion: ${dream.secondaryEmotion}.` : ""}`,
   });
 
   // Roads: the strongest few from this dream
@@ -56,7 +57,7 @@ export function buildEvidencePack(args: {
       const notIn = dream.symbols.filter((s) => !w.symbols.includes(s));
       items.push({
         id: `road:${r.to}`,
-        text: `Road to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}), strength ${r.strength}. Shared symbols (${r.shared.length}): ${r.shared.join(", ")}.${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${when}${rating} Dream symbols not in this work: ${notIn.join(", ") || "none"}.`,
+        text: `Road to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}), strength ${r.strength}. Shared symbols (${r.shared.length}): ${r.shared.join(", ")}.${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${when}${rating} Dream symbols not in this work: ${notIn.join(", ") || "none"}.${r.dreamerMentioned ? " The dreamer named this work themselves while recording the dream." : ""}`,
       });
     } else {
       const d = dreams.get(r.to);
@@ -79,12 +80,23 @@ export function buildEvidencePack(args: {
     }
   }
 
+  // Typical dreams: how many people have ever had this kind of dream (Typical Dreams Questionnaire).
+  // Sensitive items stay tagged on the dream but are not handed to the insight writer.
+  const typical = byPrevalence(dream.typicalDreams ?? []).filter((t) => !t.sensitive).slice(0, 3);
+  for (const t of typical) {
+    items.push({
+      id: `typical:${t.id}`,
+      text: `This dream includes a typical dream theme: "${t.text}". In the Typical Dreams Questionnaire, ${t.prevalence}% of ${TDQ_SOURCE.sampleSize} Canadian university students said they had ever had a dream like this (lifetime prevalence, not how often it happens per night).`,
+    });
+  }
+
   // Research cards: those the roads cite, plus a few chosen by the dream's content
   const cardIds = new Set(roads.flatMap((r) => r.researchCardIds));
   if (roads.some((r) => r.toType === "work")) cardIds.add("memory-sources-2014");
   if (roads.some((r) => works.get(r.to)?.kind === "game")) cardIds.add("gaming-2012");
   if (["anger", "apprehension", "sadness", "confusion"].includes(dream.primaryEmotion)) cardIds.add("hvdc-norms");
   if (roads.length === 0) cardIds.add("continuity-schredl");
+  if (typical.length) cardIds.add(TDQ_SOURCE.cardId);
   for (const id of cardIds) {
     const c = cards.get(id);
     if (c && !c.tags.includes("method")) items.push({ id: `card:${c.id}`, text: `${c.claim} (${c.citation}; confidence: ${c.confidence})` });

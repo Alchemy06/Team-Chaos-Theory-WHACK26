@@ -3,8 +3,9 @@
 
 import type { EvidencePack } from "./evidence";
 import type { Dream, Work } from "./types";
+import { TYPICAL_BY_ID } from "./typicalDreams";
 
-export const CITATION = /\[(dream|road|label|db|card)(?::([a-z0-9_-]+))?\]/g;
+export const CITATION = /\[(dream|road|label|db|card|typical)(?::([a-z0-9_-]+))?\]/g;
 const ANY_BRACKET = /\[([^\]]+)\]/g;
 const BANNED =
   /\b(means?|meaning|symboli[sz](?:e|es|ed|ing)|symbol of|represents?|indicates? that|signif(?:y|ies)|subconscious(?:ly)?|repress(?:ed|ing|ion)?|diagnos\w*|disorder|trauma\w*|depress\w*|ptsd|you are clearly|this proves)\b/i;
@@ -48,6 +49,11 @@ export function fallbackInsight(dream: Dream, pack: EvidencePack, works: Map<str
   }
   const yours = dream.symbols.find((s) => pack.ids.has(`label:${s}`) && pack.items.find((i) => i.id === `label:${s}`)?.text.includes("labelled yours"));
   if (yours) parts.push(`${yours.charAt(0).toUpperCase() + yours.slice(1)} appears more often in your dreams than in most people's [label:${yours}].`);
+  const typical = pack.items.find((i) => i.id.startsWith("typical:"));
+  if (typical) {
+    const t = TYPICAL_BY_ID.get(typical.id.slice("typical:".length));
+    if (t) parts.push(`Dreams about ${t.label.charAt(0).toLowerCase() + t.label.slice(1)} are typical: ${t.prevalence}% of students in one survey had ever had one [${typical.id}].`);
+  }
   if (parts.length === 0) parts.push(`Not enough evidence yet to link this dream to anything you logged [dream].`);
   parts.push("What does it remind you of?");
   return parts.join(" ");

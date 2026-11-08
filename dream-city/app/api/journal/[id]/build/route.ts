@@ -1,17 +1,16 @@
-// POST /api/journal/:id/build -> reads journal_sessions.conversation_md, extracts, upserts build_data.
-import { extractBuildData } from "@/lib/buildData";
-import { getSession, upsertBuildData } from "@/lib/db";
+// POST /api/journal/:id/build -> runs LLM 2a on the saved journal and upserts the full build_data row.
+// Same extraction and checks as /api/extract (lib/buildData.ts).
+import { ExtractError, extractSession } from "@/lib/buildData";
+import { z } from "zod";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (!z.uuid().safeParse(id).success) return Response.json({ error: "Invalid session ID" }, { status: 400 });
   try {
-    const session = await getSession(id);
-    if (!session) return Response.json({ error: "session not found" }, { status: 404 });
-    if (!session.conversation_md) return Response.json({ error: "session has no conversation_md yet" }, { status: 409 });
-    const data = await extractBuildData(id, session.conversation_md);
-    await upsertBuildData(data);
-    return Response.json(data);
+    const { build, warnings } = await extractSession(id);
+    return Response.json({ ...build, warnings });
   } catch (err) {
+    if (err instanceof ExtractError) return Response.json({ error: err.message, details: err.details }, { status: err.status });
     return Response.json({ error: err instanceof Error ? err.message : String(err) }, { status: 502 });
   }
 }

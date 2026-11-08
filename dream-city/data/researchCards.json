@@ -150,5 +150,17 @@
       "validation",
       "continuity"
     ]
+  },
+  {
+    "id": "tdq-2003",
+    "claim": "Some dream themes are near-universal: in a survey of 1,181 Canadian university students, 81.5% had dreamed of being chased, 73.8% of falling and 67.1% of school or studying at least once. Other themes were rare, such as being an object (3.5%). These are lifetime figures, not how often each theme appears per dream.",
+    "citation": "Nielsen, Zadra, Simard, Saucier, Stenstrom, Smith & Kuiken (2003). The typical dreams of Canadian university students. Dreaming 13(4), 211-235.",
+    "url": "https://doi.org/10.1023/B:DREM.0000003144.40929.0b",
+    "confidence": "Large sample; self-report of lifetime prevalence, so subject to memory bias (noted by the authors)",
+    "tags": [
+      "typical-dreams",
+      "prevalence",
+      "content"
+    ]
   }
 ]

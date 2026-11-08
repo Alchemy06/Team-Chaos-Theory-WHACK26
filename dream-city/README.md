@@ -17,7 +17,7 @@ npm run dev                            # http://localhost:3000
 
 | Area | Folder | Notes |
 | --- | --- | --- |
-| Data | `data/` | demo persona, vocab, research cards, base rates |
+| Data | `data/` | vocab, the 55 typical dreams, research cards, base rates |
 | Logic | `lib/` | types, `computeLinks`, `symbolStats`, deterministic `layoutCity`, prompts, checks |
 | API | `app/api/{followup,extract,insight}` | Groq-backed; server-side only |
 | State | `store/` | Zustand store (user dreams + insights persisted to `localStorage`) and `cityModel.ts`, which derives the city from `lib/` |
@@ -27,12 +27,22 @@ npm run dev                            # http://localhost:3000
 
 ## Recording a dream (frontend ↔ backend)
 
-1. `POST /api/followup { transcript }` → three questions (Q1/Q2 fixed, Q3 by the AI).
-2. The answers become the `.md` entry via `lib/entry.ts#toMarkdown`.
-3. `POST /api/extract { markdown }` → `{ entry, extraction }` → a `Dream`.
-4. Links, honesty labels and the layout are recomputed in code; the building rises.
-5. `POST /api/insight { dream, links, works, dreams, stats }` → cited insight
-   (`[card:…]`, `[road:…]`, `[label:…]`, `[db:…]` render as chips).
+1. `POST /api/journal { transcript }` saves the dream and LLM 1's three questions (Q1/Q2 fixed, Q3 by the AI).
+2. Each answer is saved with `POST /api/journal/<id>/answers`; `POST /api/journal/<id>/complete`
+   writes the whole conversation to `journal_sessions.conversation_md`.
+3. **LLM 2a**: `POST /api/extract { sessionId }` reads that saved dream and Q&A (never the user's media
+   or research papers), checks the answer in code (`lib/extraction.ts`) and stores every field in
+   `build_data`: summary, description, main and second emotion, street, intensity, symbols, themes,
+   places, works the dreamer named, and which of the 55 Typical Dreams Questionnaire themes it contains
+   (`data/typicalDreams.json`, Nielsen et al. 2003). `/api/journal/<id>/build` re-runs the same step.
+4. `GET /api/city` turns the stored rows into buildings; roads, honesty labels and the layout are computed in code.
+5. **LLM 2b**: `POST /api/insight { dream, links, works, dreams, stats }` → cited insight
+   (`[card:…]`, `[road:…]`, `[label:…]`, `[db:…]`, `[typical:…]` render as chips).
+   Click a dream's title or insight to read the full journal entry.
+
+Database: run `supabase/schema.sql` on a new project, or `supabase/migrations/003_build_data_llm2a.sql`
+on an existing one (safe to re-run). Rows saved before 003 still show; their symbols are estimated
+by keyword until LLM 2a is re-run on them.
 
 Fallbacks: if follow-ups fail, the fixed questions are used; if extraction
 fails (e.g. no `GROQ_API_KEY`), the user can choose an **offline estimate**

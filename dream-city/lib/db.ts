@@ -1,7 +1,7 @@
 // Server-only Supabase access for the journal tables (see supabase/schema.sql).
 // Uses the service role key, which bypasses RLS, so never import this from a client component.
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Emotion, WorkKind } from "./types";
+import type { Emotion, HvdcEmotion, WorkKind } from "./types";
 
 export type SessionStatus = "draft" | "questioning" | "completed";
 
@@ -23,22 +23,44 @@ export type JournalMessage = {
   created_at: string;
 };
 
+// What LLM 2a read from one session (lib/buildData.ts, lib/extraction.ts). One row per building.
 export type BuildData = {
   journalID: string; // journal_sessions.id
-  mainEmotion: Emotion;
-  secondaryEmotion: Emotion;
+  mainEmotion: Emotion; // district
+  secondaryEmotion: Emotion | null; // a second stated feeling, never the same as mainEmotion
   buildHeight: number; // 1-10
-  hoverDesc: string;
+  hoverDesc: string; // one short line: the title and hover label
   themes: string[];
+  // Added by migration 003. Null or empty on rows saved before it.
+  description: string | null; // up to two sentences
+  microEmotion: string | null; // street
+  symbols: string[]; // from data/vocab.json: roads, labels and towers depend on these
+  newSymbols: string[]; // not in the vocab; kept for review
+  places: string[];
+  emotionStated: boolean | null; // Hall and Van de Castle: only stated emotions are coded
+  hvdcEmotion: HvdcEmotion | null;
+  intensitySource: "self" | "ai" | null;
+  mentionedWorks: string[]; // titles the dreamer named
+  typicalDreams: string[]; // Typical Dreams Questionnaire ids (data/typicalDreams.json)
 };
 
-type BuildDataRow = {
+export type BuildDataRow = {
   journal_id: string;
   main_emotion: Emotion;
-  secondary_emotion: Emotion;
+  secondary_emotion: Emotion | null;
   build_height: number;
   hover_desc: string;
-  themes: string[];
+  themes: string[] | null;
+  description?: string | null;
+  micro_emotion?: string | null;
+  symbols?: string[] | null;
+  new_symbols?: string[] | null;
+  places?: string[] | null;
+  emotion_stated?: boolean | null;
+  hvdc_emotion?: HvdcEmotion | null;
+  intensity_source?: "self" | "ai" | null;
+  mentioned_works?: string[] | null;
+  typical_dreams?: string[] | null;
 };
 
 let client: SupabaseClient | undefined;
@@ -122,13 +144,23 @@ export async function getMessages(sessionId: string): Promise<JournalMessage[]> 
 
 // ---- build_data ----
 
-const fromRow = (r: BuildDataRow): BuildData => ({
+export const fromRow = (r: BuildDataRow): BuildData => ({
   journalID: r.journal_id,
   mainEmotion: r.main_emotion,
-  secondaryEmotion: r.secondary_emotion,
+  secondaryEmotion: r.secondary_emotion && r.secondary_emotion !== r.main_emotion ? r.secondary_emotion : null,
   buildHeight: r.build_height,
   hoverDesc: r.hover_desc,
-  themes: r.themes,
+  themes: r.themes ?? [],
+  description: r.description ?? null,
+  microEmotion: r.micro_emotion ?? null,
+  symbols: r.symbols ?? [],
+  newSymbols: r.new_symbols ?? [],
+  places: r.places ?? [],
+  emotionStated: r.emotion_stated ?? null,
+  hvdcEmotion: r.hvdc_emotion ?? null,
+  intensitySource: r.intensity_source ?? null,
+  mentionedWorks: r.mentioned_works ?? [],
+  typicalDreams: r.typical_dreams ?? [],
 });
 
 export async function upsertBuildData(b: BuildData): Promise<void> {
@@ -139,8 +171,27 @@ export async function upsertBuildData(b: BuildData): Promise<void> {
     build_height: b.buildHeight,
     hover_desc: b.hoverDesc,
     themes: b.themes,
+    description: b.description,
+    micro_emotion: b.microEmotion,
+    symbols: b.symbols,
+    new_symbols: b.newSymbols,
+    places: b.places,
+    emotion_stated: b.emotionStated ?? false,
+    hvdc_emotion: b.hvdcEmotion,
+    intensity_source: b.intensitySource ?? "ai",
+    mentioned_works: b.mentionedWorks,
+    typical_dreams: b.typicalDreams,
   };
-  must(await db().from("build_data").upsert(row));
+  const res = await db().from("build_data").upsert(row);
+  // Database not migrated yet (supabase/migrations/003_build_data_llm2a.sql): save the original columns
+  // so recording still works, and say what to run.
+  if (res.error && /column/i.test(res.error.message) && /could not find|does not exist/i.test(res.error.message)) {
+    console.warn(`build_data is missing the LLM 2a columns (${res.error.message}). Run supabase/migrations/003_build_data_llm2a.sql.`);
+    const { journal_id, main_emotion, build_height, hover_desc, themes } = row;
+    must(await db().from("build_data").upsert({ journal_id, main_emotion, secondary_emotion: b.secondaryEmotion ?? main_emotion, build_height, hover_desc, themes }));
+    return;
+  }
+  must(res);
 }
 
 export async function listBuildData(): Promise<BuildData[]> {

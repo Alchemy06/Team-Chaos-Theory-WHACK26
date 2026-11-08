@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import type { BuildData, JournalMessage, JournalSession } from "@/lib/db";
+import { db, fromRow } from "@/lib/db";
+import type { BuildDataRow, JournalMessage, JournalSession } from "@/lib/db";
 import { databaseDream } from "@/lib/databaseCity";
 
 // ── (ADDED) Hide known seed fixtures without deleting database rows ──
@@ -9,23 +9,25 @@ const SEED_IDS = new Set([
   "33333333-3333-4333-8333-333333333333",
 ]);
 
+type Row = BuildDataRow & { journal_sessions: JournalSession | null };
+
 // ── (ADDED) Read only buildings with saved database records ──
+// Every LLM 2a field comes from build_data (see lib/databaseCity.ts); the journal supplies the entry itself.
 export async function GET() {
   try {
     const { data: rows, error } = await db().from("build_data").select("*, journal_sessions(*)");
     if (error) throw error;
-    const savedRows = (rows ?? []).filter((row) => !SEED_IDS.has(row.journal_id));
+    const savedRows = ((rows ?? []) as Row[]).filter((row) => !SEED_IDS.has(row.journal_id) && row.journal_sessions?.status === "completed");
     const ids = savedRows.map((row) => row.journal_id);
     if (!ids.length) return Response.json({ dreams: [] }, { headers: { "Cache-Control": "no-store" } });
     const { data: messages, error: messageError } = await db().from("journal_messages").select().in("session_id", ids).order("sequence");
     if (messageError) throw messageError;
-    const dreams = savedRows.filter((r) => r.journal_sessions?.status === "completed").map((row) => {
-      const build: BuildData = { journalID: row.journal_id, mainEmotion: row.main_emotion, secondaryEmotion: row.secondary_emotion,
-        buildHeight: row.build_height, hoverDesc: row.hover_desc, themes: row.themes };
-      return databaseDream(build, row.journal_sessions as JournalSession, (messages as JournalMessage[]).filter((m) => m.session_id === row.journal_id));
-    });
+    const dreams = savedRows.map((row) =>
+      databaseDream(fromRow(row), row.journal_sessions as JournalSession, (messages as JournalMessage[]).filter((m) => m.session_id === row.journal_id)),
+    );
     return Response.json({ dreams }, { headers: { "Cache-Control": "no-store" } });
-  } catch {
+  } catch (err) {
+    console.error("city:", err);
     return Response.json({ error: "Could not load saved buildings. Check database access." }, { status: 500 });
   }
 }

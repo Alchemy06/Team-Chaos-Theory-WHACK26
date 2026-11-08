@@ -33,7 +33,7 @@ export function fetchFollowUps(transcript: string) {
 /** LLM 2a: reads the .md entry and returns the fields the city needs. */
 export function fetchExtraction(markdown: string, sessionId?: string) {
   // (added) Use the saved database document when a journal session is available.
-  return post<{ entry: Entry; extraction: Extraction; warnings: string[] }>("/api/extract", sessionId ? { sessionId } : { markdown });
+  return post<{ entry: Entry; extraction: Extraction; warnings: string[]; markdown?: string }>("/api/extract", sessionId ? { sessionId } : { markdown });
 }
 
 /** LLM 2b: grounded insight; the route returns a checked template if the model fails. */

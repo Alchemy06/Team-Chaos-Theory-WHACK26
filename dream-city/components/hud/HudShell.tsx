@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useCityStore } from "@/store/useCityStore";
 import { CitationPopover } from "./CitationPopover";
 import { DistrictLegend } from "./DistrictLegend";
+import { JournalEntryModal } from "./JournalEntryModal";
 import { RecordDreamSheet } from "./RecordDreamSheet";
 import { Timeline } from "./Timeline";
 import { TopBar } from "./TopBar";
@@ -28,6 +29,7 @@ export function HudShell() {
       if (e.key !== "Escape") return;
       const s = useCityStore.getState();
       if (s.citation) s.openCitation(null);
+      else if (s.entryOpen) s.openEntry(null);
       else if (s.record.open) s.closeRecord();
       else s.select(null);
     };
@@ -64,6 +66,7 @@ export function HudShell() {
       </div>
       <SelectionPanel />
       <RecordDreamSheet />
+      <JournalEntryModal />
       <CitationPopover />
     </div>
   );

@@ -10,8 +10,10 @@ export type Dream = {
   date: string; // ISO date, e.g. "2026-10-22"
   transcript: string;
   followUps: { q: string; a: string }[];
-  summary: string;
+  summary: string; // one short line: the building's title and hover label
+  description?: string; // up to two sentences on what happened (LLM 2a)
   primaryEmotion: Emotion; // district
+  secondaryEmotion?: Emotion | null; // a second feeling the dreamer stated, if any
   hvdcEmotion: HvdcEmotion | null; // research category; null if no emotion was stated
   emotionStated: boolean; // true if the dreamer named the feeling (Hall and Van de Castle rule)
   microEmotion: string; // street, from vocab.json
@@ -20,6 +22,9 @@ export type Dream = {
   symbols: string[]; // from the vocab.json symbol list where possible
   places: string[];
   themes: string[]; // from the fixed theme list in vocab.json
+  mentionedWorks?: string[]; // titles the dreamer named themselves (checked against the entry text)
+  typicalDreams?: string[]; // Typical Dreams Questionnaire ids, e.g. "tdq-01" (data/typicalDreams.json)
+  journalMarkdown?: string; // the saved journal_sessions.conversation_md, for the full-entry view
   insight?: string; // short reflection; cites evidence ids like [card:media-2018]
 };
 
@@ -51,6 +56,7 @@ export type Link = {
   strength: number; // 0-1
   explanation: string;
   researchCardIds: string[];
+  dreamerMentioned?: boolean; // the dreamer named this work while recording the dream
 };
 
 export type HonestyLabel = "yours" | "common" | "too_early" | "no_baseline";
@@ -88,8 +94,10 @@ export type Selection =
 
 // What LLM 2a returns after reading a .md dream entry.
 export type Extraction = {
-  summary: string;
+  summary: string; // one short line
+  description: string; // up to two sentences
   primaryEmotion: Emotion;
+  secondaryEmotion: Emotion | null; // must differ from primaryEmotion
   hvdcEmotion: HvdcEmotion | null;
   emotionStated: boolean;
   microEmotion: string;
@@ -99,4 +107,19 @@ export type Extraction = {
   newSymbols: string[]; // anything notable that is not in the list, kept for review, not used in the city
   places: string[];
   themes: string[]; // only from vocab.json
+  mentionedWorks: string[]; // titles the dreamer named; dropped unless they appear in the entry text
+  typicalDreams: string[]; // Typical Dreams Questionnaire ids, only from data/typicalDreams.json
+};
+
+// One of the 55 Typical Dreams Questionnaire themes (Nielsen et al. 2003).
+export type TypicalDream = {
+  id: string; // "tdq-01" ... "tdq-55"
+  item: number; // item number in the questionnaire
+  text: string; // item wording
+  label: string; // short label for the UI
+  prevalence: number; // % of 1,181 students who had EVER dreamed it (lifetime, not per dream)
+  rank: number; // 1 = most common
+  factor: string; // one of the paper's 16 factor groups
+  sensitive: boolean; // tagged like any other, but not singled out in the UI or the insight
+  keywords: string[]; // offline fallback only
 };

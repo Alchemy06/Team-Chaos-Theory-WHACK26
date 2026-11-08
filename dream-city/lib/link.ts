@@ -14,7 +14,19 @@ const W_INVOLVEMENT = 0.1;
 export const MIN_STRENGTH = 0.35; // below this, no road is drawn
 export const STRONG_STRENGTH = 0.6; // at or above this, a bright road
 
+const MENTION_BOOST = 0.25; // the dreamer named this work while recording the dream (LLM 2a mentionedWorks)
+
 const overlap = (a: string[], b: string[]) => a.filter((x) => b.includes(x));
+
+// Did the dreamer name this work? Loose title match: case, punctuation and a leading "The" are ignored.
+const norm = (t: string) => t.toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(/^\s*the\s+/, "").replace(/\s+/g, " ").trim();
+export function mentions(dream: Dream, work: Work): boolean {
+  const title = norm(work.title);
+  return (dream.mentionedWorks ?? []).some((m) => {
+    const n = norm(m);
+    return n === title || (n.length >= 4 && title.length >= 4 && (n.includes(title) || title.includes(n)));
+  });
+}
 const ratio = (shared: number, a: string[], b: string[]) =>
   shared === 0 ? 0 : shared / Math.max(1, Math.min(a.length, b.length));
 
@@ -58,17 +70,22 @@ export function computeLinks(
       const shared = overlap(dream.symbols, work.symbols);
       const sharedThemes = overlap(dream.themes, work.themes);
       const sameEmotion = dream.primaryEmotion === work.primaryEmotion;
-      // A road needs real evidence: a shared symbol, or a shared theme (media from the form has themes, no symbols).
-      if (shared.length === 0 && sharedThemes.length === 0) continue;
+      const named = mentions(dream, work);
+      // A road needs real evidence: a shared symbol, a shared theme (media from the form has themes, no symbols),
+      // or the dreamer naming the work themselves.
+      if (shared.length === 0 && sharedThemes.length === 0 && !named) continue;
       const daysBefore = work.consumedOn ? Math.round((dreamTime - Date.parse(work.consumedOn)) / DAY) : null;
       if (daysBefore !== null && daysBefore < 0) continue; // finished after the dream: can't have fed it
       const involvement = work.rating ? (work.rating - 1) / 4 : 0.5;
-      const strength =
+      const scored =
         W_SYMBOLS * ratio(shared.length, dream.symbols, work.symbols) +
         W_THEMES * ratio(sharedThemes.length, dream.themes, work.themes) +
         W_EMOTION * (sameEmotion ? 1 : 0) +
         W_RECENCY * recency(daysBefore) +
-        W_INVOLVEMENT * involvement;
+        W_INVOLVEMENT * involvement +
+        (named ? MENTION_BOOST : 0);
+      // A work the dreamer named is always at least a bright road
+      const strength = Math.min(1, named ? Math.max(scored, STRONG_STRENGTH) : scored);
       if (strength < MIN_STRENGTH) continue;
       const when =
         daysBefore === null
@@ -84,11 +101,17 @@ export function computeLinks(
         sharedThemes,
         daysBefore,
         strength: Math.round(strength * 100) / 100,
-        explanation: `Shares ${[...shared, ...sharedThemes.map((t) => `the theme ${t}`)].join(", ")}${sameEmotion ? ` and the feeling ${work.primaryEmotion}` : ""} with ${work.title}${when}.`,
+        explanation: [
+          named ? `You named ${work.title} while recording this dream${when}.` : "",
+          shared.length || sharedThemes.length
+            ? `Shares ${[...shared, ...sharedThemes.map((t) => `the theme ${t}`)].join(", ")}${sameEmotion ? ` and the feeling ${work.primaryEmotion}` : ""} with ${work.title}${named ? "" : when}.`
+            : "",
+        ].filter(Boolean).join(" "),
         researchCardIds:
           daysBefore !== null && (DAY_RESIDUE(daysBefore) || DREAM_LAG(daysBefore))
             ? ["media-2018", "dream-lag-2011"]
             : ["media-2018", "continuity-schredl"],
+        ...(named ? { dreamerMentioned: true } : {}),
       });
     }
     candidates.sort((a, b) => b.strength - a.strength);
