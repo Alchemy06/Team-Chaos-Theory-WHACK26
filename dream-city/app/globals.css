@@ -400,8 +400,29 @@ html[data-zoom="near"] .district-label {
   animation: rec-pulse 1s steps(3) infinite;
 }
 
+/* "Created" popup: pops in, holds, then fades away (length matches NOTICE_MS in the store). */
+@keyframes notice-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  10%,
+  80% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+.notice-pop {
+  animation: notice-pop 2600ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .anim-rise,
+  .notice-pop,
   .rec-pulse,
   .pixel-loader span {
     animation: none;
