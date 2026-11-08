@@ -428,3 +428,20 @@ html[data-zoom="near"] .district-label {
     animation: none;
   }
 }
+
+/* ── Building journal: quiet divisions, readable prose, pixel accents ── */
+.dream-detail > section,
+.dream-detail > .dream-disclosure { padding-block: 22px; }
+.dream-detail > :first-child { padding-top: 2px; }
+.dream-detail > :last-child { padding-bottom: 4px; }
+.dream-detail > * + * { border-top: 1px solid var(--line); }
+.dream-reading { font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.dream-reflection { border-left: 2px solid; background: var(--well); padding: 16px; }
+.dream-reflection button { font-size: 8px; letter-spacing: .04em; border-width: 1px; opacity: .85; }
+.dream-symbols > * { border-width: 1px; background: transparent; }
+.dream-symbols > * > span { font-size: 7px; opacity: .7; }
+.dream-disclosure > summary { display: flex; justify-content: space-between; gap: 16px; cursor: pointer; list-style: none; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: var(--ink-dim); }
+.dream-disclosure > summary::-webkit-details-marker { display: none; }
+.dream-disclosure > summary:hover { color: var(--ink); }
+.dream-disclosure > summary:focus-visible { outline: 2px solid var(--line-hi); outline-offset: 5px; }
+.dream-disclosure[open] > summary > span { transform: rotate(45deg); }
