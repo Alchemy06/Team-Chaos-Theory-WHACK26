@@ -25,14 +25,20 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
   const recordOpen = useCityStore((s) => s.record.open);
 
   // Fly to a selection; deselecting an island or the plaza flies back out to the whole city.
+  // While an island is in focus, picking things on it only swaps the panel: the view stays put.
   const prevKind = useRef<string | null>(null);
+  const islandView = useRef(false);
   useEffect(() => {
     const prev = prevKind.current;
     prevKind.current = selection?.kind ?? null;
     if (!selection) {
-      if (prev === "island" || prev === "plaza") goal.current = { target: new THREE.Vector3(), zoom: fitZoom };
+      if (prev === "island" || prev === "plaza" || islandView.current) goal.current = { target: new THREE.Vector3(), zoom: fitZoom };
+      islandView.current = false;
       return;
     }
+    if (selection.kind === "island") islandView.current = true;
+    else if (islandView.current && selection.kind !== "plaza") return;
+    else islandView.current = false;
     const hit = locate(layout, selection);
     if (!hit) return;
     // The part of the screen the HUD leaves free: below the top bar, left of the
