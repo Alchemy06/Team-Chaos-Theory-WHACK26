@@ -8,7 +8,7 @@ import { useCityStore } from "@/store/useCityStore";
 import { VoxelMesh } from "./VoxelMesh";
 
 // The central plaza represents the dreamer. A floating, slowly turning
-// crystal sits on a stepped dais; clicking it opens city-wide insights.
+// heart sits on a stepped dais; clicking it opens city-wide insights.
 
 function dais(): Voxel[] {
   const v: Voxel[] = [];
@@ -25,20 +25,43 @@ function dais(): Voxel[] {
   return v;
 }
 
-function crystal(): Voxel[] {
+// Voxel heart, extruded with a thinner front/back so it reads as rounded
+// while it turns. Shades run violet (bottom) to pink (top) like the city palette.
+const HEART = [
+  ".XX.XX.",
+  "XXXXXXX",
+  "XXXXXXX",
+  ".XXXXX.",
+  "..XXX..",
+  "...X...",
+];
+
+function heart(): Voxel[] {
   const v: Voxel[] = [];
-  const cols = ["#ff7ccf", "#a77bff", "#8be9ff"];
-  for (let y = 0; y < 5; y++) {
-    const r = y < 2 ? y : 4 - y;
-    for (let x = -r; x <= r; x++)
-      for (let z = -r; z <= r; z++) if (Math.abs(x) + Math.abs(z) <= r) v.push({ x, y, z, c: cols[(y + x + z + 9) % 3], g: true });
-  }
+  const rows = HEART.length;
+  const filled = (x: number, y: number) => HEART[y]?.[x] === "X";
+  const shades = ["#a77bff", "#b97aef", "#cc7ce4", "#e07cd9", "#f07cd3", "#ff7ccf"];
+  for (let row = 0; row < rows; row++)
+    for (let col = 0; col < HEART[row].length; col++) {
+      if (!filled(col, row)) continue;
+      const x = col - 3;
+      const y = rows - 1 - row;
+      const c = shades[y];
+      v.push({ x, y, z: 0, c, g: true });
+      const inner = filled(col - 1, row) && filled(col + 1, row) && filled(col, row - 1) && filled(col, row + 1);
+      if (inner) {
+        v.push({ x, y, z: 1, c, g: true });
+        v.push({ x, y, z: -1, c, g: true });
+      }
+    }
+  // A soft highlight on the left lobe.
+  for (const p of v) if (p.x === -2 && p.y === 4 && p.z !== 0) p.c = "#ffd6f0";
   return v;
 }
 
 export function Plaza() {
   const daisVoxels = useMemo(() => dais(), []);
-  const crystalVoxels = useMemo(() => crystal(), []);
+  const heartVoxels = useMemo(() => heart(), []);
   const spin = useRef<THREE.Group>(null);
   const select = useCityStore((s) => s.select);
   const hover = useCityStore((s) => s.hover);
@@ -65,9 +88,9 @@ export function Plaza() {
     >
       <VoxelMesh voxels={daisVoxels} />
       <group ref={spin} scale={0.6}>
-        <VoxelMesh voxels={crystalVoxels} castShadow={false} />
+        <VoxelMesh voxels={heartVoxels} castShadow={false} />
       </group>
-      <pointLight position={[0, 5, 0]} intensity={40} distance={22} color="#c9a8ff" decay={2} />
+      <pointLight position={[0, 5, 0]} intensity={40} distance={22} color="#e0a0f0" decay={2} />
     </group>
   );
 }
