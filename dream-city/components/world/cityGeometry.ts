@@ -155,7 +155,7 @@ export function toWorldCity(
 
   const buildings: WBuilding[] = city.buildings.map((b) => {
     const dream = data.dreams.get(b.id);
-    const height = b.kind === "dream" ? dreamHeight(dream?.intensity ?? 5) : b.kind === "work" ? 5 + Math.round(((data.works.get(b.id)?.rating ?? 3) - 1) / 2) : 6;
+    const height = b.kind === "dream" ? dreamHeight(dream?.intensity ?? 5) : b.kind === "work" ? 3 + Math.round(((data.works.get(b.id)?.rating ?? 3) - 1) / 2) : 6;
     return {
       id: b.id,
       kind: b.kind,
