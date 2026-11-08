@@ -50,6 +50,7 @@ export type WRoad = {
   dotted: boolean;
   cells: Vec2[]; // ground path tiles under this link
   path: Vec2[]; // smooth samples along the meandering trail, used for rendering
+  lift: number[]; // height above the ground at each path sample: trails arc up over the cloud sea
 };
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
 export type WorldCity = {
@@ -162,6 +163,33 @@ function wander(points: Vec2[], seed: number, amp: number): Vec2[] {
 function circlePoints(r: number, step = 2): Vec2[] {
   const n = Math.max(12, Math.ceil((Math.PI * 2 * r) / step));
   return Array.from({ length: n }, (_, i) => polar(r, (Math.PI * 2 * i) / n));
+}
+
+/**
+ * Heights for a trail: flat on land, and a smooth arch over each stretch of
+ * open cloud, higher for longer crossings so trails separate in depth.
+ */
+function arcLift(path: Vec2[], onLand: (p: Vec2) => boolean): number[] {
+  const lift = path.map(() => 0);
+  const dist = [0];
+  for (let i = 1; i < path.length; i++) dist.push(dist[i - 1] + Math.hypot(path[i].x - path[i - 1].x, path[i].z - path[i - 1].z));
+  let i = 0;
+  while (i < path.length) {
+    if (onLand(path[i])) {
+      i++;
+      continue;
+    }
+    let j = i;
+    while (j + 1 < path.length && !onLand(path[j + 1])) j++;
+    // the arch spans from the last land sample to the next one
+    const a = Math.max(0, i - 1);
+    const b = Math.min(path.length - 1, j + 1);
+    const span = dist[b] - dist[a];
+    const h = Math.min(9, 1.2 + span * 0.18);
+    for (let k = a; k <= b; k++) lift[k] = Math.max(lift[k], Math.sin((Math.PI * (dist[k] - dist[a])) / (span || 1)) * h);
+    i = j + 1;
+  }
+  return lift;
 }
 
 export function toWorldCity(
@@ -305,6 +333,7 @@ export function toWorldCity(
       dotted: r.strength < WEAK,
       cells,
       path,
+      lift: arcLift(path, (p) => land.has(key(Math.round(p.x), Math.round(p.z)))),
     });
   });
   // Streets are paths too.
