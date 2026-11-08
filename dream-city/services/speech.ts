@@ -6,6 +6,7 @@ type RecognitionLike = {
   interimResults: boolean;
   start(): void;
   stop(): void;
+  onstart: (() => void) | null;
   onresult: ((e: { resultIndex: number; results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null;
   onerror: ((e: { error: string }) => void) | null;
   onend: (() => void) | null;
@@ -25,6 +26,7 @@ export function speechSupported() {
 
 export function startDictation(handlers: {
   onText: (finalText: string, interim: string) => void;
+  onStart?: () => void;
   onEnd: () => void;
   onError: (msg: string) => void;
 }) {
@@ -48,6 +50,7 @@ export function startDictation(handlers: {
     handlers.onText(finalText.trim(), interim);
   };
   rec.onerror = (e) => handlers.onError(e.error === "not-allowed" ? "Microphone permission was denied." : e.error);
+  rec.onstart = () => handlers.onStart?.();
   rec.onend = handlers.onEnd;
   rec.start();
   return () => rec.stop();
