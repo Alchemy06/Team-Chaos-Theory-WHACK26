@@ -13,6 +13,7 @@ import { CitedText } from "../ui/CitedText";
 import { SymbolChip } from "../ui/SymbolChip";
 import { Highlighted, LinkCard } from "./LinkCard";
 import { PanelFrame, fmtDate } from "./PanelFrame";
+import { ReExplore } from "./ReExplore";
 
 // ── (ADDED) Short navigation titles; the full account stays in the journal ──
 function shortTitle(text: string) {
@@ -57,6 +58,8 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
           </div>
           <button type="button" onClick={() => openEntry(dream.id)} className="pixel-focus mt-3 inline-flex items-center gap-2 font-display text-[9px] uppercase tracking-wider text-ink-dim hover:text-gold">Open journal <span aria-hidden>↗</span></button>
         </section>
+
+        <ReExplore dreamId={dream.id} color={color} />
 
         <section>
           <SectionTitle aside={<span className="font-display text-[9px] text-ink-faint">{links.length}</span>}>Connected dreams & media</SectionTitle>

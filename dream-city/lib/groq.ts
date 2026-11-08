@@ -18,7 +18,7 @@ function parseJSON(text: string): unknown {
 export async function groqJSON(
   system: string,
   user: string,
-  opts: { temperature?: number; maxTokens?: number } = {}
+  opts: { temperature?: number; maxTokens?: number; signal?: AbortSignal } = {}
 ): Promise<unknown> {
   const key = process.env.GROQ_API_KEY;
   if (!key) throw new GroqError("GROQ_API_KEY is not set. Add it to .env.local and restart the dev server.");
@@ -37,6 +37,7 @@ export async function groqJSON(
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ ...body, ...extra }),
+      signal: opts.signal,
     });
 
   let res = await send({ response_format: { type: "json_object" } });
