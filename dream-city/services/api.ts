@@ -39,3 +39,13 @@ export function fetchExtraction(markdown: string) {
 export function fetchInsight(body: { dream: Dream; links: Link[]; works: Work[]; dreams: Dream[]; stats: SymbolStat[] }) {
   return post<{ insight: string; cited: string[]; source: "ai" | "fallback"; problems: string[] }>("/api/insight", body);
 }
+
+// ── (ADDED) Start a saved journal and return database IDs ──
+export function startJournal(transcript: string) {
+  return post<{ sessionId: string; questions: { id: string; text: string }[]; aiUsed: boolean }>("/api/journal", { transcript });
+}
+
+// ── (ADDED) Send an answer to its saved question ──
+export function saveJournalAnswer(sessionId: string, questionId: string, answer: string) {
+  return post<{ message: { id: string } }>(`/api/journal/${sessionId}/answers`, { questionId, answer });
+}

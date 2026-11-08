@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Extraction, Selection } from "@/lib/types";
-import { ApiError, fetchExtraction, fetchFollowUps, fetchInsight } from "@/services/api";
+import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer } from "@/services/api";
 import { offlineExtract } from "@/services/offline";
 import { playRiseTone, setAmbient } from "@/services/sound";
 import { computeModel } from "./cityModel";
@@ -26,6 +26,9 @@ type RecordState = {
   error: string | null;
   errorDetails: string[];
   canUseOffline: boolean;
+  // ── (ADDED) Journal session and question IDs ──
+  sessionId: string | null;
+  questionIds: string[];
 };
 
 type State = {
@@ -71,6 +74,9 @@ const emptyRecord: RecordState = {
   error: null,
   errorDetails: [],
   canUseOffline: false,
+  // ── (ADDED) Empty IDs until a session starts ──
+  sessionId: null,
+  questionIds: [],
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -139,25 +145,31 @@ export const useCityStore = create<State>()(
         }),
 
       submitTranscript: async () => {
+        if (get().record.busy) return;
         const { transcript } = get().record;
         if (transcript.trim().length < 12) {
           set((s) => ({ record: { ...s.record, error: "Tell me a little more about the dream first." } }));
           return;
         }
         set((s) => ({ record: { ...s.record, busy: true, error: null } }));
-        let questions = ["How did you feel during the dream?", "How intense did it feel, from 1 to 10?", "Have you read, watched, played or listened to anything recently that this reminds you of?"];
-        let aiQuestion = false;
         try {
-          const res = await fetchFollowUps(transcript);
-          questions = res.questions;
-          aiQuestion = res.aiUsed;
-        } catch {
-          // keep the fixed questions so recording never blocks
+          // ── (ADDED) Store IDs returned by the saved journal session ──
+          const res = await startJournal(transcript);
+          if (!get().record.open || get().record.transcript !== transcript) return;
+          set((s) => ({ record: {
+            ...s.record, busy: false, step: "followups",
+            sessionId: res.sessionId,
+            questionIds: res.questions.map((q) => q.id),
+            questions: res.questions.map((q) => q.text),
+            answers: res.questions.map(() => ""), aiQuestion: res.aiUsed,
+          } }));
+        } catch (error) {
+          set((s) => ({ record: { ...s.record, busy: false, error: error instanceof Error ? error.message : "Could not start journal." } }));
         }
-        set((s) => ({ record: { ...s.record, busy: false, step: "followups", questions, aiQuestion, answers: questions.map(() => "") } }));
       },
 
       buildDream: async (opts) => {
+        if (get().record.busy) return;
         const { record } = get();
         const entry: Entry = {
           date: today(),
@@ -165,6 +177,21 @@ export const useCityStore = create<State>()(
           followUps: record.questions.map((q, i) => ({ q, a: (record.answers[i] ?? "").trim() })),
         };
         set((s) => ({ record: { ...s.record, busy: true, step: "building", error: null, errorDetails: [] } }));
+
+        // ── (ADDED) Save non-empty answers before processing the building ──
+        try {
+          if (!record.sessionId) throw new Error("Start a journal session before saving answers.");
+          for (let i = 0; i < record.questions.length; i++) {
+            const answer = record.answers[i]?.trim();
+            if (!answer) continue;
+            const questionId = record.questionIds[i];
+            if (!questionId) throw new Error("Missing saved question ID.");
+            await saveJournalAnswer(record.sessionId, questionId, answer);
+          }
+        } catch (error) {
+          set((s) => ({ record: { ...s.record, busy: false, step: "followups", error: error instanceof Error ? error.message : "Could not save answers." } }));
+          return;
+        }
 
         let extraction: Extraction;
         let entryOut: Entry = entry;
