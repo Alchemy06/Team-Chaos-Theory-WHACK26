@@ -226,7 +226,7 @@ function RecordDreamDialog() {
           {/* ------------------ Footer & Submission Controls ------------------ */}
           {record.step !== "building" && (
             <div className="flex flex-wrap items-center justify-between gap-2 border-t-2 border-line px-4 py-3">
-              <p className="hidden text-[11px] leading-snug text-ink-faint sm:block">Your dream stays in this browser.</p>
+              <p className="hidden text-[11px] leading-snug text-ink-faint sm:block">Your journal is saved to the team’s database.</p>
               <div className="ml-auto flex flex-wrap gap-2">
                 {/* ------------------ Offline Fallback ------------------ */}
                 {record.step === "followups" && record.canUseOffline && (
