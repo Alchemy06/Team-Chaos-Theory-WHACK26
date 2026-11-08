@@ -4,6 +4,8 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { noiseTexture, voxelGeometry } from "./resources";
+import type { WorldTheme } from "@/lib/themes";
+import { useWorldTheme } from "@/store/useTheme";
 import { rngFor } from "./rng";
 
 // The whole archipelago floats on one giant cloud: a soft, moonlit cloud sea
@@ -22,6 +24,8 @@ const seaVertex = /* glsl */ `
 const seaFragment = /* glsl */ `
   uniform float uTime;
   uniform float uRadius;
+  uniform vec3 uShadow;
+  uniform vec3 uLit;
   varying vec2 vWorld;
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
   float noise(vec2 p) {
@@ -40,22 +44,35 @@ const seaFragment = /* glsl */ `
     vec2 drift = vec2(uTime * 0.35, uTime * 0.12);
     float n = fbm((cell + drift) * 0.07);
     float puff = smoothstep(0.35, 0.75, n);
-    vec3 shadow = vec3(0.12, 0.13, 0.26);
-    vec3 lit = vec3(0.36, 0.38, 0.58);
-    vec3 c = mix(shadow, lit, puff);
+    vec3 c = mix(uShadow, uLit, puff);
     // a soft moonlit sheen and a darker band just inside the rim for depth
     float r = length(vWorld);
     c *= mix(1.0, 0.75, smoothstep(uRadius * 0.7, uRadius, r));
-    c += vec3(0.05, 0.05, 0.09) * step(0.995, hash(cell + floor(uTime)));
+    c += uLit * 0.15 * step(0.995, hash(cell + floor(uTime)));
     gl_FragColor = vec4(c, 1.0);
   }
 `;
 
-function CloudSea({ radius }: { radius: number }) {
+function CloudSea({ radius, theme }: { radius: number; theme: WorldTheme }) {
   const ref = useRef<THREE.ShaderMaterial>(null);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uRadius: { value: radius } }), [radius]);
+  const uniforms = useMemo(
+    () => ({ uTime: { value: 0 }, uRadius: { value: radius }, uShadow: { value: new THREE.Color() }, uLit: { value: new THREE.Color() } }),
+    [radius],
+  );
+  // The shader writes its colour straight out, so take the hex values as-is
+  // (no sRGB -> linear conversion).
+  const shadow = useMemo(() => new THREE.Color().setStyle(theme.seaShadow, THREE.LinearSRGBColorSpace), [theme.seaShadow]);
+  const lit = useMemo(() => new THREE.Color().setStyle(theme.seaLit, THREE.LinearSRGBColorSpace), [theme.seaLit]);
+  const started = useRef(false);
   useFrame((s) => {
-    if (ref.current) ref.current.uniforms.uTime.value = s.clock.elapsedTime;
+    const m = ref.current;
+    if (!m) return;
+    m.uniforms.uTime.value = s.clock.elapsedTime;
+    // snap on the first frame, then ease toward a newly picked theme
+    const k = started.current ? 0.08 : 1;
+    started.current = true;
+    (m.uniforms.uShadow.value as THREE.Color).lerp(shadow, k);
+    (m.uniforms.uLit.value as THREE.Color).lerp(lit, k);
   });
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.6, 0]} raycast={() => null}>
@@ -74,7 +91,7 @@ function shade(hex: string, amount: number) {
 }
 
 /** Puffy rim + layered underside, as big soft blocks. */
-function buildPuffs(radius: number): Puff[] {
+function buildPuffs(radius: number, theme: WorldTheme): Puff[] {
   const rng = rngFor("cloud");
   const out: Puff[] = [];
   const R = radius + 1;
@@ -86,11 +103,11 @@ function buildPuffs(radius: number): Puff[] {
     const s = 3 + rng() * 4;
     // billows: some puffs rise well above the cloud sea, so the edge reads as fluffy, not as a band
     const rise = rng() < 0.35 ? 1 + rng() * 2.5 : rng() * 1.2;
-    out.push({ x: Math.cos(a) * r, y: -1 + rise, z: Math.sin(a) * r, s, h: s * (0.6 + rng() * 0.5), c: shade("#7c84b8", (rng() - 0.3) * 0.25) });
+    out.push({ x: Math.cos(a) * r, y: -1 + rise, z: Math.sin(a) * r, s, h: s * (0.6 + rng() * 0.5), c: shade(theme.cloudRim, (rng() - 0.3) * 0.25) });
     if (rng() > 0.45) {
       const s2 = 2 + rng() * 3;
       const off = (rng() - 0.5) * 3;
-      out.push({ x: Math.cos(a) * (r + off), y: rise + 0.6 + rng() * 1.5, z: Math.sin(a) * (r + off), s: s2, h: s2 * 0.75, c: shade("#a3a9d6", (rng() - 0.3) * 0.2) });
+      out.push({ x: Math.cos(a) * (r + off), y: rise + 0.6 + rng() * 1.5, z: Math.sin(a) * (r + off), s: s2, h: s2 * 0.75, c: shade(theme.cloudTop, (rng() - 0.3) * 0.2) });
     }
   }
   // Underside: rings that shrink and darken as they go down, like the belly of a cloud.
@@ -100,7 +117,7 @@ function buildPuffs(radius: number): Puff[] {
     const rk = R * (1 - t * 0.82);
     const y = -2.5 - k * 3.4;
     const count = Math.max(10, Math.ceil((Math.PI * 2 * rk) / 3.4));
-    const base = shade("#5d6496", -t * 0.55);
+    const base = shade(theme.cloudBelly, -t * 0.55);
     for (let i = 0; i < count; i++) {
       const a = (i / count) * Math.PI * 2 + rng() * 0.08 + k * 0.3;
       const r = rk + (rng() - 0.5) * 4;
@@ -114,9 +131,9 @@ function buildPuffs(radius: number): Puff[] {
 const tmp = new THREE.Object3D();
 const col = new THREE.Color();
 
-function CloudPuffs({ radius }: { radius: number }) {
+function CloudPuffs({ radius, theme }: { radius: number; theme: WorldTheme }) {
   const ref = useRef<THREE.InstancedMesh>(null);
-  const puffs = useMemo(() => buildPuffs(radius), [radius]);
+  const puffs = useMemo(() => buildPuffs(radius, theme), [radius, theme]);
   const group = useRef<THREE.Group>(null);
   useLayoutEffect(() => {
     const mesh = ref.current;
@@ -146,10 +163,11 @@ function CloudPuffs({ radius }: { radius: number }) {
 }
 
 export function CloudBase({ radius }: { radius: number }) {
+  const theme = useWorldTheme();
   return (
     <>
-      <CloudSea radius={radius} />
-      <CloudPuffs radius={radius} />
+      <CloudSea radius={radius} theme={theme} />
+      <CloudPuffs radius={radius} theme={theme} />
     </>
   );
 }

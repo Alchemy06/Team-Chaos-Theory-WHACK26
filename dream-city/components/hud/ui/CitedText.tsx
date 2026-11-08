@@ -38,7 +38,7 @@ export function CitedText({ text, className }: { text: string; className?: strin
               key={i}
               type="button"
               onClick={() => select(w ? { kind: "work", id } : { kind: "dream", id })}
-              className={`${chip} border-line-hi bg-panel-2 text-ink hover:bg-[#1a2456]`}
+              className={`${chip} border-line-hi bg-panel-2 text-ink hover:bg-(--btn-hover)`}
             >
               road · {w?.title ?? (d ? "earlier dream" : id)}
             </button>

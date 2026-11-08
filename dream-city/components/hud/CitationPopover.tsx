@@ -10,7 +10,7 @@ export function CitationPopover() {
   const card = id ? cards.get(id) : null;
   if (!card) return null;
   return (
-    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-[#02030a]/60 p-4" onClick={() => close(null)}>
+    <div className="pointer-events-auto fixed inset-0 z-50 grid place-items-center bg-(--overlay)/60 p-4" onClick={() => close(null)}>
       <PixelPanel className="anim-rise w-full max-w-md">
         <div role="dialog" aria-modal="true" aria-labelledby="card-title" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center justify-between border-b-2 border-line px-4 py-2">

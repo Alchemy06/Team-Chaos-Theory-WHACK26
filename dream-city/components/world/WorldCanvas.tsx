@@ -17,6 +17,7 @@ import { Terrain } from "./Terrain";
 import { CloudBase } from "./CloudBase";
 import { Bridges } from "./Bridges";
 import { markWorldMounted } from "./useRise";
+import { useWorldTheme } from "@/store/useTheme";
 
 function CityScene() {
   const model = useCity();
@@ -63,6 +64,7 @@ markWorldMounted();
 
 export default function WorldCanvas() {
   const select = useCityStore((s) => s.select);
+  const background = useWorldTheme().background;
   return (
     <>
       <Canvas
@@ -73,7 +75,7 @@ export default function WorldCanvas() {
         onPointerMissed={() => select(null)}
       >
         {/* Opaque background so the post-processing chain composites correctly */}
-        <color attach="background" args={["#070b18"]} />
+        <color attach="background" args={[background]} />
         <CityScene />
         <PostFX />
       </Canvas>

@@ -4,10 +4,12 @@
 
 import { HudShell } from "./hud/HudShell";
 import { WorldLoader } from "./world/WorldLoader";
+import { ThemeApplier } from "@/store/useTheme";
 
 export default function DreamCityApp() {
   return (
     <main className="night-sky relative h-dvh w-full overflow-hidden">
+      <ThemeApplier />
       <WorldLoader />
       <HudShell />
     </main>

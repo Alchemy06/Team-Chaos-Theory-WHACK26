@@ -14,7 +14,7 @@ export function DistrictLegend() {
       <ul className="space-y-1">
         {EMOTION_LIST.map((e) => (
           <li key={e} className="flex items-center gap-2 text-[13px]" title={VOCAB.emotionDefinitions[e]}>
-            <span className="h-3 w-3 shrink-0" style={{ background: EMOTION_COLORS[e], boxShadow: "2px 2px 0 #02030a" }} />
+            <span className="h-3 w-3 shrink-0" style={{ background: EMOTION_COLORS[e], boxShadow: "2px 2px 0 var(--shadow)" }} />
             <span className="flex-1 truncate text-ink">{EMOTION_LABELS[e]}</span>
             <span className="w-4 text-right font-display text-[10px] text-ink-dim">{model.dreams.filter((d) => d.primaryEmotion === e).length}</span>
           </li>
@@ -61,5 +61,5 @@ function LineIcon({ color, dashed, thick }: { color: string; dashed?: boolean; t
 }
 
 function Swatch({ color }: { color: string }) {
-  return <span className="block h-3 w-6" style={{ background: color, boxShadow: "inset 0 0 0 1px rgba(255,255,255,.12), 2px 2px 0 #02030a" }} />;
+  return <span className="block h-3 w-6" style={{ background: color, boxShadow: "inset 0 0 0 1px rgba(255,255,255,.12), 2px 2px 0 var(--shadow)" }} />;
 }

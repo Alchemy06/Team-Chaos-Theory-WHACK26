@@ -36,7 +36,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
               <span className="w-28 shrink-0 truncate text-[13px]" style={{ color: EMOTION_COLORS[e] }}>
                 {EMOTION_LABELS[e]}
               </span>
-              <span className="h-3 flex-1 bg-[#070b22]">
+              <span className="h-3 flex-1 bg-(--input)">
                 <span className="block h-full" style={{ width: `${(n / max) * 100}%`, background: `repeating-linear-gradient(90deg, ${EMOTION_COLORS[e]} 0 8px, transparent 8px 10px)` }} />
               </span>
               <span className="w-5 text-right font-display text-[11px] text-ink-dim">{n}</span>

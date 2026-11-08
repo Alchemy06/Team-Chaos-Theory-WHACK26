@@ -95,7 +95,7 @@ function RecordDreamDialog() {
   const title = record.step === "input" ? "What did you dream?" : record.step === "followups" ? "A few quick questions" : "Your building is rising…";
 
   return (
-    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-end bg-[#02030a]/55 sm:place-items-center sm:p-4">
+    <div className="pointer-events-auto fixed inset-0 z-40 grid place-items-end bg-(--overlay)/55 sm:place-items-center sm:p-4">
       <PixelPanel className="anim-rise w-full max-w-xl">
         <div role="dialog" aria-modal="true" aria-labelledby="record-title" className="flex max-h-[88dvh] flex-col">
           {/* ------------------ Header & Close Button ------------------ */}
@@ -154,7 +154,7 @@ function RecordDreamDialog() {
                         key={ex}
                         type="button"
                         onClick={() => setTranscript(ex)}
-                        className="pixel-focus border-2 border-line bg-[#0a1030] px-2 py-1.5 text-left text-[13px] leading-snug text-ink-dim hover:border-line-hi hover:text-ink"
+                        className="pixel-focus border-2 border-line bg-(--well) px-2 py-1.5 text-left text-[13px] leading-snug text-ink-dim hover:border-line-hi hover:text-ink"
                       >
                         “{ex}”
                       </button>

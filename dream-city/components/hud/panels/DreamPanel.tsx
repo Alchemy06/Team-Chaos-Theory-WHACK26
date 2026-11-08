@@ -49,7 +49,7 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
 
       <section>
         <SectionTitle aside={source === "fallback" ? <span className="font-display text-[9px] uppercase text-ink-faint">template</span> : undefined}>Insight</SectionTitle>
-        <div className="border-2 border-line bg-[#0a1030] p-3">
+        <div className="border-2 border-line bg-(--well) p-3">
           {dream.insight ? (
             <CitedText text={dream.insight} />
           ) : loading ? (

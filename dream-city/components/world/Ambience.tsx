@@ -4,6 +4,7 @@ import { useLayoutEffect, useMemo, useRef } from "react";
 import { Sparkles } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useWorldTheme } from "@/store/useTheme";
 import { rngFor } from "./rng";
 import { voxelGeometry } from "./resources";
 
@@ -14,10 +15,11 @@ function FogRing({ radius }: { radius: number }) {
   const ref = useRef<THREE.InstancedMesh>(null);
   const group = useRef<THREE.Group>(null);
   const count = 160;
-  const material = useMemo(
-    () => new THREE.MeshBasicMaterial({ color: "#7d8fd0", transparent: true, opacity: 0.035, depthWrite: false }),
-    [],
-  );
+  const fog = useWorldTheme().fog;
+  const material = useMemo(() => new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.035, depthWrite: false }), []);
+  useLayoutEffect(() => {
+    material.color.set(fog);
+  }, [material, fog]);
   useLayoutEffect(() => {
     const mesh = ref.current;
     if (!mesh) return;
@@ -45,11 +47,12 @@ function FogRing({ radius }: { radius: number }) {
 }
 
 export function Ambience({ radius }: { radius: number }) {
+  const theme = useWorldTheme();
   return (
     <>
       <FogRing radius={radius} />
-      <Sparkles count={140} scale={[radius * 1.8, 16, radius * 1.8]} position={[0, 8, 0]} size={4} speed={0.25} opacity={0.75} color="#d6dcff" noise={1} />
-      <Sparkles count={60} scale={[radius, 8, radius]} position={[0, 4, 0]} size={6} speed={0.4} opacity={0.9} color="#ffd98a" noise={2} />
+      <Sparkles count={140} scale={[radius * 1.8, 16, radius * 1.8]} position={[0, 8, 0]} size={4} speed={0.25} opacity={0.75} color={theme.sparkle} noise={1} />
+      <Sparkles count={60} scale={[radius, 8, radius]} position={[0, 4, 0]} size={6} speed={0.4} opacity={0.9} color={theme.sparkleWarm} noise={2} />
     </>
   );
 }
