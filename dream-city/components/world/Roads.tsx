@@ -192,13 +192,9 @@ function Link({
   );
 }
 
-/** Lift a flat path into a gentle arch: higher for longer links, so they clear trees and ground. */
-function arc(path: Vec2[]) {
-  let len = 0;
-  for (let i = 1; i < path.length; i++) len += Math.hypot(path[i].x - path[i - 1].x, path[i].z - path[i - 1].z);
-  const peak = Math.min(9, Math.max(2, len * 0.14));
-  return path.map((p, i) => new THREE.Vector3(p.x, 0.6 + peak * Math.sin((Math.PI * i) / (path.length - 1)), p.z));
-}
+/** Links lie along their path, just above the ground tiles (never z-fighting with them). */
+const LINK_Y = 0.35;
+const onPath = (path: Vec2[]) => path.map((p) => new THREE.Vector3(p.x, LINK_Y, p.z));
 
 /** The id the user is focusing on (hover wins over selection), if it is something links attach to. */
 function focusId(s: { hoverId: string | null; selection: { kind: string; id?: string } | null }) {
@@ -213,7 +209,7 @@ export const Road = memo(function Road({ road, delay, linked }: { road: WRoad; d
     if (!f || !linked.has(f)) return "idle"; // focusing something without links leaves the web as it is
     return road.from === f || road.to === f ? "focus" : "dim";
   });
-  const curve = useMemo(() => new THREE.CatmullRomCurve3(arc(road.path)), [road.path]);
+  const curve = useMemo(() => new THREE.CatmullRomCurve3(onPath(road.path), false, "centripetal"), [road.path]);
   const isMedia = road.to.startsWith("w"); // dream -> work road (dream -> dream roads are recurring patterns)
   const color = isMedia ? (road.bright ? "#ffd27a" : "#d9a75a") : "#9db2ff";
   return (
@@ -223,20 +219,20 @@ export const Road = memo(function Road({ road, delay, linked }: { road: WRoad; d
       strength={road.strength}
       highlight={state === "focus"}
       dimmed={state === "dim"}
-      radius={road.bright ? 0.13 : 0.09}
+      radius={road.bright ? 0.18 : 0.13}
       dashed={road.dotted}
       revealDelay={delay}
     />
   );
 });
 
-/** The main boulevard: a smooth closed loop through the buildings that share its symbol. */
+/** The main boulevard: a smooth gold ring along the central island's ring road. */
 export function Boulevard({ anchors }: { anchors: Vec2[] }) {
-  // Slightly raised so it reads as a smooth ring over the ground; steps back while a building is in focus.
+  // Sits on the ring road; steps back while a building is in focus.
   const curve = useMemo(
     () =>
       new THREE.CatmullRomCurve3(
-        anchors.map((p) => new THREE.Vector3(p.x, 0.6, p.z)),
+        anchors.map((p) => new THREE.Vector3(p.x, LINK_Y - 0.05, p.z)),
         true,
         "centripetal",
       ),

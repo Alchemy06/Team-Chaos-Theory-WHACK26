@@ -13,9 +13,9 @@ const tmp = new THREE.Object3D();
 function FogRing({ radius }: { radius: number }) {
   const ref = useRef<THREE.InstancedMesh>(null);
   const group = useRef<THREE.Group>(null);
-  const count = 260;
+  const count = 160;
   const material = useMemo(
-    () => new THREE.MeshBasicMaterial({ color: "#7d8fd0", transparent: true, opacity: 0.075, depthWrite: false }),
+    () => new THREE.MeshBasicMaterial({ color: "#7d8fd0", transparent: true, opacity: 0.035, depthWrite: false }),
     [],
   );
   useLayoutEffect(() => {
@@ -24,7 +24,7 @@ function FogRing({ radius }: { radius: number }) {
     const rng = rngFor("fog");
     for (let i = 0; i < count; i++) {
       const a = rng() * Math.PI * 2;
-      const r = radius + 1 + rng() * 16;
+      const r = radius + 8 + rng() * 18; // out beyond the islands, over open water
       const s = 2 + Math.floor(rng() * 4);
       tmp.position.set(Math.cos(a) * r, 0.5 + rng() * 4, Math.sin(a) * r);
       tmp.scale.set(s, 1 + Math.floor(rng() * 3), s);

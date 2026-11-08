@@ -14,6 +14,8 @@ import { LinkLayer } from "./LinkLayer";
 import { Plaza } from "./Plaza";
 import { SelectionMarker } from "./SelectionMarker";
 import { Terrain } from "./Terrain";
+import { Water } from "./Water";
+import { Bridges } from "./Bridges";
 import { markWorldMounted } from "./useRise";
 
 function CityScene() {
@@ -23,7 +25,9 @@ function CityScene() {
   return (
     <>
       <Lighting radius={city.radius} />
+      <Water radius={city.radius} />
       <Terrain city={city} />
+      <Bridges bridges={city.bridges} />
       <Plaza />
       {city.buildings.map((b) => {
         if (!model.visible.has(b.id)) return null;
