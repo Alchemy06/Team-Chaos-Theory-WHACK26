@@ -19,7 +19,7 @@ const EXAMPLES = [
 
 // ------------------ Displaying Building Process ------------------ //
 
-const BUILD_STEPS = ["Writing the dream entry", "Extracting emotion, symbols & intensity", "Finding your district and street", "Scoring roads to your library"];
+const BUILD_STEPS = ["Writing the dream entry", "Extracting emotion, symbols & intensity", "Finding your district and street", "Linking it to your library"];
 
 function BuildingProgress() {
   const [step, setStep] = useState(0);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ComponentRef } from "react";
+import { useCallback, useEffect, useRef, type ComponentRef } from "react";
 import { MapControls, OrthographicCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -78,6 +78,9 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
 
   // Reset view
   useEffect(() => {
+    // ── (ADDED) Explicit reset overrides a stale interaction or island focus ──
+    interacting.current = false;
+    islandView.current = false;
     goal.current = { target: new THREE.Vector3(), zoom: fitZoom };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nonce]);
@@ -102,6 +105,40 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
     if (delta.lengthSq() < 1e-5 && Math.abs(g.zoom - cam.zoom) < 0.01) goal.current = null;
   });
 
+  // ── (ADDED) Stable callbacks prevent MapControls reconnecting during a drag ──
+  const handleStart = useCallback(() => {
+    interacting.current = true;
+    goal.current = null;
+  }, []);
+  const handleEnd = useCallback(() => { interacting.current = false; }, []);
+  const handleChange = useCallback(() => {
+    const c = controls.current;
+    if (!c) return;
+    const max = layout.radius + 30;
+    const len = Math.hypot(c.target.x, c.target.z);
+    if (len > max) {
+      const f = max / len;
+      const dx = c.target.x * f - c.target.x;
+      const dz = c.target.z * f - c.target.z;
+      c.target.x += dx;
+      c.target.z += dz;
+      c.object.position.x += dx;
+      c.object.position.z += dz;
+    }
+  }, [layout.radius]);
+
+  useEffect(() => {
+    const endInterruptedDrag = () => { interacting.current = false; };
+    window.addEventListener("blur", endInterruptedDrag);
+    window.addEventListener("pointerup", endInterruptedDrag);
+    window.addEventListener("pointercancel", endInterruptedDrag);
+    return () => {
+      window.removeEventListener("blur", endInterruptedDrag);
+      window.removeEventListener("pointerup", endInterruptedDrag);
+      window.removeEventListener("pointercancel", endInterruptedDrag);
+    };
+  }, []);
+
   const camPos: [number, number, number] = [
     Math.cos(AZIMUTH) * Math.cos(ELEV) * DIST,
     Math.sin(ELEV) * DIST,
@@ -123,29 +160,9 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
         zoomToCursor
         autoRotate={!selection}
         autoRotateSpeed={0.12}
-        onStart={() => {
-          interacting.current = true;
-          goal.current = null;
-        }}
-        onEnd={() => {
-          interacting.current = false;
-        }}
-        onChange={() => {
-          // keep the camera over the island
-          const c = controls.current;
-          if (!c) return;
-          const max = layout.radius + 30; // room for the free-area offset when focusing an outer island
-          const len = Math.hypot(c.target.x, c.target.z);
-          if (len > max) {
-            const f = max / len;
-            const dx = c.target.x * f - c.target.x;
-            const dz = c.target.z * f - c.target.z;
-            c.target.x += dx;
-            c.target.z += dz;
-            c.object.position.x += dx;
-            c.object.position.z += dz;
-          }
-        }}
+        onStart={handleStart}
+        onEnd={handleEnd}
+        onChange={handleChange}
       />
     </>
   );

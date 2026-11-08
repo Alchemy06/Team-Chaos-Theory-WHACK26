@@ -5,11 +5,16 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Emotion, Extraction, Selection, Work, WorkKind } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
+import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import { computeModel } from "./cityModel";
 
 export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
 export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
+
+/** A small "it's created" popup in the middle of the screen that fades away by itself. */
+export type Notice = { id: number; title: string; body?: string; color?: string };
+const NOTICE_MS = 2600;
 
 export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo" };
 
@@ -46,6 +51,7 @@ type State = {
   cameraNonce: number;
   citation: string | null;
   entryOpen: string | null; // dream id whose full journal entry is open
+  notice: Notice | null;
   settings: Settings;
   record: RecordState;
 
@@ -57,6 +63,7 @@ type State = {
   toggleSetting: (k: keyof Settings) => void;
   openCitation: (id: string | null) => void;
   openEntry: (dreamId: string | null) => void;
+  showNotice: (n: Omit<Notice, "id">) => void;
   requestInsight: (dreamId: string) => Promise<void>;
 
   openRecord: () => void;
@@ -83,6 +90,9 @@ const emptyRecord: RecordState = {
   sessionId: null,
   questionIds: [],
 };
+
+// ── (ADDED) Deduplicate overlapping database refreshes ──
+let cityRequestActive = false;
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -118,14 +128,21 @@ export const useCityStore = create<State>()(
       cityError: null,
       // ── (ADDED) Database is the sole source of map buildings ──
       loadCity: async () => {
+        if (cityRequestActive) return;
+        cityRequestActive = true;
         set({ cityLoading: true, cityError: null });
         try {
           const response = await fetch("/api/city", { cache: "no-store" });
           if (!response.ok) throw new Error("Could not load saved buildings.");
           const data = await response.json() as { dreams: Dream[] };
-          set({ userDreams: data.dreams, cityLoading: false, timelineDay: null });
+          // ── (ADDED) Unchanged database rows must not rebuild terrain and meshes ──
+          const unchanged = JSON.stringify(get().userDreams) === JSON.stringify(data.dreams);
+          set({ userDreams: unchanged ? get().userDreams : data.dreams, cityLoading: false,
+            ...(unchanged ? {} : { timelineDay: null }) });
         } catch (error) {
           set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
+        } finally {
+          cityRequestActive = false;
         }
       },
       insights: {},
@@ -138,6 +155,7 @@ export const useCityStore = create<State>()(
       cameraNonce: 0,
       citation: null,
       entryOpen: null,
+      notice: null,
       settings: { pixelation: true, bloom: true, labels: true },
       record: emptyRecord,
 
@@ -149,6 +167,13 @@ export const useCityStore = create<State>()(
       toggleSetting: (k) => set((s) => ({ settings: { ...s.settings, [k]: !s.settings[k] } })),
       openCitation: (citation) => set({ citation }),
       openEntry: (entryOpen) => set({ entryOpen }),
+      showNotice: (n) => {
+        const id = Date.now();
+        set({ notice: { ...n, id } });
+        setTimeout(() => {
+          if (get().notice?.id === id) set({ notice: null });
+        }, NOTICE_MS);
+      },
 
       // Ask the backend for a grounded insight for one dream (cached).
       requestInsight: async (dreamId) => {
@@ -280,6 +305,11 @@ export const useCityStore = create<State>()(
         setTimeout(() => {
           if (get().justBuiltId === dream.id) set({ justBuiltId: null });
         }, 4000);
+        get().showNotice({
+          title: "Dream recorded",
+          body: `Rising on the ${EMOTION_LABELS[dream.primaryEmotion]} island`,
+          color: EMOTION_COLORS[dream.primaryEmotion],
+        });
         void get().requestInsight(dream.id);
       },
 

@@ -57,7 +57,7 @@ export function buildEvidencePack(args: {
       const notIn = dream.symbols.filter((s) => !w.symbols.includes(s));
       items.push({
         id: `road:${r.to}`,
-        text: `Road to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}), strength ${r.strength}. Shared symbols (${r.shared.length}): ${r.shared.join(", ")}.${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${when}${rating} Dream symbols not in this work: ${notIn.join(", ") || "none"}.${r.dreamerMentioned ? " The dreamer named this work themselves while recording the dream." : ""}`,
+        text: `Link to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}), strength ${r.strength}. Shared symbols (${r.shared.length}): ${r.shared.join(", ")}.${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${when}${rating} Dream symbols not in this work: ${notIn.join(", ") || "none"}.${r.dreamerMentioned ? " The dreamer named this work themselves while recording the dream." : ""}`,
       });
     } else {
       const d = dreams.get(r.to);

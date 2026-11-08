@@ -68,7 +68,7 @@ export function checkExtraction(raw: unknown, entry: Entry): CheckResult {
   const symbolsIn = strings(r.symbols);
   const symbols = [...new Set(symbolsIn.filter(isSymbol))];
   const newSymbols = [...new Set([...strings(r.newSymbols), ...symbolsIn.filter((s) => !isSymbol(s))])].filter((s) => !isSymbol(s));
-  if (symbols.length === 0) warnings.push("No symbols from the list were found, so this dream will have no roads.");
+  if (symbols.length === 0) warnings.push("No symbols from the list were found, so this dream will have no links.");
   const themesIn = strings(r.themes);
   const themes = [...new Set(themesIn.filter(isTheme))];
   const dropped = themesIn.filter((t) => !isTheme(t));

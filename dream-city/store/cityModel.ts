@@ -42,7 +42,16 @@ export type CityModel = {
 let cache: { userDreams: Dream[]; day: number | null; insights: Record<string, StoredInsight>; model: CityModel } | null = null;
 
 export function computeModel(userDreams: Dream[], day: number | null, insights: Record<string, StoredInsight>): CityModel {
-  if (cache && cache.userDreams === userDreams && cache.day === day && cache.insights === insights) return cache.model;
+  // ── (ADDED) Text-only insight updates reuse the existing 3D geometry ──
+  if (cache && cache.userDreams === userDreams && cache.day === day) {
+    if (cache.insights === insights) return cache.model;
+    const allDreams = userDreams.map((d) => insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d);
+    const dreamById = new Map(allDreams.map((d) => [d.id, d]));
+    const model = { ...cache.model, allDreams, dreamById,
+      dreams: cache.model.dreams.map((d) => dreamById.get(d.id) ?? d) };
+    cache = { userDreams, day, insights, model };
+    return model;
+  }
 
   const allDreams = userDreams.map((d) => (insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d));
   const allWorks: Work[] = [];

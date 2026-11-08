@@ -123,9 +123,9 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
       <TypicalDreams ids={dream.typicalDreams ?? []} />
 
       <section>
-        <SectionTitle>Roads from this building</SectionTitle>
+        <SectionTitle>Links from this building</SectionTitle>
         {links.length === 0 ? (
-          <p className="text-[13px] text-ink-dim">No link is strong enough to draw a road yet.</p>
+          <p className="text-[13px] text-ink-dim">No link is strong enough to draw yet.</p>
         ) : (
           <ul className="space-y-2">
             {links.map((l) => {

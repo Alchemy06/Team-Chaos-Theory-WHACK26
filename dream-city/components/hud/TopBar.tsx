@@ -50,7 +50,7 @@ export function TopBar() {
         <div className="hidden border-l-2 border-line pl-4 sm:block">
           <div className="text-[14px] leading-tight text-ink">Saved dream city</div>
           <div className="text-[12px] leading-tight text-ink-dim">
-            {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
+            {model.dreams.length} dreams · {model.works.length} works · {model.links.length} links
           </div>
         </div>
       </PixelPanel>

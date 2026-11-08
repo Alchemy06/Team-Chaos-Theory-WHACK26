@@ -26,7 +26,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
   return (
     <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title="Your dream city" meta="Built from saved database journals.">
       <p className="font-display text-[10px] uppercase tracking-wider text-ink-dim">
-        {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
+        {model.dreams.length} dreams · {model.works.length} works · {model.links.length} links
       </p>
       <section>
         <SectionTitle>Dominant districts</SectionTitle>

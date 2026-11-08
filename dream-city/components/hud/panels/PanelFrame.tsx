@@ -22,7 +22,8 @@ export function PanelFrame({
   onTitleClick?: () => void; // makes the title a button (e.g. open the full journal entry)
   titleHint?: string;
 }) {
-  const select = useCityStore((s) => s.select);
+  // ── (ADDED) Closing details explicitly restores the full-city camera ──
+  const resetCamera = useCityStore((s) => s.resetCamera);
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="h-2 shrink-0" style={{ background: `repeating-linear-gradient(90deg, ${color} 0 12px, transparent 12px 16px)` }} />
@@ -47,7 +48,7 @@ export function PanelFrame({
           </h2>
           {meta && <div className="mt-1.5 text-[13px] text-ink-dim">{meta}</div>}
         </div>
-        <button type="button" onClick={() => select(null)} aria-label="Close panel" className="pixel-btn grid h-8 w-8 shrink-0 place-items-center font-display text-xs">
+        <button type="button" onClick={resetCamera} aria-label="Close panel" className="pixel-btn grid h-8 w-8 shrink-0 place-items-center font-display text-xs">
           ✕
         </button>
       </header>
