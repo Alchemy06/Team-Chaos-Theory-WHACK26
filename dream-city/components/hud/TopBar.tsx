@@ -12,7 +12,6 @@ const SETTING_LABELS: Record<keyof Settings, string> = {
   pixelation: "Pixel filter",
   bloom: "Glow (bloom)",
   labels: "Map labels",
-  sound: "Ambient sound",
 };
 
 function Logo() {

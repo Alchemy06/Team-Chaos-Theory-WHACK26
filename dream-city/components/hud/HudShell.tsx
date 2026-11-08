@@ -45,7 +45,7 @@ export function HudShell() {
         </div>
       )}
       <div className="absolute bottom-3 left-3 hidden lg:block">
-        <DistrictLegend />
+        <DistrictLegend collapsible />
       </div>
       <div
         className={`absolute inset-x-2 bottom-2 flex flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:justify-center md:inset-x-auto md:left-1/2 md:-translate-x-1/2 ${hasSelection ? "max-md:hidden" : ""}`}

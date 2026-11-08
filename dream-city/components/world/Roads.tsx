@@ -268,7 +268,8 @@ function Motes({
 /** The id the user is focusing on (hover wins over selection), if it is something links attach to. */
 function focusId(s: { hoverId: string | null; selection: { kind: string; id?: string } | null }) {
   const id = s.hoverId ?? (s.selection && "id" in s.selection ? s.selection.id : null);
-  return id && !id.startsWith("landmark:") && id !== "plaza" ? id : null;
+  if (s.selection?.kind === "island" && !s.hoverId) return null;
+  return id && !id.startsWith("landmark:") && !id.startsWith("island:") && id !== "plaza" ? id : null;
 }
 
 export const Road = memo(function Road({ road, delay, linked }: { road: WRoad; delay: number; linked: Set<string> }) {

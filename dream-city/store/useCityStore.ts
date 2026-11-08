@@ -3,14 +3,13 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
-import type { Dream, Extraction, Selection } from "@/lib/types";
+import type { Dream, Emotion, Extraction, Selection } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
-import { playRiseTone, setAmbient } from "@/services/sound";
 import { computeModel } from "./cityModel";
 
-export type UISelection = Selection | { kind: "plaza" } | null;
+export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
-export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean; sound: boolean };
+export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
 
 export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo" };
 
@@ -110,7 +109,7 @@ export const useCityStore = create<State>()(
       justBuiltId: null,
       cameraNonce: 0,
       citation: null,
-      settings: { pixelation: true, bloom: true, labels: true, sound: false },
+      settings: { pixelation: true, bloom: true, labels: true },
       record: emptyRecord,
 
       select: (selection) => set({ selection }),
@@ -118,12 +117,7 @@ export const useCityStore = create<State>()(
       setTimelineDay: (timelineDay) => set({ timelineDay }),
       setPlaying: (playing) => set({ playing }),
       resetCamera: () => set((s) => ({ cameraNonce: s.cameraNonce + 1, selection: null })),
-      toggleSetting: (k) =>
-        set((s) => {
-          const settings = { ...s.settings, [k]: !s.settings[k] };
-          if (k === "sound") setAmbient(settings.sound);
-          return { settings };
-        }),
+      toggleSetting: (k) => set((s) => ({ settings: { ...s.settings, [k]: !s.settings[k] } })),
       openCitation: (citation) => set({ citation }),
 
       // Ask the backend for a grounded insight for one dream (cached).
@@ -249,7 +243,6 @@ export const useCityStore = create<State>()(
           selection: { kind: "dream", id: dream.id },
           timelineDay: null,
         }));
-        if (get().settings.sound) playRiseTone();
         setTimeout(() => {
           if (get().justBuiltId === dream.id) set({ justBuiltId: null });
         }, 4000);
@@ -269,7 +262,12 @@ export const useCityStore = create<State>()(
           ...current,
           userDreams: current.userDreams,
           insights: p.insights && typeof p.insights === "object" ? p.insights : {},
-          settings: { ...current.settings, ...(p.settings ?? {}), sound: false },
+          // only keep known settings (older saves may still carry the removed "sound" flag)
+          settings: {
+            pixelation: p.settings?.pixelation ?? current.settings.pixelation,
+            bloom: p.settings?.bloom ?? current.settings.bloom,
+            labels: p.settings?.labels ?? current.settings.labels,
+          },
         };
       },
     },
