@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useCity } from "@/store/useCity";
 import { useCityStore } from "@/store/useCityStore";
 import { Ambience } from "./Ambience";
+import { Cosy } from "./Cosy";
 import { ConstructionSite, DreamBuilding, LibraryBuilding } from "./Buildings";
 import { CameraRig } from "./CameraRig";
 import { Effects } from "./Effects";
@@ -46,6 +47,7 @@ function CityScene() {
       <SelectionMarker city={city} />
       <CameraPublisher />
       <Ambience radius={city.radius} />
+      <Cosy city={city} />
       <CameraRig layout={city} />
     </>
   );
