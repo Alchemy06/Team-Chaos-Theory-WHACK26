@@ -2,7 +2,7 @@
 Our Project for WHACK26 hackathon
 
 
-This project uses docker to reproduce the application environment on any device
+This project uses docker to reproduce the application environment on any device easily without causing problems
 
 Requirement:
 
