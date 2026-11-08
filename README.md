@@ -12,4 +12,7 @@ Requirement:
   
 
 To setup you have to use command -> "docker compose up --build -d" in project terminal
-  
+
+Core Objective :
+
+Tests :
