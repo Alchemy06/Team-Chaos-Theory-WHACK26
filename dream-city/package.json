@@ -11,7 +11,8 @@
     "test": "node --experimental-strip-types --test tests/journalSequence.test.mjs tests/journalMarkdown.test.mjs tests/loadSavedDreams.test.mjs",
     "test:llm2": "node --test tests/llm2Markdown.test.mjs",
     "test:llm2:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/llm2Emotion.live.test.mjs",
-    "test:insight:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/insight.live.test.mjs"
+    "test:insight:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/insight.live.test.mjs",
+    "test:reexplore": "node --test tests/reexplore.test.mjs tests/reexploreDatabase.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",
@@ -27,6 +28,7 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.15",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

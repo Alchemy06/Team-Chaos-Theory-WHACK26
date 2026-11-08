@@ -26,9 +26,30 @@ export function Highlighted({ text, symbols }: { text: string; symbols: string[]
   return <>{out}</>;
 }
 
-export function LinkCard({ link, title, sub, icon, onOpen, otherText }: { link: Link; title: string; sub: string; icon: string; onOpen: () => void; otherText?: string }) {
+export function LinkCard({ link, title, sub, icon, onOpen, otherText, compact = false }: { link: Link; title: string; sub: string; icon: string; onOpen: () => void; otherText?: string; compact?: boolean }) {
   // Same words as the map key: strong, recurring, weaker (dashed); anything in between is moderate.
   const tag = link.strength >= STRONG_STRENGTH ? "strong" : link.toType === "dream" ? "recurring" : link.strength < WEAK_STRENGTH ? "weaker" : "moderate";
+  if (compact) return (
+    <div className="border border-line bg-(--well)">
+      <button type="button" onClick={onOpen} className="pixel-focus group flex w-full items-center gap-3 p-3 text-left hover:bg-(--hover)">
+        <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center text-lg text-ink-dim">{icon}</span>
+        <span className="min-w-0 flex-1"><span className="block truncate font-sans text-[14px] font-medium text-ink">{title}</span>
+          <span className="mt-1 block font-display text-[8px] uppercase tracking-wider text-ink-faint">{sub}</span>
+          <span className="mt-1.5 block font-sans text-[12px] leading-relaxed text-ink-dim">{link.shared.length ? `Shared: ${link.shared.slice(0,3).join(", ")}` : `Themes: ${link.sharedThemes.slice(0,2).join(", ")}`}</span>
+        </span>
+        <span aria-hidden className="text-ink-faint group-hover:text-gold">→</span>
+      </button>
+      <details className="border-t border-line/60 px-3 py-2">
+        <summary className="pixel-focus cursor-pointer font-sans text-[11px] text-ink-faint">Why this connection?</summary>
+        <div className="space-y-2 pt-2 font-sans text-[12px] leading-relaxed text-ink-dim">
+          <p>{link.explanation}</p>
+          <p title="A heuristic similarity score, not a probability">Connection score: {Math.round(link.strength * 100)} · {tag}</p>
+          {otherText && <p className="border-l border-line pl-2 italic"><Highlighted text={otherText} symbols={link.shared} /></p>}
+          {link.researchCardIds.length > 0 && <CitedText className="text-[11px] text-ink-faint" text={`Evidence: ${link.researchCardIds.map(c => `[card:${c}]`).join(" ")}`} />}
+        </div>
+      </details>
+    </div>
+  );
   return (
     <div className="border-2 border-line bg-(--well)">
       <button type="button" onClick={onOpen} className="pixel-focus flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-(--hover)">
