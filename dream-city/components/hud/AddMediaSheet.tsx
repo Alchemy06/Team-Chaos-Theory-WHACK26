@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useCityStore } from "@/store/useCityStore";
 import { PixelButton, PixelPanel, cx } from "./ui/Pixel";
 
 type Kind = "book" | "film" | "song" | "game";
@@ -104,6 +105,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Save failed (${res.status})`);
       setSaved(data as Saved);
+      void useCityStore.getState().loadMedia(); // refresh the Related media lists
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

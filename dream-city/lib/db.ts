@@ -173,3 +173,14 @@ export async function listMedia(opts: { since?: string; limit?: number } = {}): 
   if (opts.limit) q = q.limit(opts.limit);
   return must(await q);
 }
+
+// The same work already saved? Matches on external_id (e.g. tmdb:603) or on kind + title, ignoring case.
+export async function findDuplicateMedia(m: { kind: string; title: string; external_id?: string | null }): Promise<Media | null> {
+  if (m.external_id) {
+    const byId = must(await db().from("media").select().eq("external_id", m.external_id).limit(1)) as Media[];
+    if (byId.length) return byId[0];
+  }
+  const title = m.title.trim().replace(/[%_\\]/g, (c) => "\\" + c); // escape ilike wildcards
+  const byTitle = must(await db().from("media").select().eq("kind", m.kind).ilike("title", title).limit(1)) as Media[];
+  return byTitle[0] ?? null;
+}

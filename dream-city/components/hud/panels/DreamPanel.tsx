@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { computeLinks } from "@/lib/link";
 import type { Dream } from "@/lib/types";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import type { CityModel } from "@/store/cityModel";
@@ -113,6 +114,8 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         )}
       </section>
 
+      <RelatedMedia dream={dream} />
+
       <section>
         <SectionTitle>Transcript</SectionTitle>
         <p className="text-[15px] leading-relaxed text-ink-dim">
@@ -130,5 +133,41 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         )}
       </section>
     </PanelFrame>
+  );
+}
+
+// Media from the + Media form that shares themes (and maybe the feeling) with this dream.
+// Same scoring as the roads (lib/link.ts), but listed here instead of drawn as buildings.
+function RelatedMedia({ dream }: { dream: Dream }) {
+  const media = useCityStore((s) => s.userWorks);
+  const related = useMemo(() => {
+    const byId = new Map(media.map((m) => [m.id, m]));
+    return computeLinks([dream], media, { maxWorksPerDream: 5, maxDreamsPerDream: 0 })
+      .filter((l) => l.toType === "work")
+      .map((l) => ({ link: l, work: byId.get(l.to)! }));
+  }, [dream, media]);
+
+  return (
+    <section>
+      <SectionTitle>Related media</SectionTitle>
+      {related.length === 0 ? (
+        <p className="text-[13px] text-ink-dim">
+          {media.length === 0 ? "Add films, books or songs with + Media to see links here." : "Nothing you logged before this dream shares its themes yet."}
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {related.map(({ link, work }) => (
+            <li key={work.id} className="border-2 border-line bg-[#0a1030] px-3 py-2">
+              <div className="flex items-baseline gap-2 text-[14px] text-ink">
+                <span aria-hidden>{WORK_ICON[work.kind]}</span>
+                <span className="truncate">{work.title}</span>
+                <span className="ml-auto shrink-0 font-display text-[10px] text-ink-faint">{Math.round(link.strength * 100)}%</span>
+              </div>
+              <p className="mt-1 text-[12px] leading-snug text-ink-dim">{link.explanation}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }

@@ -18,6 +18,7 @@ export function HudShell() {
 
   useEffect(() => {
     void useCityStore.persist.rehydrate();
+    void useCityStore.getState().loadMedia();
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       const s = useCityStore.getState();

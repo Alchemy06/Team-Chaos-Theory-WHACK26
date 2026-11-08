@@ -2,7 +2,7 @@
 // POST /api/media { kind, title, creator?, consumed_on?, user_note?, external_id? }
 //   -> Groq fills main_emotion + themes, then the row is saved.
 import { z } from "zod";
-import { listMedia } from "@/lib/db";
+import { findDuplicateMedia, listMedia } from "@/lib/db";
 import { addMediaTagged } from "@/lib/mediaTags";
 
 const Body = z.object({
@@ -27,6 +27,8 @@ export async function POST(req: Request) {
   if (!parsed.success) return Response.json({ error: parsed.error.message }, { status: 400 });
   const b = parsed.data;
   try {
+    const dup = await findDuplicateMedia({ kind: b.kind, title: b.title, external_id: b.external_id });
+    if (dup) return Response.json({ error: `“${dup.title}” is already in your library.` }, { status: 409 });
     const row = await addMediaTagged({
       kind: b.kind,
       title: b.title,

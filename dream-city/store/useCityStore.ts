@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
-import type { Dream, Extraction, Selection } from "@/lib/types";
+import type { Dream, Emotion, Extraction, Selection, Work, WorkKind } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchFollowUps, fetchInsight } from "@/services/api";
 import { offlineExtract } from "@/services/offline";
 import { playRiseTone, setAmbient } from "@/services/sound";
@@ -30,6 +30,8 @@ type RecordState = {
 
 type State = {
   userDreams: Dream[];
+  userWorks: Work[]; // media from Supabase (the + Media form); shown in a dream's panel, not as buildings
+  loadMedia: () => Promise<void>;
   insights: Record<string, StoredInsight>;
   insightLoading: Record<string, boolean>;
   selection: UISelection;
@@ -75,10 +77,34 @@ const emptyRecord: RecordState = {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+type MediaRow = { id: string; kind: WorkKind; title: string; creator: string | null; consumed_on: string; user_note: string | null; themes: string[]; main_emotion: Emotion | null };
+const mediaToWork = (m: MediaRow): Work => ({
+  id: `media:${m.id}`,
+  title: m.title,
+  creator: m.creator ?? undefined,
+  kind: m.kind,
+  consumedOn: m.consumed_on,
+  userNote: m.user_note ?? undefined,
+  primaryEmotion: m.main_emotion as Emotion,
+  symbols: [],
+  themes: m.themes,
+});
+
 export const useCityStore = create<State>()(
   persist(
     (set, get) => ({
       userDreams: [],
+      userWorks: [],
+      loadMedia: async () => {
+        try {
+          const res = await fetch("/api/media");
+          if (!res.ok) return;
+          const { media } = (await res.json()) as { media: MediaRow[] };
+          set({ userWorks: media.filter((m) => m.main_emotion).map(mediaToWork) });
+        } catch {
+          // offline or Supabase not set up: the city just shows the demo works
+        }
+      },
       insights: {},
       insightLoading: {},
       selection: null,

@@ -7,7 +7,8 @@ const DAY = 24 * 60 * 60 * 1000;
 
 // Heuristic weights: tune them on the demo persona, and say they are heuristics if asked.
 const W_SYMBOLS = 0.5;
-const W_THEMES = 0.2;
+const W_THEMES = 0.3;
+const W_EMOTION = 0.15; // the work's main feeling matches the dream's district
 const W_RECENCY = 0.2;
 const W_INVOLVEMENT = 0.1;
 export const MIN_STRENGTH = 0.35; // below this, no road is drawn
@@ -55,14 +56,17 @@ export function computeLinks(
     const candidates: Link[] = [];
     for (const work of works) {
       const shared = overlap(dream.symbols, work.symbols);
-      if (shared.length === 0) continue;
+      const sharedThemes = overlap(dream.themes, work.themes);
+      const sameEmotion = dream.primaryEmotion === work.primaryEmotion;
+      // A road needs real evidence: a shared symbol, or a shared theme (media from the form has themes, no symbols).
+      if (shared.length === 0 && sharedThemes.length === 0) continue;
       const daysBefore = work.consumedOn ? Math.round((dreamTime - Date.parse(work.consumedOn)) / DAY) : null;
       if (daysBefore !== null && daysBefore < 0) continue; // finished after the dream: can't have fed it
-      const sharedThemes = overlap(dream.themes, work.themes);
       const involvement = work.rating ? (work.rating - 1) / 4 : 0.5;
       const strength =
         W_SYMBOLS * ratio(shared.length, dream.symbols, work.symbols) +
         W_THEMES * ratio(sharedThemes.length, dream.themes, work.themes) +
+        W_EMOTION * (sameEmotion ? 1 : 0) +
         W_RECENCY * recency(daysBefore) +
         W_INVOLVEMENT * involvement;
       if (strength < MIN_STRENGTH) continue;
@@ -80,7 +84,7 @@ export function computeLinks(
         sharedThemes,
         daysBefore,
         strength: Math.round(strength * 100) / 100,
-        explanation: `Shares ${shared.join(", ")} with ${work.title}${when}.`,
+        explanation: `Shares ${[...shared, ...sharedThemes.map((t) => `the theme ${t}`)].join(", ")}${sameEmotion ? ` and the feeling ${work.primaryEmotion}` : ""} with ${work.title}${when}.`,
         researchCardIds:
           daysBefore !== null && (DAY_RESIDUE(daysBefore) || DREAM_LAG(daysBefore))
             ? ["media-2018", "dream-lag-2011"]
