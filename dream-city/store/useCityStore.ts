@@ -3,12 +3,12 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
-import type { Dream, Extraction, Selection } from "@/lib/types";
+import type { Dream, Emotion, Extraction, Selection } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
 import { offlineExtract } from "@/services/offline";
 import { computeModel } from "./cityModel";
 
-export type UISelection = Selection | { kind: "plaza" } | null;
+export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
 export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
 

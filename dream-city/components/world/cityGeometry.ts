@@ -51,6 +51,7 @@ export type WRoad = {
   lift: number[]; // height above the ground at each sample: each link is an arch
 };
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
+export type WIsland = { emotion: Emotion; center: Vec2; radius: number };
 export type WorldCity = {
   districts: WDistrict[];
   streets: WStreet[];
@@ -60,6 +61,8 @@ export type WorldCity = {
   landmarks: WLandmark[];
   /** land cell key -> emotion island, or "centre" */
   land: Map<string, Emotion | "centre">;
+  /** Each emotion island's centre and how far its land reaches, for camera framing. */
+  islands: WIsland[];
   pathCells: Set<string>;
   ringCells: Set<string>;
   radius: number;
@@ -274,10 +277,24 @@ export function toWorldCity(
     }
   }
 
+  // ---------- islands: centre and reach of each emotion's land ----------
+  const cellsOf = new Map<Emotion, Vec2[]>();
+  for (const [k, owner] of land) {
+    if (owner === "centre") continue;
+    const [x, z] = k.split(",").map(Number);
+    cellsOf.set(owner, [...(cellsOf.get(owner) ?? []), { x, z }]);
+  }
+  const islands: WIsland[] = [...cellsOf].map(([emotion, cells]) => {
+    const cx = cells.reduce((s, c) => s + c.x, 0) / cells.length;
+    const cz = cells.reduce((s, c) => s + c.z, 0) / cells.length;
+    const reach = Math.max(...cells.map((c) => Math.hypot(c.x - cx, c.z - cz)));
+    return { emotion, center: { x: cx, z: cz }, radius: reach };
+  });
+
   let radius = CENTRAL_R;
   for (const k of land.keys()) {
     const [x, z] = k.split(",").map(Number);
     radius = Math.max(radius, Math.hypot(x, z));
   }
-  return { districts, streets, buildings, roads, boulevard, landmarks, land, pathCells, ringCells, radius: radius + 1 };
+  return { districts, streets, buildings, roads, boulevard, landmarks, land, islands, pathCells, ringCells, radius: radius + 1 };
 }

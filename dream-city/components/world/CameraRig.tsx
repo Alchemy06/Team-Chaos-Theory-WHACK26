@@ -24,13 +24,29 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
   const nonce = useCityStore((s) => s.cameraNonce);
   const recordOpen = useCityStore((s) => s.record.open);
 
-  // Fly to a selection
+  // Fly to a selection; deselecting an island or the plaza flies back out to the whole city.
+  const prevKind = useRef<string | null>(null);
   useEffect(() => {
-    if (!selection) return;
+    const prev = prevKind.current;
+    prevKind.current = selection?.kind ?? null;
+    if (!selection) {
+      if (prev === "island" || prev === "plaza") goal.current = { target: new THREE.Vector3(), zoom: fitZoom };
+      return;
+    }
     const hit = locate(layout, selection);
     if (!hit) return;
     const panelOffset = size.width > 900 ? 1 : 0; // keep the building left of the side panel
-    const zoom = selection.kind === "plaza" ? Math.max(fitZoom * 1.3, 9) : Math.min(24, Math.max(fitZoom * 1.6, 14));
+    let zoom: number;
+    const sheet = size.width < 768; // on phones the panel is a bottom sheet over the lower ~62%
+    if (selection.kind === "island") {
+      // fit the whole island into the screen space the panel leaves free
+      const r = hit.w / 2;
+      const availW = panelOffset ? size.width - 440 : size.width;
+      const availH = sheet ? size.height * 0.36 : size.height;
+      zoom = Math.min(18, Math.max(fitZoom * 1.1, Math.min(availW, availH * 1.35) / (r * 2.3)));
+    } else {
+      zoom = selection.kind === "plaza" ? Math.max(fitZoom * 1.3, 9) : Math.min(24, Math.max(fitZoom * 1.6, 14));
+    }
     // shift target so the building sits left of centre when the panel is open
     const shift = panelOffset ? 200 / zoom : 0;
     const t = new THREE.Vector3(hit.pos.x, hit.top * 0.35, hit.pos.z);
@@ -41,8 +57,16 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
         t.addScaledVector(camRight, shift);
       }
     }
+    // On phones, lift the island into the visible area above the bottom sheet.
+    if (sheet && selection.kind === "island") {
+      const cam = controls.current?.object;
+      if (cam) {
+        const forward = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).setY(0).normalize();
+        t.addScaledVector(forward, -(size.height * 0.31) / (zoom * Math.sin(ELEV)));
+      }
+    }
     goal.current = { target: t, zoom };
-  }, [selection, layout, fitZoom, size.width]);
+  }, [selection, layout, fitZoom, size.width, size.height]);
 
   // Reset view
   useEffect(() => {
