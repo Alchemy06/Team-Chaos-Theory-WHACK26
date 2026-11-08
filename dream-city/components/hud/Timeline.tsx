@@ -29,46 +29,37 @@ export function Timeline() {
 
   const label = day === null ? "Tonight · full city" : `Night ${day + 1} · ${fmtDate(dayToDate(day))}`;
 
-  // A compact chip until hovered or focused (CSS: .timeline-wrap / .timeline-detail in globals.css);
-  // it stays open while playing or scrubbed back in time, so the replay stays visible.
-  const open = playing || day !== null;
   return (
-    <PixelPanel className="timeline-wrap pointer-events-auto px-3 py-2">
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => {
-            if (!playing && day === null) setDay(0);
-            setPlaying(!playing);
-          }}
-          className="pixel-btn grid h-9 w-9 shrink-0 place-items-center font-display text-xs"
-          aria-label={playing ? "Pause time-lapse" : "Play time-lapse"}
-        >
-          {playing ? "❚❚" : "▶"}
-        </button>
-        <div className="min-w-0 flex-1">
-          <div className="flex justify-between gap-3 font-display text-[10px] uppercase tracking-wider">
-            <span className="text-ink-faint">Time-lapse</span>
-            <span className="truncate text-gold">{label}</span>
-          </div>
-          <div className="timeline-detail" data-open={open}>
-            <div>
-              <input
-                type="range"
-                min={0}
-                max={max}
-                value={day ?? max}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  setPlaying(false);
-                  setDay(v >= max ? null : v);
-                }}
-                className="pixel-range mt-2 w-full"
-                aria-label="Replay the city night by night"
-              />
-            </div>
-          </div>
+    <PixelPanel className="pointer-events-auto flex items-center gap-3 px-3 py-2 sm:w-[min(460px,60vw)]">
+      <button
+        type="button"
+        onClick={() => {
+          if (!playing && day === null) setDay(0);
+          setPlaying(!playing);
+        }}
+        className="pixel-btn grid h-9 w-9 shrink-0 place-items-center font-display text-xs"
+        aria-label={playing ? "Pause time-lapse" : "Play time-lapse"}
+      >
+        {playing ? "❚❚" : "▶"}
+      </button>
+      <div className="min-w-0 flex-1">
+        <div className="mb-1.5 flex justify-between font-display text-[9px] uppercase tracking-wider">
+          <span className="text-ink-faint">Time-lapse</span>
+          <span className="text-gold">{label}</span>
         </div>
+        <input
+          type="range"
+          min={0}
+          max={max}
+          value={day ?? max}
+          onChange={(e) => {
+            const v = Number(e.target.value);
+            setPlaying(false);
+            setDay(v >= max ? null : v);
+          }}
+          className="pixel-range w-full"
+          aria-label="Replay the city night by night"
+        />
       </div>
     </PixelPanel>
   );

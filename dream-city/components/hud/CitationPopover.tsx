@@ -17,7 +17,7 @@ export function CitationPopover() {
             <span id="card-title" className="font-display text-[11px] uppercase tracking-[0.14em] text-gold">
               Research card · {card.id}
             </span>
-            <button type="button" onClick={() => close(null)} className="pixel-btn grid h-7 w-7 place-items-center font-display text-[11px]" aria-label="Close">
+            <button type="button" onClick={() => close(null)} className="pixel-btn grid h-7 w-7 place-items-center font-display text-[10px]" aria-label="Close">
               ✕
             </button>
           </div>
@@ -27,7 +27,7 @@ export function CitationPopover() {
               {card.citation} ↗
             </a>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="pixel-chip px-1.5 font-display text-[10px] uppercase leading-[16px] tracking-wider text-[var(--emo-confusion)]">{card.confidence}</span>
+              <span className="pixel-chip px-1.5 font-display text-[9px] uppercase leading-[16px] tracking-wider text-[var(--emo-confusion)]">{card.confidence}</span>
               {card.tags.map((t) => (
                 <span key={t} className="text-[12px] text-ink-faint">
                   #{t}

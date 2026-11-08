@@ -49,14 +49,14 @@ export function DistrictLegend({ collapsible = false }: { collapsible?: boolean 
   return (
     <PixelPanel className={cx("pointer-events-auto p-3", open ? "w-60" : "w-44")}>
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="font-display text-[11px] uppercase tracking-[0.14em] text-ink-faint">{open ? "Districts · emotions" : "Islands"}</span>
+        <span className="font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">{open ? "Districts · emotions" : "Islands"}</span>
         {collapsible && (
           <button
             type="button"
             aria-expanded={open}
             disabled={hasSelection}
             onClick={() => writeOpen(!savedOpen)}
-            className="pixel-focus font-display text-[10px] uppercase tracking-[0.12em] text-ink-dim hover:text-ink disabled:opacity-40"
+            className="pixel-focus font-display text-[9px] uppercase tracking-[0.12em] text-ink-dim hover:text-ink disabled:opacity-40"
           >
             Key {open ? "▾" : "▸"}
           </button>
@@ -72,14 +72,14 @@ export function DistrictLegend({ collapsible = false }: { collapsible?: boolean 
                 onClick={() => select({ kind: "island", id: e })}
                 aria-pressed={focusedIsland === e}
                 className={cx(
-                  "pixel-focus flex w-full items-center gap-1.5 rounded px-1 text-left hover:bg-(--hover)",
+                  "pixel-focus flex w-full items-center gap-1.5 text-left hover:bg-(--hover)",
                   open ? "text-[13px]" : "text-[11px]",
                   focusedIsland === e && "bg-(--hover)",
                 )}
               >
                 <span className="h-3 w-3 shrink-0" style={{ background: EMOTION_COLORS[e], boxShadow: "2px 2px 0 var(--shadow)" }} />
                 <span className="flex-1 truncate text-ink">{EMOTION_LABELS[e]}</span>
-                <span className="w-4 text-right font-display text-[11px] text-ink-dim">{n}</span>
+                <span className="w-4 text-right font-display text-[10px] text-ink-dim">{n}</span>
               </button>
             </li>
           );
@@ -87,17 +87,17 @@ export function DistrictLegend({ collapsible = false }: { collapsible?: boolean 
       </ul>
       {open && (
       <div className="mt-3 space-y-1 border-t-2 border-line pt-2 text-[12px] text-ink-dim">
-        <div className="mb-1 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing arcs between places</div>
+        <div className="mb-1 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing arcs between places</div>
         <KeyRow icon={<LineIcon color="#ffd27a" />}>Dream ↔ book, film, song or game</KeyRow>
         <KeyRow icon={<LineIcon color="#9db2ff" />}>Recurring · dream ↔ dream</KeyRow>
         <KeyRow icon={<LineIcon color="#d9a75a" dashed />}>Weaker link</KeyRow>
         <KeyRow icon={<LineIcon color="#ffd27a" thick />}>Strong link (thicker)</KeyRow>
         <p className="pb-1 text-[11px] text-ink-faint">Hover or select a building to light up its links.</p>
-        <div className="mb-1 mt-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Map</div>
+        <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Map</div>
         <KeyRow icon={<Swatch color="#5d6178" />}>Path</KeyRow>
         <KeyRow icon={<Swatch color="#8a7440" />}>Main boulevard · ring road on the central island</KeyRow>
         <KeyRow icon={<Swatch color="#4a5080" />}>Cloud sea · the city floats on a giant cloud</KeyRow>
-        <div className="mb-1 mt-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Places</div>
+        <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Places</div>
         <KeyRow icon={<span className="text-[var(--yours)]">★</span>}>Landmark · “Yours” symbol</KeyRow>
         <KeyRow icon={<span className="text-[#ff9d3b]">?</span>}>Construction site</KeyRow>
         <p className="pt-1 text-[11px] text-ink-faint">Height = intensity · lit windows = recent</p>

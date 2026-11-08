@@ -29,12 +29,12 @@ export function Highlighted({ text, symbols }: { text: string; symbols: string[]
 export function LinkCard({ link, title, sub, icon, onOpen, otherText }: { link: Link; title: string; sub: string; icon: string; onOpen: () => void; otherText?: string }) {
   const tag = link.strength >= STRONG_STRENGTH ? "strong" : link.toType === "dream" ? "recurring" : "possible";
   return (
-    <div className="rounded-md border-2 border-line bg-(--well)">
+    <div className="border-2 border-line bg-(--well)">
       <button type="button" onClick={onOpen} className="pixel-focus flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-(--hover)">
         <span className="grid h-8 w-8 shrink-0 place-items-center border-2 border-line-hi bg-panel-2 text-gold">{icon}</span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] text-ink">{title}</span>
-          <span className="block truncate font-display text-[10px] uppercase tracking-wider text-ink-faint">{sub}</span>
+          <span className="block truncate font-display text-[9px] uppercase tracking-wider text-ink-faint">{sub}</span>
         </span>
         <span className="text-right">
           <span className="block font-display text-[11px] text-gold">{Math.round(link.strength * 100)}</span>

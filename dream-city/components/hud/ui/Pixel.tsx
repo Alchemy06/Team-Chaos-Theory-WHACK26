@@ -37,7 +37,7 @@ export function IconButton({ label, className, children, ...props }: ButtonHTMLA
 export function SectionTitle({ children, aside }: { children: ReactNode; aside?: ReactNode }) {
   return (
     <div className="mb-2 flex items-baseline justify-between gap-2">
-      <h3 className="font-display text-[11px] uppercase tracking-[0.14em] text-ink-faint">{children}</h3>
+      <h3 className="font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">{children}</h3>
       {aside}
     </div>
   );
@@ -68,7 +68,7 @@ const LABEL_CLASS: Record<HonestyLabel, string> = {
 
 export function HonestyBadge({ label, title }: { label: HonestyLabel; title?: string }) {
   return (
-    <span title={title} className={cx("pixel-chip inline-flex items-center px-1.5 font-display text-[10px] uppercase leading-[16px] tracking-wider", LABEL_CLASS[label])}>
+    <span title={title} className={cx("pixel-chip inline-flex items-center px-1.5 font-display text-[9px] uppercase leading-[16px] tracking-wider", LABEL_CLASS[label])}>
       {LABEL_TEXT[label]}
     </span>
   );

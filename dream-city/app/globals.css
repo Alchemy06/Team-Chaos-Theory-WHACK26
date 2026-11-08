@@ -172,46 +172,35 @@ body {
 }
 
 /* ---------- Pixel UI primitives ---------- */
-/* Soft, rounded panels with a gentle lift and a faint glow in the theme's line colour. */
 .pixel-panel {
   background: linear-gradient(180deg, var(--panel-2), var(--panel));
   border: 2px solid var(--line);
-  border-radius: 10px;
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
-    0 0 0 1px color-mix(in oklab, var(--line-hi) 22%, transparent),
-    0 10px 28px -8px rgb(0 0 0 / 0.55);
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.06),
+    inset 0 -2px 0 0 rgba(0, 0, 0, 0.35),
+    4px 4px 0 0 var(--shadow);
   image-rendering: pixelated;
 }
 
 .pixel-btn {
   position: relative;
   border: 2px solid var(--line-hi);
-  border-radius: 8px;
   background: var(--panel-2);
   color: var(--ink);
   box-shadow:
-    inset 0 -2px 0 0 rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-    0 4px 12px -4px rgb(0 0 0 / 0.5);
-  transition:
-    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    background 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    inset 0 -3px 0 0 rgba(0, 0, 0, 0.35),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.08),
+    3px 3px 0 0 var(--shadow);
+  transition: transform 80ms steps(2), box-shadow 80ms steps(2), background 120ms;
 }
 .pixel-btn:hover {
   background: var(--btn-hover);
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 -2px 0 0 rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
-    0 7px 16px -5px rgb(0 0 0 / 0.55);
 }
 .pixel-btn:active {
-  transform: translateY(1px);
+  transform: translate(2px, 2px);
   box-shadow:
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.3),
-    0 2px 6px -3px rgb(0 0 0 / 0.5);
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.35),
+    1px 1px 0 0 var(--shadow);
 }
 .pixel-btn:focus-visible,
 .pixel-focus:focus-visible {
@@ -234,24 +223,18 @@ body {
 
 .pixel-chip {
   border: 2px solid currentColor;
-  border-radius: 6px;
-  box-shadow: 0 3px 8px -4px rgb(0 0 0 / 0.5);
+  box-shadow: 2px 2px 0 0 var(--shadow);
 }
 
 .pixel-input {
   background: var(--input);
   border: 2px solid var(--line);
-  border-radius: 8px;
   color: var(--ink);
-  box-shadow: inset 0 2px 6px 0 rgba(0, 0, 0, 0.35);
-  transition: border-color 180ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: inset 2px 2px 0 0 rgba(0, 0, 0, 0.5);
 }
 .pixel-input:focus {
   outline: none;
   border-color: var(--line-hi);
-  box-shadow:
-    inset 0 2px 6px 0 rgba(0, 0, 0, 0.35),
-    0 0 0 3px color-mix(in oklab, var(--line-hi) 30%, transparent);
 }
 
 /* Pixel range slider */
@@ -261,24 +244,22 @@ body {
   height: 10px;
   background: var(--input);
   border: 2px solid var(--line);
-  border-radius: 999px;
 }
 .pixel-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
+  width: 16px;
+  height: 20px;
   background: var(--gold);
-  border: 2px solid color-mix(in oklab, var(--gold) 35%, black);
-  box-shadow: 0 2px 8px -2px rgb(0 0 0 / 0.6), 0 0 10px -2px var(--gold);
+  border: 2px solid #3a2a08;
+  box-shadow: 2px 2px 0 0 var(--shadow);
   cursor: grab;
 }
 .pixel-range::-moz-range-thumb {
   width: 14px;
-  height: 14px;
-  border-radius: 999px;
+  height: 18px;
+  border-radius: 0;
   background: var(--gold);
-  border: 2px solid color-mix(in oklab, var(--gold) 35%, black);
+  border: 2px solid #3a2a08;
   cursor: grab;
 }
 
@@ -297,11 +278,10 @@ body {
   line-height: 1.15;
   background: var(--label-plate);
   border: 1px solid var(--label-border);
-  border-radius: 6px;
-  box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.6);
-  padding: 2px 7px;
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
   text-shadow: 1px 1px 0 #000;
-  transition: opacity 300ms ease;
+  transition: opacity 200ms steps(3);
 }
 .district-label {
   font-family: var(--font-silkscreen), monospace;
@@ -311,10 +291,7 @@ body {
   text-transform: uppercase;
   padding: 3px 9px;
   border: 2px solid currentColor;
-  border-radius: 8px;
-  box-shadow:
-    0 6px 16px -6px rgb(0 0 0 / 0.7),
-    0 0 14px -6px currentColor;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.65);
 }
 .street-label {
   font-size: 13px;
@@ -354,9 +331,8 @@ html[data-zoom="near"] .district-label {
   font-family: var(--font-pixelify), monospace;
   background: var(--label-plate);
   border: 2px solid var(--line-hi);
-  border-radius: 8px;
-  box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.65);
-  padding: 5px 10px;
+  box-shadow: 3px 3px 0 0 var(--shadow);
+  padding: 4px 8px;
   white-space: nowrap;
   transform: translateY(-8px);
 }
@@ -380,9 +356,8 @@ html[data-zoom="near"] .district-label {
   width: 12px;
   height: 12px;
   background: var(--emo-wonder);
-  border-radius: 4px;
-  box-shadow: 0 3px 8px -3px rgb(0 0 0 / 0.6);
-  animation: blink 1100ms ease-in-out infinite;
+  box-shadow: 3px 3px 0 0 var(--shadow);
+  animation: blink 900ms steps(2) infinite;
 }
 .pixel-loader span:nth-child(2) {
   background: var(--emo-apprehension);
@@ -406,68 +381,23 @@ html[data-zoom="near"] .district-label {
 
 @keyframes rise-in {
   from {
-    transform: translateY(10px) scale(0.98);
+    transform: translateY(12px);
     opacity: 0;
   }
 }
 .anim-rise {
-  animation: rise-in 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: rise-in 220ms steps(4) both;
 }
 
 @keyframes rec-pulse {
   50% {
     box-shadow:
-      0 0 0 7px rgba(255, 90, 79, 0.18),
-      0 4px 12px -4px rgb(0 0 0 / 0.5);
+      0 0 0 6px rgba(255, 90, 79, 0.25),
+      3px 3px 0 0 var(--shadow);
   }
 }
 .rec-pulse {
-  animation: rec-pulse 2.4s ease-in-out infinite;
-}
-
-/* ---------- Timeline: a compact chip that opens on hover (always open on touch screens) ---------- */
-.timeline-detail {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition: grid-template-rows 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 200ms ease;
-}
-.timeline-detail > div {
-  overflow: hidden;
-}
-.timeline-wrap:hover .timeline-detail,
-.timeline-wrap:focus-within .timeline-detail,
-.timeline-detail[data-open="true"] {
-  grid-template-rows: 1fr;
-  opacity: 1;
-}
-@media (min-width: 640px) {
-  .timeline-wrap {
-    width: 250px;
-    transition: width 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .timeline-wrap:hover,
-  .timeline-wrap:focus-within,
-  .timeline-wrap:has([data-open="true"]) {
-    width: min(460px, 60vw);
-  }
-}
-@media (hover: none) {
-  .timeline-detail {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
-  .timeline-wrap {
-    width: min(460px, 100%);
-  }
-}
-
-/* ---------- Quiet mode: the HUD fades back so the city can breathe ---------- */
-.hud-layer {
-  transition: opacity 500ms ease;
-}
-.hud-layer[data-quiet="true"] {
-  opacity: 0.12;
+  animation: rec-pulse 1s steps(3) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

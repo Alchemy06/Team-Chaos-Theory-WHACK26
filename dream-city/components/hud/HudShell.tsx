@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useCityStore } from "@/store/useCityStore";
 import { CitationPopover } from "./CitationPopover";
 import { DistrictLegend } from "./DistrictLegend";
@@ -15,47 +15,6 @@ export function HudShell() {
   const openRecord = useCityStore((s) => s.openRecord);
   const recordOpen = useCityStore((s) => s.record.open);
   const hasSelection = useCityStore((s) => s.selection !== null);
-  const citationOpen = useCityStore((s) => s.citation !== null);
-
-  // Quiet mode: H fades the HUD back (until H again); after a while with no
-  // input it also drifts quiet on its own, and any input wakes it. Never while
-  // something needs reading or typing.
-  const [quiet, setQuiet] = useState(false);
-  const manual = useRef(false);
-  useEffect(() => {
-    let timer = 0;
-    const arm = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => setQuiet(true), 25000);
-    };
-    const wake = () => {
-      if (!manual.current) setQuiet(false);
-      arm();
-    };
-    const onKey = (e: KeyboardEvent) => {
-      const el = e.target as HTMLElement | null;
-      const typing = el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
-      if (!typing && (e.key === "h" || e.key === "H") && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        setQuiet((q) => {
-          manual.current = !q;
-          return !q;
-        });
-        arm();
-        return;
-      }
-      wake();
-    };
-    const events = ["pointermove", "pointerdown", "wheel", "touchstart"] as const;
-    events.forEach((ev) => window.addEventListener(ev, wake, { passive: true }));
-    window.addEventListener("keydown", onKey);
-    arm();
-    return () => {
-      window.clearTimeout(timer);
-      events.forEach((ev) => window.removeEventListener(ev, wake));
-      window.removeEventListener("keydown", onKey);
-    };
-  }, []);
-  const hushed = quiet && !recordOpen && !citationOpen && !hasSelection;
 
   useEffect(() => {
     void useCityStore.persist.rehydrate();
@@ -71,7 +30,7 @@ export function HudShell() {
   }, []);
 
   return (
-    <div className="hud-layer pointer-events-none absolute inset-0 z-20" data-quiet={hushed}>
+    <div className="pointer-events-none absolute inset-0 z-20">
       <TopBar />
       <div className="absolute bottom-3 left-3 hidden lg:block">
         <DistrictLegend collapsible />
