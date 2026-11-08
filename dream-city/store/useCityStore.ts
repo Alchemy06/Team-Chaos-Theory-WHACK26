@@ -95,9 +95,9 @@ export const useCityStore = create<State>()(
           const response = await fetch("/api/city", { cache: "no-store" });
           if (!response.ok) throw new Error("Could not load saved buildings.");
           const data = await response.json() as { dreams: Dream[] };
-          set({ userDreams: data.dreams, cityLoading: false });
+          set({ userDreams: data.dreams, cityLoading: false, timelineDay: null });
         } catch (error) {
-          set({ userDreams: [], cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
+          set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
         }
       },
       insights: {},

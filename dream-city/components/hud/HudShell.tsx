@@ -30,8 +30,14 @@ export function HudShell() {
       else if (s.record.open) s.closeRecord();
       else s.select(null);
     };
+    // ── (ADDED) Pick up database changes when returning to the map ──
+    const refreshCity = () => { if (!useCityStore.getState().record.open) void useCityStore.getState().loadCity(); };
+    window.addEventListener("focus", refreshCity);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("focus", refreshCity);
+      window.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   return (
