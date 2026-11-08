@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useCity } from "@/store/useCity";
@@ -27,6 +27,7 @@ export function LinkLayer() {
       events={undefined}
     >
       <CameraSync />
+      <Occluders />
       <Links />
     </Canvas>
   );
@@ -46,6 +47,42 @@ function CameraSync() {
     camera.updateProjectionMatrix();
   }, -1);
   return null;
+}
+
+const tmp = new THREE.Object3D();
+
+/**
+ * Invisible stand-ins for buildings and landmarks. They write depth only, so
+ * links passing behind a tower are hidden correctly even though the links
+ * live on their own canvas.
+ */
+function Occluders() {
+  const model = useCity();
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const boxes = useMemo(() => {
+    const out: { x: number; z: number; h: number }[] = [];
+    for (const b of model.world.buildings) if (model.visible.has(b.id)) out.push({ x: b.pos.x, z: b.pos.z, h: b.height + 1 });
+    for (const l of model.world.landmarks) out.push({ x: l.pos.x, z: l.pos.z, h: l.height + 1 });
+    return out;
+  }, [model]);
+  useLayoutEffect(() => {
+    const mesh = ref.current;
+    if (!mesh) return;
+    boxes.forEach((b, i) => {
+      tmp.position.set(b.x, b.h / 2, b.z);
+      tmp.scale.set(2.9, b.h, 2.9);
+      tmp.updateMatrix();
+      mesh.setMatrixAt(i, tmp.matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    mesh.computeBoundingSphere();
+  }, [boxes]);
+  return (
+    <instancedMesh key={boxes.length} ref={ref} args={[undefined, undefined, boxes.length]} renderOrder={-10} raycast={() => null}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial colorWrite={false} />
+    </instancedMesh>
+  );
 }
 
 function Links() {

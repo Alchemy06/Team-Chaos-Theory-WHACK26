@@ -17,7 +17,7 @@ const ELEV = 0.62; // radians above the horizon (~35°, isometric-ish)
 export function CameraRig({ layout }: { layout: WorldCity }) {
   const controls = useRef<MapControlsImpl>(null);
   const size = useThree((s) => s.size);
-  const fitZoom = Math.max(3.2, Math.min(14, Math.min(size.width, size.height * 1.35) / (layout.radius * (size.width < 640 ? 1.45 : 2.25))));
+  const fitZoom = Math.max(2, Math.min(14, Math.min(size.width, size.height * 1.35) / (layout.radius * (size.width < 640 ? 2.2 : 2.25))));
   const goal = useRef<{ target: THREE.Vector3; zoom: number } | null>({ target: new THREE.Vector3(), zoom: fitZoom });
   const interacting = useRef(false);
   const selection = useCityStore((s) => s.selection);
@@ -84,7 +84,7 @@ export function CameraRig({ layout }: { layout: WorldCity }) {
         makeDefault
         enableDamping
         dampingFactor={0.12}
-        minZoom={2.5}
+        minZoom={1.8}
         maxZoom={42}
         minPolarAngle={0.55}
         maxPolarAngle={1.12}
