@@ -12,6 +12,7 @@
 --   journal_sessions one row per dream conversation (final markdown in conversation_md)
 --   journal_messages one row per question or answer in that conversation
 --   build_data       one row per completed session: what the AI read from the markdown for its building
+--   media            one row per recently consumed book, film, song or game (no login, server-only like journal)
 
 -- ---------- types ----------
 create type emotion as enum ('anger', 'apprehension', 'sadness', 'confusion', 'happiness', 'wonder');
@@ -136,6 +137,22 @@ create table build_data (
   themes            text[] not null default '{}'         -- from data/vocab.json themes
 );
 
+-- ---------- media: what the user recently read, watched, played or listened to ----------
+-- Same rules as the journal tables: no user_id, server-only via the service role key.
+-- (works above needs a login and a required emotion; media is the no-login version.)
+create table media (
+  id           uuid primary key default gen_random_uuid(),
+  kind         work_kind not null,                       -- book | film | song | game
+  title        text not null,
+  creator      text,                                     -- author, director, artist, studio
+  consumed_on  date not null default current_date,
+  user_note    text,                                     -- how it felt, in the user's words
+  themes       text[] not null default '{}',             -- from data/vocab.json themes
+  main_emotion emotion,                                  -- optional, user- or AI-set
+  external_id  text,                                     -- e.g. 'tmdb:603', 'ol:OL82563W'
+  created_at   timestamptz not null default now()
+);
+
 -- ---------- indexes ----------
 create index dreams_user_date on dreams (user_id, dreamt_on);
 create index dreams_symbols on dreams using gin (symbols);
@@ -143,6 +160,8 @@ create index works_user on works (user_id);
 create index works_symbols on works using gin (symbols);
 create index links_user_dream on links (user_id, dream_id);
 create index links_to on links (to_id);
+create index media_consumed_on on media (consumed_on desc);
+create index media_themes on media using gin (themes);
 
 -- ---------- row-level security ----------
 alter table dreams enable row level security;
@@ -154,6 +173,7 @@ alter table base_rates enable row level security;
 alter table journal_sessions enable row level security;
 alter table journal_messages enable row level security;
 alter table build_data enable row level security;
+alter table media enable row level security;
 
 create policy "own dreams" on dreams for all
   using (auth.uid() = user_id) with check (auth.uid() = user_id);

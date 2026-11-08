@@ -4,6 +4,7 @@ import { useState } from "react";
 import { demo } from "@/store/cityModel";
 import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
+import { AddMediaButton } from "./AddMediaSheet";
 import { DistrictLegend } from "./DistrictLegend";
 import { IconButton, PixelPanel, cx } from "./ui/Pixel";
 
@@ -46,6 +47,7 @@ export function TopBar() {
 
   return (
     <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+      <div className="flex items-stretch gap-2">
       <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
         <Logo />
         <div className="hidden border-l-2 border-line pl-4 sm:block">
@@ -55,6 +57,8 @@ export function TopBar() {
           </div>
         </div>
       </PixelPanel>
+      <AddMediaButton />
+      </div>
 
       <div className="pointer-events-auto relative flex gap-2">
         <IconButton label="City-wide insights" aria-pressed={plazaOpen} onClick={() => select(plazaOpen ? null : { kind: "plaza" })}>
