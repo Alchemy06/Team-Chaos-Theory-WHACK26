@@ -56,7 +56,7 @@ export function WorkPanel({ work, model }: { work: Work; model: CityModel }) {
         <p className="mt-2 text-[13px] text-ink-dim">{work.themes.map((t) => `#${t}`).join(" ")}</p>
       </section>
       <section>
-        <SectionTitle aside={<span className="font-display text-[10px] text-gold">{links.length}</span>}>Dreams linked by road</SectionTitle>
+        <SectionTitle aside={<span className="font-display text-[10px] text-gold">{links.length}</span>}>Linked dreams</SectionTitle>
         {links.length === 0 ? (
           <p className="text-[13px] text-ink-dim">No dream shares enough with this yet.</p>
         ) : (
