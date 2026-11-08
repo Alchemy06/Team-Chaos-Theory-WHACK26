@@ -6,6 +6,7 @@ import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
 import { AddMediaButton } from "./AddMediaSheet";
 import { DistrictLegend } from "./DistrictLegend";
+import { ThemePicker } from "./ThemePicker";
 import { IconButton, PixelPanel, cx } from "./ui/Pixel";
 
 const SETTING_LABELS: Record<keyof Settings, string> = {
@@ -80,7 +81,9 @@ export function TopBar() {
         )}
         {menu === "settings" && (
           <PixelPanel className="anim-rise absolute right-0 top-12 z-40 w-64 p-3">
-            <div className="mb-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
+            <div className="mb-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Theme</div>
+            <ThemePicker />
+            <div className="mb-2 mt-3 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
             <ul className="space-y-1">
               {(Object.keys(SETTING_LABELS) as (keyof Settings)[]).map((k) => (
                 <li key={k}>
@@ -89,10 +92,10 @@ export function TopBar() {
                     role="switch"
                     aria-checked={settings[k]}
                     onClick={() => toggle(k)}
-                    className="pixel-focus flex w-full items-center justify-between px-1 py-1.5 text-left text-[14px] hover:bg-[#121a44]"
+                    className="pixel-focus flex w-full items-center justify-between px-1 py-1.5 text-left text-[14px] hover:bg-(--hover)"
                   >
                     {SETTING_LABELS[k]}
-                    <span className={cx("h-4 w-8 border-2", settings[k] ? "border-gold bg-gold/30" : "border-line bg-[#070b22]")}>
+                    <span className={cx("h-4 w-8 border-2", settings[k] ? "border-gold bg-gold/30" : "border-line bg-(--input)")}>
                       <span className={cx("block h-full w-3 transition-transform", settings[k] ? "translate-x-[14px] bg-gold" : "bg-line-hi")} />
                     </span>
                   </button>
