@@ -6,6 +6,7 @@ import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Emotion, Extraction, Selection } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
 import { computeModel } from "./cityModel";
+import { loadSavedDreams } from "@/services/loadSavedDreams";
 
 export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
@@ -97,9 +98,7 @@ export const useCityStore = create<State>()(
         cityRequestActive = true;
         set({ cityLoading: true, cityError: null });
         try {
-          const response = await fetch("/api/city", { cache: "no-store" });
-          if (!response.ok) throw new Error("Could not load saved buildings.");
-          const data = await response.json() as { dreams: Dream[] };
+          const data = { dreams: await loadSavedDreams<Dream>() };
           // ── (ADDED) Unchanged database rows must not rebuild terrain and meshes ──
           const unchanged = JSON.stringify(get().userDreams) === JSON.stringify(data.dreams);
           set({ userDreams: unchanged ? get().userDreams : data.dreams, cityLoading: false,
