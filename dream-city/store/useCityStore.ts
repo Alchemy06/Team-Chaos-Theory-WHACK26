@@ -5,7 +5,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Emotion, Extraction, Selection } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
-import { offlineExtract } from "@/services/offline";
 import { computeModel } from "./cityModel";
 
 export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
@@ -32,6 +31,9 @@ type RecordState = {
 
 type State = {
   userDreams: Dream[];
+  cityLoading: boolean;
+  cityError: string | null;
+  loadCity: () => Promise<void>;
   insights: Record<string, StoredInsight>;
   insightLoading: Record<string, boolean>;
   selection: UISelection;
@@ -84,6 +86,20 @@ export const useCityStore = create<State>()(
   persist(
     (set, get) => ({
       userDreams: [],
+      cityLoading: true,
+      cityError: null,
+      // ── (ADDED) Database is the sole source of map buildings ──
+      loadCity: async () => {
+        set({ cityLoading: true, cityError: null });
+        try {
+          const response = await fetch("/api/city", { cache: "no-store" });
+          if (!response.ok) throw new Error("Could not load saved buildings.");
+          const data = await response.json() as { dreams: Dream[] };
+          set({ userDreams: data.dreams, cityLoading: false, timelineDay: null });
+        } catch (error) {
+          set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
+        }
+      },
       insights: {},
       insightLoading: {},
       selection: null,
@@ -162,7 +178,7 @@ export const useCityStore = create<State>()(
         }
       },
 
-      buildDream: async (opts) => {
+      buildDream: async () => {
         if (get().record.busy) return;
         const { record } = get();
         const entry: Entry = {
@@ -191,9 +207,7 @@ export const useCityStore = create<State>()(
 
         let extraction: Extraction;
         let entryOut: Entry = entry;
-        if (opts?.offline) {
-          extraction = offlineExtract(entry);
-        } else {
+        {
           try {
             const res = await fetchExtraction(toMarkdown(entry), record.sessionId ?? undefined);
             extraction = res.extraction;
@@ -206,7 +220,7 @@ export const useCityStore = create<State>()(
                 step: "followups",
                 error: err instanceof ApiError ? err.message : "Could not read that dream.",
                 errorDetails: err instanceof ApiError ? err.details : [],
-                canUseOffline: true,
+                canUseOffline: false,
               },
             }));
             return;
@@ -216,14 +230,14 @@ export const useCityStore = create<State>()(
         const { newSymbols: _ignored, ...fields } = extraction;
         void _ignored; // kept server-side for review, not used in the city
         const dream: Dream = {
-          id: `u-${Date.now().toString(36)}`,
+          id: record.sessionId!,
           date: entryOut.date,
           transcript: entryOut.transcript,
           followUps: entryOut.followUps.filter((f) => f.a),
           ...fields,
         };
         set((s) => ({
-          userDreams: [...s.userDreams, dream],
+          userDreams: [...s.userDreams.filter((d) => d.id !== dream.id), dream],
           record: emptyRecord,
           justBuiltId: dream.id,
           selection: { kind: "dream", id: dream.id },
@@ -240,13 +254,13 @@ export const useCityStore = create<State>()(
     {
       name: "dream-city-v2",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ userDreams: s.userDreams, settings: s.settings, insights: s.insights }),
+      partialize: (s) => ({ settings: s.settings, insights: s.insights }),
       skipHydration: true,
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<State>;
         return {
           ...current,
-          userDreams: Array.isArray(p.userDreams) ? p.userDreams : [],
+          userDreams: current.userDreams,
           insights: p.insights && typeof p.insights === "object" ? p.insights : {},
           // only keep known settings (older saves may still carry the removed "sound" flag)
           settings: {
