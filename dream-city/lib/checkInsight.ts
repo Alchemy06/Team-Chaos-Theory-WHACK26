@@ -1,14 +1,15 @@
 // Code checks on LLM 2b's insight. Prompts can't guarantee honesty; these checks can.
 // An insight that fails is regenerated once, then replaced with a plain template.
 
-import type { EvidencePack } from "./evidence";
-import type { Dream, Work } from "./types";
-import { TYPICAL_BY_ID } from "./typicalDreams";
+import type { EvidencePack } from "@/lib/evidence";
+import type { Dream, Work } from "@/lib/types";
+import { TYPICAL_BY_ID } from "@/lib/typicalDreams";
 
-export const CITATION = /\[(dream|road|label|db|card|typical)(?::([a-z0-9_-]+))?\]/g;
+// Ids can contain a colon: media roads look like [road:media:<uuid>]
+export const CITATION = /\[(dream|road|label|db|card|typical)(?::([a-z0-9_:-]+))?\]/gi;
 const ANY_BRACKET = /\[([^\]]+)\]/g;
 const BANNED =
-  /\b(means?|meaning|symboli[sz](?:e|es|ed|ing)|symbol of|represents?|indicates? that|signif(?:y|ies)|subconscious(?:ly)?|repress(?:ed|ing|ion)?|diagnos\w*|disorder|trauma\w*|depress\w*|ptsd|you are clearly|this proves)\b/i;
+  /\b(means?|meaning|symboli[sz](?:e|es|ed|ing)|symbol of|represents?|indicates? that|signif(?:y|ies)|subconscious(?:ly)?|repress(?:ed|ing|ion)?|diagnos\w*|disorder|trauma\w*|depress\w*|ptsd|you are clearly|this proves|your (?:mind|brain|psyche)|processing|telling you|a sign (?:of|that)|deep down|unresolved|hidden (?:fear|desire)s?)\b/i;
 const MAX_WORDS = 90;
 
 export type InsightCheck = { ok: boolean; problems: string[]; cited: string[] };
@@ -45,7 +46,10 @@ export function fallbackInsight(dream: Dream, pack: EvidencePack, works: Map<str
   const parts: string[] = [];
   if (road) {
     const w = works.get(road.to);
-    parts.push(`This dream shares ${road.shared.join(", ")} with ${w?.title ?? "a work you logged"} [road:${road.to}].`);
+    const title = w?.title ?? "a work you logged";
+    const what = [...road.shared, ...road.sharedThemes.map((t) => `the theme ${t}`)];
+    if (road.dreamerMentioned) parts.push(`You named ${title} while recording this dream [road:${road.to}].`);
+    else if (what.length) parts.push(`This dream shares ${what.join(", ")} with ${title} [road:${road.to}].`);
   }
   const yours = dream.symbols.find((s) => pack.ids.has(`label:${s}`) && pack.items.find((i) => i.id === `label:${s}`)?.text.includes("labelled yours"));
   if (yours) parts.push(`${yours.charAt(0).toUpperCase() + yours.slice(1)} appears more often in your dreams than in most people's [label:${yours}].`);

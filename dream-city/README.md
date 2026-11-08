@@ -40,6 +40,39 @@ npm run dev                            # http://localhost:3000
    (`[card:…]`, `[road:…]`, `[label:…]`, `[db:…]`, `[typical:…]` render as chips).
    Click a dream's title or insight to read the full journal entry.
 
+## Several cities and the demo people
+
+Each dream city is a person. "My city" is everything recorded without a city; the menu under the logo
+switches city or makes a new one (table `cities`, migration 005). Media are tagged with symbols as well
+as themes, so they become library buildings with roads to the dreams they share symbols, themes or a
+named title with.
+
+To load the fictional demo people (Maya, Theo, Priya; `data/personas.json`) into the database:
+
+```bash
+npm run seed:demo        # or: node scripts/seedPersonas.mjs maya
+```
+
+## How LLM 2b stays honest, and how we measure it
+
+`lib/insight.ts` builds an evidence pack in code (dream, links to your media and earlier dreams, honesty
+labels, DreamBank rates, typical dreams, research cards). The writer may only cite those ids. Code then
+rejects unknown ids, invented numbers and interpretation words; a second model (`GROQ_JUDGE_MODEL`,
+default `llama-3.3-70b-versatile`) checks every sentence is backed by what it cites. One retry, then a
+template made only from evidence. Every insight is saved in `insights` with its attempts (migration 004).
+
+Evaluation (run on your machine; needs GROQ_API_KEY in .env.local):
+
+```bash
+npm run eval:sample       # download DreamBank once, draw a fair sample + the 991 norm dreams
+npm run eval:llm2a        # run the real LLM 2a on them (resumable)
+pip install transformers torch && npm run eval:dreamy   # DReAMy's expert-trained emotion model
+npm run eval:base-rates   # real DreamBank base rates, measured by LLM 2a itself
+npm run eval:labels       # sheet for two people to hand-label 100 dreams
+npm run eval:score        # data/eval/report_llm2a.md
+npm run eval:llm2b        # data/eval/report_llm2b.md, plus 50 sentences to check by hand
+```
+
 Database: run `supabase/schema.sql` on a new project, or `supabase/migrations/003_build_data_llm2a.sql`
 on an existing one (safe to re-run). Rows saved before 003 still show; their symbols are estimated
 by keyword until LLM 2a is re-run on them.

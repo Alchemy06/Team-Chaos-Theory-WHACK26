@@ -39,22 +39,33 @@ export type CityModel = {
   recById: Map<string, Recommendation>;
 };
 
-let cache: { userDreams: Dream[]; day: number | null; insights: Record<string, StoredInsight>; model: CityModel } | null = null;
+// An insight generated in this browser (newest, e.g. after "Rewrite") wins over the one saved in the database.
+function withInsight(d: Dream, insights: Record<string, StoredInsight>): Dream {
+  const i = insights[d.id];
+  if (!i) return d;
+  return { ...d, insight: i.text, insightSource: i.source === "demo" ? undefined : i.source, insightSupport: i.support ?? d.insightSupport };
+}
 
-export function computeModel(userDreams: Dream[], day: number | null, insights: Record<string, StoredInsight>): CityModel {
+let cache: { userDreams: Dream[]; userWorks: Work[]; day: number | null; insights: Record<string, StoredInsight>; model: CityModel } | null = null;
+
+const NO_WORKS: Work[] = [];
+
+// userWorks: the city's logged media (books, films, songs, games). They become library buildings,
+// and roads are drawn from each dream to the works it links to (lib/link.ts), as in the Maya demo.
+export function computeModel(userDreams: Dream[], day: number | null, insights: Record<string, StoredInsight>, userWorks: Work[] = NO_WORKS): CityModel {
   // ── (ADDED) Text-only insight updates reuse the existing 3D geometry ──
-  if (cache && cache.userDreams === userDreams && cache.day === day) {
+  if (cache && cache.userDreams === userDreams && cache.userWorks === userWorks && cache.day === day) {
     if (cache.insights === insights) return cache.model;
-    const allDreams = userDreams.map((d) => insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d);
+    const allDreams = userDreams.map((d) => withInsight(d, insights));
     const dreamById = new Map(allDreams.map((d) => [d.id, d]));
     const model = { ...cache.model, allDreams, dreamById,
       dreams: cache.model.dreams.map((d) => dreamById.get(d.id) ?? d) };
-    cache = { userDreams, day, insights, model };
+    cache = { userDreams, userWorks, day, insights, model };
     return model;
   }
 
-  const allDreams = userDreams.map((d) => (insights[d.id] && !d.insight ? { ...d, insight: insights[d.id].text } : d));
-  const allWorks: Work[] = [];
+  const allDreams = userDreams.map((d) => withInsight(d, insights));
+  const allWorks = userWorks;
   const cutoff = day === null ? null : dayToDate(day, timelineRange(allDreams).start);
   const dreams = cutoff ? allDreams.filter((d) => d.date <= cutoff) : allDreams;
   const works = cutoff ? allWorks.filter((w) => !w.consumedOn || w.consumedOn <= cutoff) : allWorks;
@@ -88,6 +99,6 @@ export function computeModel(userDreams: Dream[], day: number | null, insights: 
     workById,
     recById,
   };
-  cache = { userDreams, day, insights, model };
+  cache = { userDreams, userWorks, day, insights, model };
   return model;
 }

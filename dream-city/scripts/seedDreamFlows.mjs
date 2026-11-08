@@ -37,7 +37,7 @@ for (const [index, flow] of flows.entries()) {
   }
   const text = (flow.dream + " " + flow.followUps.map(t => t.answer).join(" ")).toLowerCase();
   checked(await db.from("build_data").upsert({ journal_id: id, main_emotion: flow.suggestedEmotion,
-    secondary_emotion: flow.suggestedEmotion, build_height: Number(flow.followUps[1].answer),
+    secondary_emotion: null, // must differ from main_emotion (migration 003) build_height: Number(flow.followUps[1].answer),
     hover_desc: flow.title + ": " + flow.dream, themes: flow.themes ?? vocab.themes.filter(theme => text.includes(theme.toLowerCase())) }));
   checked(await db.from("journal_sessions").update({ status: "completed", conversation_md: sections.join("\n\n") + "\n", completed_at: date }).eq("id", id));
   added++;

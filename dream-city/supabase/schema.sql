@@ -9,9 +9,11 @@
 --   symbol_labels   one row per symbol per user: the Yours / Common / Too early label, saved
 --   research_cards  shared, read-only research citations
 --   base_rates      shared, read-only DreamBank baseline
+--   cities           one row per dream city (person); sessions and media with no city are "My city"
 --   journal_sessions one row per dream conversation (final markdown in conversation_md)
 --   journal_messages one row per question or answer in that conversation
 --   build_data       one row per completed session: what the AI read from the markdown for its building
+--   insights         one row per LLM 2b insight, with its evidence, checks and attempts
 --   media            one row per recently consumed book, film, song or game (no login, server-only like journal)
 
 -- ---------- types ----------
@@ -109,8 +111,18 @@ create table base_rates (
 -- ---------- journal: the question-and-answer conversation behind each dream ----------
 -- No user_id (no login yet). RLS is on with no policies, so only the server
 -- (service role key, lib/db.ts) can read or write these three tables.
+-- One row per dream city (a person). The default "My city" is not a row: it is sessions with no city.
+create table cities (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  blurb      text,
+  is_demo    boolean not null default false,             -- fictional demo people such as Maya
+  created_at timestamptz not null default now()
+);
+
 create table journal_sessions (
   id              uuid primary key default gen_random_uuid(),
+  city_id         uuid references cities (id) on delete cascade,  -- null = "My city"
   status          text not null default 'draft' check (status in ('draft', 'questioning', 'completed')),
   conversation_md text,                                  -- final markdown journal
   created_at      timestamptz not null default now(),
@@ -153,17 +165,34 @@ create table build_data (
   )
 );
 
+-- ---------- insights: LLM 2b reflections, one row per generation; the newest is shown ----------
+create table insights (
+  id           uuid primary key default gen_random_uuid(),
+  journal_id   uuid not null references journal_sessions (id) on delete cascade,
+  text         text not null,                            -- the insight shown, with [id] citations
+  source       text not null check (source in ('ai', 'fallback')),
+  cited        text[] not null default '{}',             -- evidence ids it cites
+  problems     text[] not null default '{}',             -- why AI drafts were rejected
+  support      jsonb not null default '{}',              -- second-model check: verdict per sentence
+  attempts     jsonb not null default '[]',              -- every draft with its problems
+  evidence     jsonb not null default '[]',              -- the evidence pack it was written from
+  writer_model text,
+  created_at   timestamptz not null default now()
+);
+
 -- ---------- media: what the user recently read, watched, played or listened to ----------
 -- Same rules as the journal tables: no user_id, server-only via the service role key.
 -- (works above needs a login and a required emotion; media is the no-login version.)
 create table media (
   id           uuid primary key default gen_random_uuid(),
+  city_id      uuid references cities (id) on delete cascade,  -- null = "My city"
   kind         work_kind not null,                       -- book | film | song | game
   title        text not null,
   creator      text,                                     -- author, director, artist, studio
   consumed_on  date not null default current_date,
   user_note    text,                                     -- how it felt, in the user's words
   themes       text[] not null default '{}',             -- from data/vocab.json themes
+  symbols      text[] not null default '{}',             -- from data/vocab.json symbols
   main_emotion emotion,                                  -- optional, user- or AI-set
   external_id  text,                                     -- e.g. 'tmdb:603', 'ol:OL82563W'
   created_at   timestamptz not null default now()
@@ -178,7 +207,11 @@ create index links_user_dream on links (user_id, dream_id);
 create index links_to on links (to_id);
 create index media_consumed_on on media (consumed_on desc);
 create index media_themes on media using gin (themes);
+create index media_city on media (city_id);
+create index journal_sessions_city on journal_sessions (city_id);
+create unique index media_unique_title_city on media (coalesce(city_id, '00000000-0000-0000-0000-000000000000'::uuid), kind, lower(trim(title)));
 create index build_data_symbols on build_data using gin (symbols);
+create index insights_journal_newest on insights (journal_id, created_at desc);
 create index build_data_typical on build_data using gin (typical_dreams);
 
 -- ---------- row-level security ----------
@@ -188,9 +221,11 @@ alter table links enable row level security;
 alter table symbol_labels enable row level security;
 alter table research_cards enable row level security;
 alter table base_rates enable row level security;
+alter table cities enable row level security;
 alter table journal_sessions enable row level security;
 alter table journal_messages enable row level security;
 alter table build_data enable row level security;
+alter table insights enable row level security;
 alter table media enable row level security;
 
 create policy "own dreams" on dreams for all

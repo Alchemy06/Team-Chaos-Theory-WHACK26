@@ -1,6 +1,6 @@
 "use client";
 
-import { LABEL_TEXT, MIN_COUNT, YOURS_MULTIPLIER, explainStat } from "@/lib/honesty";
+import { ALPHA, LABEL_TEXT, MIN_COUNT, explainStat } from "@/lib/honesty";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import { baseRates, type CityModel } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
@@ -47,8 +47,8 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
       <section className="border-2 border-line bg-(--well) p-3">
         <SectionTitle>Why “{LABEL_TEXT[stat.label]}”</SectionTitle>
         <p className="text-[12px] leading-relaxed text-ink-faint">
-          Fewer than {MIN_COUNT} appearances → Too early; at least {YOURS_MULTIPLIER}× the DreamBank rate → Yours; otherwise Common; with no DreamBank figure → No baseline. The {YOURS_MULTIPLIER}× threshold is a heuristic,
-          not a statistical test.
+          Fewer than {MIN_COUNT} appearances → Too early. Yours only when a count this high would happen by chance less than {ALPHA * 100}% of the time
+          at the DreamBank rate (exact binomial test); otherwise Common. With many symbols, expect the odd Yours by luck.
         </p>
         <CitedText className="mt-2 text-[12px] text-ink-faint" text="Baseline: [card:dreambank]" />
       </section>

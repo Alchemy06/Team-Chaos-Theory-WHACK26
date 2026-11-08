@@ -6,14 +6,14 @@ import { z } from "zod";
 
 export async function POST(request: Request) {
   // ── (ADDED) Validate before calling AI or Supabase ──
-  const parsed = z.object({ transcript: z.string().trim().min(12).max(20000) })
+  const parsed = z.object({ transcript: z.string().trim().min(12).max(20000), cityId: z.uuid().nullish() })
     .safeParse(await request.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Dream must contain 12–20,000 characters" }, { status: 400 });
 
   let sessionId: string | null = null;
   try {
     const generated = await generateJournalQuestions(parsed.data.transcript);
-    const session = await createSession();
+    const session = await createSession(parsed.data.cityId ?? null); // null = "My city"
     sessionId = session.id;
     await addMessage(session.id, "user", parsed.data.transcript, null, 0);
 

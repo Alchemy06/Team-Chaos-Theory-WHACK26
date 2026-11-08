@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
 import { AddMediaButton } from "./AddMediaSheet";
+import { CitySwitcher } from "./CitySwitcher";
 import { DistrictLegend } from "./DistrictLegend";
 import { BackgroundMusic } from "./BackgroundMusic";
 import { ThemePicker } from "./ThemePicker";
@@ -49,7 +50,7 @@ export function TopBar() {
       <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
         <Logo />
         <div className="hidden border-l-2 border-line pl-4 sm:block">
-          <div className="text-[14px] leading-tight text-ink">Your dream city</div>
+          <CitySwitcher />
           <div className="text-[12px] leading-tight text-ink-dim">
             {model.dreams.length} dreams · {model.works.length} works · {model.links.length} links
           </div>

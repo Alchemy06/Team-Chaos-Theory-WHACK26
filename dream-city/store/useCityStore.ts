@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
-import type { Dream, Emotion, Extraction, Selection, Work, WorkKind } from "@/lib/types";
+import type { Dream, Emotion, Extraction, InsightSupport, Selection, Work, WorkKind } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import { computeModel } from "./cityModel";
@@ -17,7 +17,7 @@ export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
 export type Notice = { id: number; title: string; body?: string; color?: string };
 const NOTICE_MS = 2600;
 
-export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo" };
+export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo"; support?: InsightSupport };
 
 type RecordState = {
   open: boolean;
@@ -40,8 +40,14 @@ type State = {
   cityLoading: boolean;
   cityError: string | null;
   loadCity: () => Promise<void>;
-  userWorks: Work[]; // media from Supabase (the + Media form); shown in a dream's panel, not as buildings
+  userWorks: Work[]; // the city's media (the + Media form): library buildings with roads to dreams
   loadMedia: () => Promise<void>;
+  // ── Several dream cities: null = the default "My city"; others are rows in the cities table ──
+  cityId: string | null;
+  cities: City[];
+  loadCities: () => Promise<void>;
+  setCity: (id: string | null) => void;
+  createCity: (name: string, blurb?: string) => Promise<string | null>;
   insights: Record<string, StoredInsight>;
   insightLoading: Record<string, boolean>;
   selection: UISelection;
@@ -65,7 +71,7 @@ type State = {
   openCitation: (id: string | null) => void;
   openEntry: (dreamId: string | null) => void;
   showNotice: (n: Omit<Notice, "id">) => void;
-  requestInsight: (dreamId: string) => Promise<void>;
+  requestInsight: (dreamId: string, opts?: { force?: boolean }) => Promise<void>;
 
   openRecord: () => void;
   closeRecord: () => void;
@@ -97,7 +103,8 @@ let cityRequestActive = false;
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-type MediaRow = { id: string; kind: WorkKind; title: string; creator: string | null; consumed_on: string; user_note: string | null; themes: string[]; main_emotion: Emotion | null };
+type MediaRow = { id: string; kind: WorkKind; title: string; creator: string | null; consumed_on: string; user_note: string | null; themes: string[]; main_emotion: Emotion | null; symbols?: string[] };
+export type City = { id: string; name: string; blurb: string | null; is_demo: boolean };
 const mediaToWork = (m: MediaRow): Work => ({
   id: `media:${m.id}`,
   title: m.title,
@@ -106,9 +113,11 @@ const mediaToWork = (m: MediaRow): Work => ({
   consumedOn: m.consumed_on,
   userNote: m.user_note ?? undefined,
   primaryEmotion: m.main_emotion as Emotion,
-  symbols: [],
+  symbols: m.symbols ?? [],
   themes: m.themes,
 });
+
+const cityQuery = (id: string | null) => `city=${id ?? "mine"}`;
 
 export const useCityStore = create<State>()(
   persist(
@@ -117,10 +126,12 @@ export const useCityStore = create<State>()(
       userWorks: [],
       loadMedia: async () => {
         try {
-          const res = await fetch("/api/media");
+          const res = await fetch(`/api/media?${cityQuery(get().cityId)}`, { cache: "no-store" });
           if (!res.ok) return;
           const { media } = (await res.json()) as { media: MediaRow[] };
-          set({ userWorks: media.filter((m) => m.main_emotion).map(mediaToWork) });
+          const works = media.filter((m) => m.main_emotion).map(mediaToWork);
+          // Unchanged media must not rebuild the city's geometry
+          if (JSON.stringify(works) !== JSON.stringify(get().userWorks)) set({ userWorks: works });
         } catch {
           // offline or Supabase not set up: the city just shows the demo works
         }
@@ -133,7 +144,7 @@ export const useCityStore = create<State>()(
         cityRequestActive = true;
         set({ cityLoading: true, cityError: null });
         try {
-          const data = { dreams: await loadSavedDreams<Dream>() };
+          const data = { dreams: await loadSavedDreams<Dream>(fetch, 12000, `/api/city?${cityQuery(get().cityId)}`) };
           // ── (ADDED) Unchanged database rows must not rebuild terrain and meshes ──
           const unchanged = JSON.stringify(get().userDreams) === JSON.stringify(data.dreams);
           set({ userDreams: unchanged ? get().userDreams : data.dreams, cityLoading: false,
@@ -142,6 +153,42 @@ export const useCityStore = create<State>()(
           set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
         } finally {
           cityRequestActive = false;
+        }
+      },
+      cityId: null,
+      cities: [],
+      loadCities: async () => {
+        try {
+          const res = await fetch("/api/cities", { cache: "no-store" });
+          if (!res.ok) return;
+          const { cities } = (await res.json()) as { cities: City[] };
+          set({ cities });
+          // A remembered city that no longer exists falls back to "My city"
+          const id = get().cityId;
+          if (id && !cities.some((c) => c.id === id)) get().setCity(null);
+        } catch {
+          // no database yet: only "My city"
+        }
+      },
+      setCity: (id) => {
+        if (id === get().cityId) return;
+        set({ cityId: id, userDreams: [], userWorks: [], selection: null, timelineDay: null, justBuiltId: null, entryOpen: null });
+        void get().loadCity();
+        void get().loadMedia();
+      },
+      createCity: async (name, blurb) => {
+        try {
+          const res = await fetch("/api/cities", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, blurb }) });
+          const data = (await res.json().catch(() => ({}))) as { city?: City; error?: string };
+          if (!res.ok || !data.city) {
+            get().showNotice({ title: "Could not create the city", body: data.error ?? `Error ${res.status}` });
+            return null;
+          }
+          set((st) => ({ cities: [...st.cities, data.city!] }));
+          get().setCity(data.city.id);
+          return data.city.id;
+        } catch {
+          return null;
         }
       },
       insights: {},
@@ -175,24 +222,28 @@ export const useCityStore = create<State>()(
       },
 
       // Ask the backend for a grounded insight for one dream (cached).
-      requestInsight: async (dreamId) => {
+      requestInsight: async (dreamId, opts) => {
         const s = get();
-        if (s.insights[dreamId] || s.insightLoading[dreamId]) return;
-        const model = computeModel(s.userDreams, null, s.insights);
+        if (s.insightLoading[dreamId]) return;
+        if (!opts?.force && s.insights[dreamId]) return;
+        const model = computeModel(s.userDreams, null, s.insights, s.userWorks);
         const dream = model.dreamById.get(dreamId);
         if (!dream) return;
         set((st) => ({ insightLoading: { ...st.insightLoading, [dreamId]: true } }));
         try {
+          // LLM 2b gets the same links the city draws: to the city's media and to earlier dreams
+          const { insight: _old, ...plain } = dream;
+          void _old;
           const res = await fetchInsight({
-            dream,
+            dream: plain,
             links: model.links.filter((l) => l.from === dreamId),
             works: model.allWorks,
             dreams: model.allDreams,
             stats: model.statsList,
           });
-          set((st) => ({ insights: { ...st.insights, [dreamId]: { text: res.insight, source: res.source } } }));
+          set((st) => ({ insights: { ...st.insights, [dreamId]: { text: res.insight, source: res.source, support: res.support } } }));
         } catch {
-          // leave it empty; the panel offers a retry
+          // leave it as it was; the panel offers a retry
         } finally {
           set((st) => ({ insightLoading: { ...st.insightLoading, [dreamId]: false } }));
         }
@@ -218,7 +269,7 @@ export const useCityStore = create<State>()(
         set((s) => ({ record: { ...s.record, busy: true, error: null } }));
         try {
           // ── (ADDED) Store IDs returned by the saved journal session ──
-          const res = await startJournal(transcript);
+          const res = await startJournal(transcript, get().cityId);
           if (!get().record.open || get().record.transcript !== transcript) return;
           set((s) => ({ record: {
             ...s.record, busy: false, step: "followups",
@@ -317,7 +368,7 @@ export const useCityStore = create<State>()(
     {
       name: "dream-city-v2",
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ settings: s.settings, insights: s.insights }),
+      partialize: (s) => ({ settings: s.settings, insights: s.insights, cityId: s.cityId }),
       skipHydration: true,
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<State>;
@@ -325,6 +376,7 @@ export const useCityStore = create<State>()(
           ...current,
           userDreams: current.userDreams,
           insights: p.insights && typeof p.insights === "object" ? p.insights : {},
+          cityId: typeof p.cityId === "string" ? p.cityId : null,
           // only keep known settings (older saves may still carry the removed "sound" flag)
           settings: {
             pixelation: p.settings?.pixelation ?? current.settings.pixelation,

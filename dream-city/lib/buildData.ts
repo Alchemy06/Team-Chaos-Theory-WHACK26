@@ -2,13 +2,13 @@
 // Takes LLM 1's output (the dream and its Q&A, saved in journal_messages and journal_sessions.conversation_md),
 // runs the shared extraction prompt and checks (lib/prompts.ts, lib/extraction.ts) and saves every field
 // in build_data. /api/extract and /api/journal/:id/build both use this, so they always store the same thing.
-import { getMessages, getSession, upsertBuildData, type BuildData } from "./db";
-import { fromMarkdown, toMarkdown, type Entry } from "./entry";
-import { checkExtraction } from "./extraction";
-import { groqJSON } from "./groq";
-import { journalDocument } from "./journalMarkdown";
-import { EXTRACTION_SYSTEM } from "./prompts";
-import type { Extraction } from "./types";
+import { getMessages, getSession, upsertBuildData, type BuildData } from "@/lib/db";
+import { fromMarkdown, toMarkdown, type Entry } from "@/lib/entry";
+import { checkExtraction } from "@/lib/extraction";
+import { groqJSON } from "@/lib/groq";
+import { journalDocument } from "@/lib/journalMarkdown";
+import { EXTRACTION_SYSTEM } from "@/lib/prompts";
+import type { Extraction } from "@/lib/types";
 
 export class ExtractError extends Error {
   constructor(message: string, public status: number, public details: string[] = []) {

@@ -6,6 +6,16 @@ import { explainStat } from "./honesty";
 import { TDQ_SOURCE, byPrevalence } from "./typicalDreams";
 
 export type EvidenceItem = { id: string; text: string };
+
+// data/baseRates.json. method "llm2a": rates from running LLM 2a itself on a DreamBank sample
+// (scripts/base_rates_llm.ts), so the user's rates and the baseline are measured the same way.
+export type BaseRates = {
+  placeholder: boolean;
+  n: number;
+  rates: Record<string, number>;
+  method?: "keyword" | "llm2a";
+  typicalRates?: Record<string, number>;
+};
 export type EvidencePack = {
   items: EvidenceItem[];
   ids: Set<string>;
@@ -27,7 +37,7 @@ export function buildEvidencePack(args: {
   dreams: Map<string, Dream>;
   stats: Map<string, SymbolStat>;
   cards: Map<string, ResearchCard>;
-  baseRates: { placeholder: boolean; n: number; rates: Record<string, number> };
+  baseRates: BaseRates;
   maxRoads?: number;
 }): EvidencePack {
   const { dream, works, dreams, stats, cards, baseRates } = args;
@@ -35,7 +45,7 @@ export function buildEvidencePack(args: {
 
   items.push({
     id: "dream",
-    text: `The dream (${dream.date}): ${dream.description || dream.summary} Main emotion: ${dream.primaryEmotion}${dream.emotionStated ? " (stated by the dreamer)" : " (not stated)"}, intensity ${dream.intensity}/10${dream.intensitySource === "self" ? " (self-rated)" : ""}. Symbols: ${dream.symbols.join(", ") || "none"}.${dream.secondaryEmotion ? ` Second emotion: ${dream.secondaryEmotion}.` : ""}`,
+    text: `The dream (${dream.date}): ${dream.description || dream.summary} Main emotion: ${dream.primaryEmotion}${dream.emotionStated ? " (stated by the dreamer)" : " (not stated)"}, intensity ${dream.intensity}/10${dream.intensitySource === "self" ? " (self-rated)" : ""}. Symbols: ${dream.symbols.join(", ") || "none"}. Themes: ${dream.themes.join(", ") || "none"}.${dream.secondaryEmotion ? ` Second emotion: ${dream.secondaryEmotion}.` : ""}`,
   });
 
   // Roads: the strongest few from this dream
@@ -54,10 +64,16 @@ export function buildEvidencePack(args: {
             ? ` The dreamer ${VERB[w.kind]} it the same day as the dream.`
             : ` The dreamer ${VERB[w.kind]} it ${r.daysBefore} day${r.daysBefore === 1 ? "" : "s"} before the dream.`;
       const rating = w.rating ? ` They rated it ${w.rating} out of 5.` : "";
-      const notIn = dream.symbols.filter((s) => !w.symbols.includes(s));
+      // Media logged with + Media has themes and a feeling but no symbols, so say what is and is not known
+      const notIn = w.symbols.length
+        ? ` Dream symbols not in this work: ${dream.symbols.filter((s) => !w.symbols.includes(s)).join(", ") || "none"}.`
+        : " The work's symbols were not recorded, so it is linked by themes, feeling and timing only.";
+      const shared = r.shared.length ? ` Shared symbols: ${r.shared.join(", ")}.` : "";
+      const feeling = w.primaryEmotion === dream.primaryEmotion ? ` Both have the main feeling ${w.primaryEmotion}.` : "";
+      const note = w.userNote ? ` The dreamer's note on it: "${w.userNote.slice(0, 160)}"` : "";
       items.push({
         id: `road:${r.to}`,
-        text: `Link to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}), strength ${r.strength}. Shared symbols (${r.shared.length}): ${r.shared.join(", ")}.${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${when}${rating} Dream symbols not in this work: ${notIn.join(", ") || "none"}.${r.dreamerMentioned ? " The dreamer named this work themselves while recording the dream." : ""}`,
+        text: `Link to ${w.title} (${w.kind}${w.creator ? ` by ${w.creator}` : ""}).${r.dreamerMentioned ? " The dreamer named this work themselves while recording the dream." : ""}${shared}${r.sharedThemes.length ? ` Shared themes: ${r.sharedThemes.join(", ")}.` : ""}${feeling}${when}${rating}${notIn}${note}`,
       });
     } else {
       const d = dreams.get(r.to);
@@ -75,7 +91,10 @@ export function buildEvidencePack(args: {
     if (!baseRates.placeholder && s in baseRates.rates) {
       items.push({
         id: `db:${s}`,
-        text: `In a sample of ${baseRates.n} DreamBank reports, ${Math.round(baseRates.rates[s] * 100)}% mention ${s} (approximate, keyword-based).`,
+        text:
+          baseRates.method === "llm2a"
+            ? `In a sample of ${baseRates.n} DreamBank reports coded by the same AI step, ${Math.round(baseRates.rates[s] * 100)}% include ${s}.`
+            : `In a sample of ${baseRates.n} DreamBank reports, ${Math.round(baseRates.rates[s] * 100)}% mention ${s} (approximate, keyword-based).`,
       });
     }
   }
@@ -86,7 +105,11 @@ export function buildEvidencePack(args: {
   for (const t of typical) {
     items.push({
       id: `typical:${t.id}`,
-      text: `This dream includes a typical dream theme: "${t.text}". In the Typical Dreams Questionnaire, ${t.prevalence}% of ${TDQ_SOURCE.sampleSize} Canadian university students said they had ever had a dream like this (lifetime prevalence, not how often it happens per night).`,
+      text: `This dream includes a typical dream theme: "${t.text}". In the Typical Dreams Questionnaire, ${t.prevalence}% of ${TDQ_SOURCE.sampleSize} Canadian university students said they had ever had a dream like this (lifetime prevalence, not how often it happens per night).${
+        !baseRates.placeholder && baseRates.typicalRates && t.id in baseRates.typicalRates
+          ? ` In ${baseRates.n} DreamBank reports, ${Math.round(baseRates.typicalRates[t.id] * 1000) / 10}% of single dreams included it.`
+          : ""
+      }`,
     });
   }
 
