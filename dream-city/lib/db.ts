@@ -87,22 +87,26 @@ export async function completeSession(id: string, conversationMd: string): Promi
 
 // ---- messages ----
 
-/** Appends a message with the next sequence number. One writer per session at a time. */
+/** Writes a reserved conversation position, or appends for legacy callers. */
 export async function addMessage(
   sessionId: string,
   role: JournalMessage["role"],
   content: string,
   replyToId: string | null = null,
+  position?: number,
 ): Promise<JournalMessage> {
-  const last = must(
-    await db()
-      .from("journal_messages")
-      .select("sequence")
-      .eq("session_id", sessionId)
-      .order("sequence", { ascending: false })
-      .limit(1),
-  ) as { sequence: number }[];
-  const sequence = last.length ? last[0].sequence + 1 : 0;
+  let sequence = position;
+  if (sequence === undefined) {
+    const last = must(
+      await db()
+        .from("journal_messages")
+        .select("sequence")
+        .eq("session_id", sessionId)
+        .order("sequence", { ascending: false })
+        .limit(1),
+    ) as { sequence: number }[];
+    sequence = last.length ? last[0].sequence + 1 : 0;
+  }
   return must(
     await db()
       .from("journal_messages")

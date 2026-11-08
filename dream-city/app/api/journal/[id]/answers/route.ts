@@ -1,5 +1,6 @@
 // ── (ADDED) Validate and save one answer in the no-login demo ──
 import { addMessage, getMessages, getSession } from "@/lib/db";
+import { answerSequence } from "@/lib/journalSequence";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -30,7 +31,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     if (messages.filter((m) => m.role === "user" && m.reply_to_id).length >= 3) {
       return Response.json({ error: "Three-answer limit reached" }, { status: 409 });
     }
-    const message = await addMessage(id, "user", parsed.data.answer, question.id);
+    const message = await addMessage(id, "user", parsed.data.answer, question.id, answerSequence(question.sequence));
     return Response.json({ message }, { status: 201 });
   } catch (error) {
     console.error("journal answer:", error);
