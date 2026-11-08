@@ -21,7 +21,7 @@ export function DistrictLegend() {
         ))}
       </ul>
       <div className="mt-3 space-y-1 border-t-2 border-line pt-2 text-[12px] text-ink-dim">
-        <div className="mb-1 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing trails that roam between places</div>
+        <div className="mb-1 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing arcs between places</div>
         <KeyRow icon={<LineIcon color="#ffd27a" />}>Dream ↔ book, film, song or game</KeyRow>
         <KeyRow icon={<LineIcon color="#9db2ff" />}>Recurring · dream ↔ dream</KeyRow>
         <KeyRow icon={<LineIcon color="#d9a75a" dashed />}>Weaker link</KeyRow>

@@ -10,7 +10,7 @@ import { WORLD } from "./palette";
 // Links are thin, smooth, glowing curves (not voxels), so they read as
 // connections rather than more objects in the city. Each one is a faint base
 // line with glowing motes flowing along it from dream to work (or dream to
-// dream), and it arcs up into the sky where it crosses the cloud sea. Each vertex carries its
+// dream), and it rises in a straight arc through the sky between the two. Each vertex carries its
 // position along the curve (aT) and its distance from the plaza (aR) so the
 // shader can animate a travelling pulse, reveal the line progressively, dash
 // weak links, fade near the centre and brighten on hover / selection.

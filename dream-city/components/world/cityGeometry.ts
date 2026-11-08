@@ -3,8 +3,7 @@
 //
 // Island variant: each emotion district is lifted out onto its own island,
 // floating around a central island (plaza + landmarks + ring road). There are
-// no bridges: links are free-roaming trails that meander within an island and
-// drift across the sky between islands.
+// no bridges: links are straight arcs through the sky between buildings.
 
 import type { City } from "@/lib/layout";
 import { DREAM_START, PLAZA_RADIUS } from "@/lib/layout";
@@ -48,9 +47,8 @@ export type WRoad = {
   strength: number;
   bright: boolean;
   dotted: boolean;
-  cells: Vec2[]; // ground path tiles under this link
-  path: Vec2[]; // smooth samples along the meandering trail, used for rendering
-  lift: number[]; // height above the ground at each path sample: trails arc up over the cloud sea
+  path: Vec2[]; // samples along the straight line between the two buildings
+  lift: number[]; // height above the ground at each sample: each link is an arch
 };
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
 export type WorldCity = {
@@ -116,80 +114,10 @@ function densify(points: Vec2[], step = 2): Vec2[] {
   return out;
 }
 
-/** One pass of Chaikin corner cutting (keeps the end points), so trails curve instead of kinking. */
-function smooth(points: Vec2[]): Vec2[] {
-  if (points.length < 3) return points;
-  const out: Vec2[] = [points[0]];
-  for (let i = 0; i < points.length - 1; i++) {
-    const a = points[i];
-    const b = points[i + 1];
-    out.push({ x: a.x * 0.75 + b.x * 0.25, z: a.z * 0.75 + b.z * 0.25 }, { x: a.x * 0.25 + b.x * 0.75, z: a.z * 0.25 + b.z * 0.75 });
-  }
-  out.push(points[points.length - 1]);
-  return out;
-}
-
-/**
- * Let a trail roam: push interior points sideways by two layered sine waves
- * seeded per link, so no two trails wiggle alike. The wobble eases in from
- * zero at both ends so trails still meet their buildings.
- */
-function wander(points: Vec2[], seed: number, amp: number): Vec2[] {
-  if (points.length < 3 || amp === 0) return points;
-  const dist = [0];
-  for (let i = 1; i < points.length; i++) dist.push(dist[i - 1] + Math.hypot(points[i].x - points[i - 1].x, points[i].z - points[i - 1].z));
-  const total = dist[dist.length - 1] || 1;
-  const f1 = 0.09 + (seed % 7) * 0.012;
-  const f2 = 0.21 + ((seed >>> 3) % 5) * 0.02;
-  const p1 = ((seed >>> 6) % 628) / 100;
-  const p2 = ((seed >>> 10) % 628) / 100;
-  const dir = (seed >>> 14) % 2 ? 1 : -1;
-  return points.map((p, i) => {
-    if (i === 0 || i === points.length - 1) return p;
-    const a = points[i - 1];
-    const b = points[i + 1];
-    const dx = b.x - a.x;
-    const dz = b.z - a.z;
-    const len = Math.hypot(dx, dz) || 1;
-    const d = dist[i];
-    const ease = Math.min(1, d / 5, (total - d) / 5);
-    const taper = ease * ease * (3 - 2 * ease);
-    const w = dir * amp * taper * (Math.sin(d * f1 + p1) * 0.7 + Math.sin(d * f2 + p2) * 0.3);
-    return { x: p.x - (dz / len) * w, z: p.z + (dx / len) * w };
-  });
-}
-
 /** A full circle of points (closed loops can't go through arcPoints, which takes the short way round). */
 function circlePoints(r: number, step = 2): Vec2[] {
   const n = Math.max(12, Math.ceil((Math.PI * 2 * r) / step));
   return Array.from({ length: n }, (_, i) => polar(r, (Math.PI * 2 * i) / n));
-}
-
-/**
- * Heights for a trail: flat on land, and a smooth arch over each stretch of
- * open cloud, higher for longer crossings so trails separate in depth.
- */
-function arcLift(path: Vec2[], onLand: (p: Vec2) => boolean): number[] {
-  const lift = path.map(() => 0);
-  const dist = [0];
-  for (let i = 1; i < path.length; i++) dist.push(dist[i - 1] + Math.hypot(path[i].x - path[i - 1].x, path[i].z - path[i - 1].z));
-  let i = 0;
-  while (i < path.length) {
-    if (onLand(path[i])) {
-      i++;
-      continue;
-    }
-    let j = i;
-    while (j + 1 < path.length && !onLand(path[j + 1])) j++;
-    // the arch spans from the last land sample to the next one
-    const a = Math.max(0, i - 1);
-    const b = Math.min(path.length - 1, j + 1);
-    const span = dist[b] - dist[a];
-    const h = Math.min(9, 1.2 + span * 0.18);
-    for (let k = a; k <= b; k++) lift[k] = Math.max(lift[k], Math.sin((Math.PI * (dist[k] - dist[a])) / (span || 1)) * h);
-    i = j + 1;
-  }
-  return lift;
 }
 
 export function toWorldCity(
@@ -296,34 +224,12 @@ export function toWorldCity(
     const ea = emotionOf(r.from);
     const eb = emotionOf(r.to);
     if (!A || !B || !ea || !eb) return;
-    const seed = hashString(`${r.from}->${r.to}`);
-    let waypoints: Vec2[];
-    let amp: number;
-    if (ea === eb) {
-      waypoints = [A, B];
-      amp = 1.1;
-    } else {
-      // Leave each island from its landing and drift across the sky, bowing
-      // around the central island rather than following a fixed road.
-      const la = landing.get(ea) ?? A;
-      const lb = landing.get(eb) ?? B;
-      let mid = (Math.atan2(la.z, la.x) + Math.atan2(lb.z, lb.x)) / 2;
-      if (Math.abs(Math.atan2(la.z, la.x) - Math.atan2(lb.z, lb.x)) > Math.PI) mid += Math.PI;
-      const bow = CENTRAL_R + 3 + (seed % 9);
-      waypoints = [A, la, polar(bow, mid), lb, B];
-      amp = 2.4;
-    }
-    const path = wander(smooth(smooth(densify(waypoints, 1.5))), seed, amp);
-    const cells: Vec2[] = [];
-    const seen = new Set<string>();
-    for (let j = 0; j < path.length - 1; j++)
-      for (const c of lineCells(path[j], path[j + 1])) {
-        const k = key(c.x, c.z);
-        if (!land.has(k) || seen.has(k)) continue; // over the cloud sea a trail is just light
-        seen.add(k);
-        cells.push(c);
-        if (!ringCells.has(k)) pathCells.add(k);
-      }
+    // A straight line between the two buildings, arching up into the sky:
+    // longer links arch higher, so they clear the towers and separate in depth.
+    const path = densify([A, B], 1.5);
+    const span = Math.hypot(B.x - A.x, B.z - A.z);
+    const h = Math.min(16, 1.5 + span * 0.22);
+    const lift = path.map((_, j) => Math.sin((Math.PI * j) / (path.length - 1)) * h);
     roads.push({
       id: `${r.from}->${r.to}`,
       from: r.from,
@@ -331,9 +237,8 @@ export function toWorldCity(
       strength: r.strength,
       bright: r.strength >= STRONG_STRENGTH,
       dotted: r.strength < WEAK,
-      cells,
       path,
-      lift: arcLift(path, (p) => land.has(key(Math.round(p.x), Math.round(p.z)))),
+      lift,
     });
   });
   // Streets are paths too.
