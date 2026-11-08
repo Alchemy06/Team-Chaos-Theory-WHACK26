@@ -5,11 +5,16 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { toMarkdown, type Entry } from "@/lib/entry";
 import type { Dream, Emotion, Extraction, Selection, Work, WorkKind } from "@/lib/types";
 import { ApiError, fetchExtraction, fetchInsight, startJournal, saveJournalAnswer, finishJournal } from "@/services/api";
+import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
 import { computeModel } from "./cityModel";
 
 export type UISelection = Selection | { kind: "plaza" } | { kind: "island"; id: Emotion } | null;
 
 export type Settings = { pixelation: boolean; bloom: boolean; labels: boolean };
+
+/** A small "it's created" popup in the middle of the screen that fades away by itself. */
+export type Notice = { id: number; title: string; body?: string; color?: string };
+const NOTICE_MS = 2600;
 
 export type StoredInsight = { text: string; source: "ai" | "fallback" | "demo" };
 
@@ -45,6 +50,7 @@ type State = {
   justBuiltId: string | null;
   cameraNonce: number;
   citation: string | null;
+  notice: Notice | null;
   settings: Settings;
   record: RecordState;
 
@@ -55,6 +61,7 @@ type State = {
   resetCamera: () => void;
   toggleSetting: (k: keyof Settings) => void;
   openCitation: (id: string | null) => void;
+  showNotice: (n: Omit<Notice, "id">) => void;
   requestInsight: (dreamId: string) => Promise<void>;
 
   openRecord: () => void;
@@ -135,6 +142,7 @@ export const useCityStore = create<State>()(
       justBuiltId: null,
       cameraNonce: 0,
       citation: null,
+      notice: null,
       settings: { pixelation: true, bloom: true, labels: true },
       record: emptyRecord,
 
@@ -145,6 +153,13 @@ export const useCityStore = create<State>()(
       resetCamera: () => set((s) => ({ cameraNonce: s.cameraNonce + 1, selection: null })),
       toggleSetting: (k) => set((s) => ({ settings: { ...s.settings, [k]: !s.settings[k] } })),
       openCitation: (citation) => set({ citation }),
+      showNotice: (n) => {
+        const id = Date.now();
+        set({ notice: { ...n, id } });
+        setTimeout(() => {
+          if (get().notice?.id === id) set({ notice: null });
+        }, NOTICE_MS);
+      },
 
       // Ask the backend for a grounded insight for one dream (cached).
       requestInsight: async (dreamId) => {
@@ -272,6 +287,11 @@ export const useCityStore = create<State>()(
         setTimeout(() => {
           if (get().justBuiltId === dream.id) set({ justBuiltId: null });
         }, 4000);
+        get().showNotice({
+          title: "Dream recorded",
+          body: `Rising on the ${EMOTION_LABELS[dream.primaryEmotion]} island`,
+          color: EMOTION_COLORS[dream.primaryEmotion],
+        });
         void get().requestInsight(dream.id);
       },
 

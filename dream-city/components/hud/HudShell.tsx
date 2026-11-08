@@ -6,6 +6,7 @@ import { CitationPopover } from "./CitationPopover";
 import { DistrictLegend } from "./DistrictLegend";
 import { RecordDreamSheet } from "./RecordDreamSheet";
 import { Timeline } from "./Timeline";
+import { CreatedNotice } from "./CreatedNotice";
 import { TopBar } from "./TopBar";
 import { SelectionPanel } from "./panels/SelectionPanel";
 import { PixelButton } from "./ui/Pixel";
@@ -65,6 +66,7 @@ export function HudShell() {
       <SelectionPanel />
       <RecordDreamSheet />
       <CitationPopover />
+      <CreatedNotice />
     </div>
   );
 }

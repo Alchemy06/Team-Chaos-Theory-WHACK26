@@ -105,6 +105,8 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `Save failed (${res.status})`);
       setSaved(data as Saved);
+      const icon = KINDS.find((k) => k.kind === kind)?.icon ?? "";
+      useCityStore.getState().showNotice({ title: "Added to your library", body: `${icon} ${(data as Saved).title || title}`.trim() });
       void useCityStore.getState().loadMedia(); // refresh the Related media lists
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
