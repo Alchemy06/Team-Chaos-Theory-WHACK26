@@ -2,9 +2,9 @@
 // voxel-grid geometry for the 3D world. Pure TypeScript, no React or three.
 //
 // Island variant: each emotion district is lifted out onto its own island,
-// joined to a central island (plaza + landmarks + ring road) by a bridge.
-// Links are routed along real paths: straight within an island, and via the
-// bridges and the ring road between islands.
+// floating around a central island (plaza + landmarks + ring road). There are
+// no bridges: links are free-roaming trails that meander within an island and
+// drift across the sky between islands.
 
 import type { City } from "@/lib/layout";
 import { DREAM_START, PLAZA_RADIUS } from "@/lib/layout";
@@ -21,7 +21,7 @@ export const DISTRICT_PUSH = 12;
 const LIBRARY_PUSH = 6;
 /** How far each emotion island drifts away from the centre (voxels). */
 export const ISLAND_GAP = 16;
-/** Central island radius and the ring road (main boulevard) that every bridge joins. */
+/** Central island radius and its ring road (main boulevard). */
 export const CENTRAL_R = PLAZA_R + 11;
 export const RING_R = PLAZA_R + 7;
 const SHORE = 5; // land margin around everything on an island
@@ -49,10 +49,9 @@ export type WRoad = {
   bright: boolean;
   dotted: boolean;
   cells: Vec2[]; // ground path tiles under this link
-  path: Vec2[]; // smooth samples along the routed path (with a small lane offset), used for rendering
+  path: Vec2[]; // smooth samples along the meandering trail, used for rendering
 };
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
-export type WBridge = { emotion: Emotion; angle: number; from: Vec2; to: Vec2; cells: Vec2[] };
 export type WorldCity = {
   districts: WDistrict[];
   streets: WStreet[];
@@ -62,7 +61,6 @@ export type WorldCity = {
   landmarks: WLandmark[];
   /** land cell key -> emotion island, or "centre" */
   land: Map<string, Emotion | "centre">;
-  bridges: WBridge[];
   pathCells: Set<string>;
   ringCells: Set<string>;
   radius: number;
@@ -117,9 +115,34 @@ function densify(points: Vec2[], step = 2): Vec2[] {
   return out;
 }
 
-/** Shift interior points sideways so links that share a path read as parallel strands. */
-function laneOffset(points: Vec2[], offset: number): Vec2[] {
-  if (offset === 0) return points;
+/** One pass of Chaikin corner cutting (keeps the end points), so trails curve instead of kinking. */
+function smooth(points: Vec2[]): Vec2[] {
+  if (points.length < 3) return points;
+  const out: Vec2[] = [points[0]];
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i];
+    const b = points[i + 1];
+    out.push({ x: a.x * 0.75 + b.x * 0.25, z: a.z * 0.75 + b.z * 0.25 }, { x: a.x * 0.25 + b.x * 0.75, z: a.z * 0.25 + b.z * 0.75 });
+  }
+  out.push(points[points.length - 1]);
+  return out;
+}
+
+/**
+ * Let a trail roam: push interior points sideways by two layered sine waves
+ * seeded per link, so no two trails wiggle alike. The wobble eases in from
+ * zero at both ends so trails still meet their buildings.
+ */
+function wander(points: Vec2[], seed: number, amp: number): Vec2[] {
+  if (points.length < 3 || amp === 0) return points;
+  const dist = [0];
+  for (let i = 1; i < points.length; i++) dist.push(dist[i - 1] + Math.hypot(points[i].x - points[i - 1].x, points[i].z - points[i - 1].z));
+  const total = dist[dist.length - 1] || 1;
+  const f1 = 0.09 + (seed % 7) * 0.012;
+  const f2 = 0.21 + ((seed >>> 3) % 5) * 0.02;
+  const p1 = ((seed >>> 6) % 628) / 100;
+  const p2 = ((seed >>> 10) % 628) / 100;
+  const dir = (seed >>> 14) % 2 ? 1 : -1;
   return points.map((p, i) => {
     if (i === 0 || i === points.length - 1) return p;
     const a = points[i - 1];
@@ -127,9 +150,11 @@ function laneOffset(points: Vec2[], offset: number): Vec2[] {
     const dx = b.x - a.x;
     const dz = b.z - a.z;
     const len = Math.hypot(dx, dz) || 1;
-    // taper the offset in near the ends so lines still meet their buildings
-    const t = Math.min(1, i / 3, (points.length - 1 - i) / 3);
-    return { x: p.x - (dz / len) * offset * t, z: p.z + (dx / len) * offset * t };
+    const d = dist[i];
+    const ease = Math.min(1, d / 5, (total - d) / 5);
+    const taper = ease * ease * (3 - 2 * ease);
+    const w = dir * amp * taper * (Math.sin(d * f1 + p1) * 0.7 + Math.sin(d * f2 + p2) * 0.3);
+    return { x: p.x - (dz / len) * w, z: p.z + (dx / len) * w };
   });
 }
 
@@ -137,15 +162,6 @@ function laneOffset(points: Vec2[], offset: number): Vec2[] {
 function circlePoints(r: number, step = 2): Vec2[] {
   const n = Math.max(12, Math.ceil((Math.PI * 2 * r) / step));
   return Array.from({ length: n }, (_, i) => polar(r, (Math.PI * 2 * i) / n));
-}
-
-/** Points along the shorter arc between two angles. */
-function arcPoints(r: number, from: number, to: number): Vec2[] {
-  let d = to - from;
-  while (d > Math.PI) d -= Math.PI * 2;
-  while (d < -Math.PI) d += Math.PI * 2;
-  const n = Math.max(2, Math.ceil((Math.abs(d) * r) / 2));
-  return Array.from({ length: n + 1 }, (_, i) => polar(r, from + (d * i) / n));
 }
 
 export function toWorldCity(
@@ -226,7 +242,7 @@ export function toWorldCity(
   for (const b of buildings) addAnchor(b.emotion, b.pos);
   for (const s of streets) for (const c of s.cells.filter((_, i) => i % 2 === 0)) addAnchor(s.emotion, c);
 
-  // Each island gets a landing on its centre line, facing the central island.
+  // Each island reaches toward the centre with a landing on its centre line, where cross-island trails set off.
   const landing = new Map<Emotion, Vec2>();
   for (const [e, pts] of islandAnchors) {
     const a = midOf.get(e) ?? 0;
@@ -237,25 +253,6 @@ export function toWorldCity(
   }
   for (const [e, pts] of islandAnchors) for (const p of pts) stamp(p, SHORE + jitter(p.x, p.z) * 1.6, e);
 
-  // ---------- bridges ----------
-  const bridges: WBridge[] = [...landing.entries()].map(([e, l]) => {
-    const a = midOf.get(e) ?? 0;
-    const from = polar(CENTRAL_R - 1, a);
-    const to = { x: l.x, z: l.z };
-    const cells: Vec2[] = [];
-    const seen = new Set<string>();
-    for (const c of lineCells(from, to))
-      for (const off of [-1, 0, 1]) {
-        const p = { x: Math.round(c.x - Math.sin(a) * off), z: Math.round(c.z + Math.cos(a) * off) };
-        if (!seen.has(key(p.x, p.z)) && !land.has(key(p.x, p.z))) {
-          seen.add(key(p.x, p.z));
-          cells.push(p);
-        }
-      }
-    return { emotion: e, angle: a, from, to, cells };
-  });
-  const bridgeOf = new Map(bridges.map((b) => [b.emotion, b]));
-
   // ---------- ring road (main boulevard) ----------
   const ring = circlePoints(RING_R);
   const ringCells = new Set<string>();
@@ -265,29 +262,40 @@ export function toWorldCity(
   const pathCells = new Set<string>();
   const emotionOf = (id: string): Emotion | null => byId.get(id)?.emotion ?? null;
   const roads: WRoad[] = [];
-  city.roads.forEach((r, i) => {
+  city.roads.forEach((r) => {
     const A = byId.get(r.from)?.pos;
     const B = byId.get(r.to)?.pos;
     const ea = emotionOf(r.from);
     const eb = emotionOf(r.to);
     if (!A || !B || !ea || !eb) return;
+    const seed = hashString(`${r.from}->${r.to}`);
     let waypoints: Vec2[];
+    let amp: number;
     if (ea === eb) {
       waypoints = [A, B];
+      amp = 1.1;
     } else {
-      const ba = bridgeOf.get(ea)!;
-      const bb = bridgeOf.get(eb)!;
-      waypoints = [A, ba.to, ba.from, polar(RING_R, ba.angle), ...arcPoints(RING_R, ba.angle, bb.angle).slice(1, -1), polar(RING_R, bb.angle), bb.from, bb.to, B];
+      // Leave each island from its landing and drift across the sky, bowing
+      // around the central island rather than following a fixed road.
+      const la = landing.get(ea) ?? A;
+      const lb = landing.get(eb) ?? B;
+      let mid = (Math.atan2(la.z, la.x) + Math.atan2(lb.z, lb.x)) / 2;
+      if (Math.abs(Math.atan2(la.z, la.x) - Math.atan2(lb.z, lb.x)) > Math.PI) mid += Math.PI;
+      const bow = CENTRAL_R + 3 + (seed % 9);
+      waypoints = [A, la, polar(bow, mid), lb, B];
+      amp = 2.4;
     }
+    const path = wander(smooth(smooth(densify(waypoints, 1.5))), seed, amp);
     const cells: Vec2[] = [];
-    for (let j = 0; j < waypoints.length - 1; j++)
-      for (const c of lineCells(waypoints[j], waypoints[j + 1])) {
+    const seen = new Set<string>();
+    for (let j = 0; j < path.length - 1; j++)
+      for (const c of lineCells(path[j], path[j + 1])) {
         const k = key(c.x, c.z);
-        if (!land.has(k)) continue; // over water the bridge deck carries the path
+        if (!land.has(k) || seen.has(k)) continue; // over the cloud sea a trail is just light
+        seen.add(k);
         cells.push(c);
         if (!ringCells.has(k)) pathCells.add(k);
       }
-    const lane = ((i % 5) - 2) * 0.42;
     roads.push({
       id: `${r.from}->${r.to}`,
       from: r.from,
@@ -296,7 +304,7 @@ export function toWorldCity(
       bright: r.strength >= STRONG_STRENGTH,
       dotted: r.strength < WEAK,
       cells,
-      path: laneOffset(densify(waypoints), lane),
+      path,
     });
   });
   // Streets are paths too.
@@ -337,5 +345,5 @@ export function toWorldCity(
     const [x, z] = k.split(",").map(Number);
     radius = Math.max(radius, Math.hypot(x, z));
   }
-  return { districts, streets, buildings, roads, boulevard, landmarks, land, bridges, pathCells, ringCells, radius: radius + 1 };
+  return { districts, streets, buildings, roads, boulevard, landmarks, land, pathCells, ringCells, radius: radius + 1 };
 }

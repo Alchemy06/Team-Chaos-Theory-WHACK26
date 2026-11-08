@@ -21,7 +21,7 @@ export function DistrictLegend() {
         ))}
       </ul>
       <div className="mt-3 space-y-1 border-t-2 border-line pt-2 text-[12px] text-ink-dim">
-        <div className="mb-1 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing lines along paths</div>
+        <div className="mb-1 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Links · glowing trails that roam between places</div>
         <KeyRow icon={<LineIcon color="#ffd27a" />}>Dream ↔ book, film, song or game</KeyRow>
         <KeyRow icon={<LineIcon color="#9db2ff" />}>Recurring · dream ↔ dream</KeyRow>
         <KeyRow icon={<LineIcon color="#d9a75a" dashed />}>Weaker link</KeyRow>
@@ -30,7 +30,6 @@ export function DistrictLegend() {
         <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Map</div>
         <KeyRow icon={<Swatch color="#5d6178" />}>Path</KeyRow>
         <KeyRow icon={<Swatch color="#8a7440" />}>Main boulevard · ring road on the central island</KeyRow>
-        <KeyRow icon={<Swatch color="#6b4d37" />}>Bridge to an emotion island</KeyRow>
         <KeyRow icon={<Swatch color="#4a5080" />}>Cloud sea · the city floats on a giant cloud</KeyRow>
         <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Places</div>
         <KeyRow icon={<span className="text-[var(--yours)]">★</span>}>Landmark · “Yours” symbol</KeyRow>

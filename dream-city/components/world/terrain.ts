@@ -83,7 +83,6 @@ export function buildProps(city: WorldCity): Voxel[] {
     const [x, z] = k.split(",").map(Number);
     block(x, z, 1, 1);
   }
-  for (const b of city.bridges) for (const c of b.cells) block(c.x, c.z, 1, 1);
 
   const out: Voxel[] = [];
   // Street lamps, offset to one side, only on land and never inside a footprint
