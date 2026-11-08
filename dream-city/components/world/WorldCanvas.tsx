@@ -15,7 +15,6 @@ import { Plaza } from "./Plaza";
 import { SelectionMarker } from "./SelectionMarker";
 import { Terrain } from "./Terrain";
 import { CloudBase } from "./CloudBase";
-import { Bridges } from "./Bridges";
 import { markWorldMounted } from "./useRise";
 import { useWorldTheme } from "@/store/useTheme";
 
@@ -28,7 +27,6 @@ function CityScene() {
       <Lighting radius={city.radius} />
       <CloudBase radius={city.radius} />
       <Terrain city={city} />
-      <Bridges bridges={city.bridges} />
       <Plaza />
       {city.buildings.map((b) => {
         if (!model.visible.has(b.id)) return null;

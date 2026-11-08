@@ -2,9 +2,8 @@
 // voxel-grid geometry for the 3D world. Pure TypeScript, no React or three.
 //
 // Island variant: each emotion district is lifted out onto its own island,
-// joined to a central island (plaza + landmarks + ring road) by a bridge.
-// Links are routed along real paths: straight within an island, and via the
-// bridges and the ring road between islands.
+// floating around a central island (plaza + landmarks + ring road). There are
+// no bridges: links are straight arcs through the sky between buildings.
 
 import type { City } from "@/lib/layout";
 import { DREAM_START, PLAZA_RADIUS } from "@/lib/layout";
@@ -21,7 +20,7 @@ export const DISTRICT_PUSH = 12;
 const LIBRARY_PUSH = 6;
 /** How far each emotion island drifts away from the centre (voxels). */
 export const ISLAND_GAP = 16;
-/** Central island radius and the ring road (main boulevard) that every bridge joins. */
+/** Central island radius and its ring road (main boulevard). */
 export const CENTRAL_R = PLAZA_R + 11;
 export const RING_R = PLAZA_R + 7;
 const SHORE = 5; // land margin around everything on an island
@@ -48,11 +47,10 @@ export type WRoad = {
   strength: number;
   bright: boolean;
   dotted: boolean;
-  cells: Vec2[]; // ground path tiles under this link
-  path: Vec2[]; // smooth samples along the routed path (with a small lane offset), used for rendering
+  path: Vec2[]; // samples along the straight line between the two buildings
+  lift: number[]; // height above the ground at each sample: each link is an arch
 };
 export type WLandmark = { symbol: string; emotion: Emotion; pos: Vec2; height: number };
-export type WBridge = { emotion: Emotion; angle: number; from: Vec2; to: Vec2; cells: Vec2[] };
 export type WorldCity = {
   districts: WDistrict[];
   streets: WStreet[];
@@ -62,7 +60,6 @@ export type WorldCity = {
   landmarks: WLandmark[];
   /** land cell key -> emotion island, or "centre" */
   land: Map<string, Emotion | "centre">;
-  bridges: WBridge[];
   pathCells: Set<string>;
   ringCells: Set<string>;
   radius: number;
@@ -117,35 +114,10 @@ function densify(points: Vec2[], step = 2): Vec2[] {
   return out;
 }
 
-/** Shift interior points sideways so links that share a path read as parallel strands. */
-function laneOffset(points: Vec2[], offset: number): Vec2[] {
-  if (offset === 0) return points;
-  return points.map((p, i) => {
-    if (i === 0 || i === points.length - 1) return p;
-    const a = points[i - 1];
-    const b = points[i + 1];
-    const dx = b.x - a.x;
-    const dz = b.z - a.z;
-    const len = Math.hypot(dx, dz) || 1;
-    // taper the offset in near the ends so lines still meet their buildings
-    const t = Math.min(1, i / 3, (points.length - 1 - i) / 3);
-    return { x: p.x - (dz / len) * offset * t, z: p.z + (dx / len) * offset * t };
-  });
-}
-
 /** A full circle of points (closed loops can't go through arcPoints, which takes the short way round). */
 function circlePoints(r: number, step = 2): Vec2[] {
   const n = Math.max(12, Math.ceil((Math.PI * 2 * r) / step));
   return Array.from({ length: n }, (_, i) => polar(r, (Math.PI * 2 * i) / n));
-}
-
-/** Points along the shorter arc between two angles. */
-function arcPoints(r: number, from: number, to: number): Vec2[] {
-  let d = to - from;
-  while (d > Math.PI) d -= Math.PI * 2;
-  while (d < -Math.PI) d += Math.PI * 2;
-  const n = Math.max(2, Math.ceil((Math.abs(d) * r) / 2));
-  return Array.from({ length: n + 1 }, (_, i) => polar(r, from + (d * i) / n));
 }
 
 export function toWorldCity(
@@ -226,7 +198,7 @@ export function toWorldCity(
   for (const b of buildings) addAnchor(b.emotion, b.pos);
   for (const s of streets) for (const c of s.cells.filter((_, i) => i % 2 === 0)) addAnchor(s.emotion, c);
 
-  // Each island gets a landing on its centre line, facing the central island.
+  // Each island reaches toward the centre with a landing on its centre line, where cross-island trails set off.
   const landing = new Map<Emotion, Vec2>();
   for (const [e, pts] of islandAnchors) {
     const a = midOf.get(e) ?? 0;
@@ -237,25 +209,6 @@ export function toWorldCity(
   }
   for (const [e, pts] of islandAnchors) for (const p of pts) stamp(p, SHORE + jitter(p.x, p.z) * 1.6, e);
 
-  // ---------- bridges ----------
-  const bridges: WBridge[] = [...landing.entries()].map(([e, l]) => {
-    const a = midOf.get(e) ?? 0;
-    const from = polar(CENTRAL_R - 1, a);
-    const to = { x: l.x, z: l.z };
-    const cells: Vec2[] = [];
-    const seen = new Set<string>();
-    for (const c of lineCells(from, to))
-      for (const off of [-1, 0, 1]) {
-        const p = { x: Math.round(c.x - Math.sin(a) * off), z: Math.round(c.z + Math.cos(a) * off) };
-        if (!seen.has(key(p.x, p.z)) && !land.has(key(p.x, p.z))) {
-          seen.add(key(p.x, p.z));
-          cells.push(p);
-        }
-      }
-    return { emotion: e, angle: a, from, to, cells };
-  });
-  const bridgeOf = new Map(bridges.map((b) => [b.emotion, b]));
-
   // ---------- ring road (main boulevard) ----------
   const ring = circlePoints(RING_R);
   const ringCells = new Set<string>();
@@ -265,29 +218,18 @@ export function toWorldCity(
   const pathCells = new Set<string>();
   const emotionOf = (id: string): Emotion | null => byId.get(id)?.emotion ?? null;
   const roads: WRoad[] = [];
-  city.roads.forEach((r, i) => {
+  city.roads.forEach((r) => {
     const A = byId.get(r.from)?.pos;
     const B = byId.get(r.to)?.pos;
     const ea = emotionOf(r.from);
     const eb = emotionOf(r.to);
     if (!A || !B || !ea || !eb) return;
-    let waypoints: Vec2[];
-    if (ea === eb) {
-      waypoints = [A, B];
-    } else {
-      const ba = bridgeOf.get(ea)!;
-      const bb = bridgeOf.get(eb)!;
-      waypoints = [A, ba.to, ba.from, polar(RING_R, ba.angle), ...arcPoints(RING_R, ba.angle, bb.angle).slice(1, -1), polar(RING_R, bb.angle), bb.from, bb.to, B];
-    }
-    const cells: Vec2[] = [];
-    for (let j = 0; j < waypoints.length - 1; j++)
-      for (const c of lineCells(waypoints[j], waypoints[j + 1])) {
-        const k = key(c.x, c.z);
-        if (!land.has(k)) continue; // over water the bridge deck carries the path
-        cells.push(c);
-        if (!ringCells.has(k)) pathCells.add(k);
-      }
-    const lane = ((i % 5) - 2) * 0.42;
+    // A straight line between the two buildings, arching up into the sky:
+    // longer links arch higher, so they clear the towers and separate in depth.
+    const path = densify([A, B], 1.5);
+    const span = Math.hypot(B.x - A.x, B.z - A.z);
+    const h = Math.min(16, 1.5 + span * 0.22);
+    const lift = path.map((_, j) => Math.sin((Math.PI * j) / (path.length - 1)) * h);
     roads.push({
       id: `${r.from}->${r.to}`,
       from: r.from,
@@ -295,8 +237,8 @@ export function toWorldCity(
       strength: r.strength,
       bright: r.strength >= STRONG_STRENGTH,
       dotted: r.strength < WEAK,
-      cells,
-      path: laneOffset(densify(waypoints), lane),
+      path,
+      lift,
     });
   });
   // Streets are paths too.
@@ -337,5 +279,5 @@ export function toWorldCity(
     const [x, z] = k.split(",").map(Number);
     radius = Math.max(radius, Math.hypot(x, z));
   }
-  return { districts, streets, buildings, roads, boulevard, landmarks, land, bridges, pathCells, ringCells, radius: radius + 1 };
+  return { districts, streets, buildings, roads, boulevard, landmarks, land, pathCells, ringCells, radius: radius + 1 };
 }

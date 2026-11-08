@@ -224,27 +224,3 @@ export function lamp(x0: number, z0: number): Voxel[] {
     { x: x0, y: 2, z: z0, c: WORLD.window, g: true },
   ];
 }
-
-/** A plank bridge (deck top at ground level), with rails and a coloured lamp at each end. */
-export function bridgeVoxels(b: { angle: number; from: { x: number; z: number }; to: { x: number; z: number }; cells: { x: number; z: number }[] }, color: string): Voxel[] {
-  const v: Voxel[] = [];
-  const nx = -Math.sin(b.angle);
-  const nz = Math.cos(b.angle);
-  const along = (c: { x: number; z: number }) => (c.x - b.from.x) * Math.cos(b.angle) + (c.z - b.from.z) * Math.sin(b.angle);
-  for (const c of b.cells) {
-    const side = (c.x - b.from.x) * nx + (c.z - b.from.z) * nz;
-    const t = Math.round(along(c));
-    v.push({ x: c.x, y: -1, z: c.z, c: t % 2 ? "#5a4130" : "#6b4d37" }); // planks
-    if (Math.abs(side) > 0.9) {
-      v.push({ x: c.x, y: 0, z: c.z, c: t % 3 === 0 ? "#3b2a1f" : "#4a3627" }); // rail
-    }
-  }
-  // lamps at both ends, on either side
-  for (const end of [b.from, b.to])
-    for (const s of [-1.6, 1.6]) {
-      const x = Math.round(end.x + nx * s);
-      const z = Math.round(end.z + nz * s);
-      v.push({ x, y: 0, z, c: "#2b2f45" }, { x, y: 1, z, c: "#2b2f45" }, { x, y: 2, z, c: color, g: true });
-    }
-  return v;
-}
