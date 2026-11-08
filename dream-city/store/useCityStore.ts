@@ -80,6 +80,9 @@ const emptyRecord: RecordState = {
   questionIds: [],
 };
 
+// ── (ADDED) Deduplicate overlapping database refreshes ──
+let cityRequestActive = false;
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 export const useCityStore = create<State>()(
@@ -90,14 +93,21 @@ export const useCityStore = create<State>()(
       cityError: null,
       // ── (ADDED) Database is the sole source of map buildings ──
       loadCity: async () => {
+        if (cityRequestActive) return;
+        cityRequestActive = true;
         set({ cityLoading: true, cityError: null });
         try {
           const response = await fetch("/api/city", { cache: "no-store" });
           if (!response.ok) throw new Error("Could not load saved buildings.");
           const data = await response.json() as { dreams: Dream[] };
-          set({ userDreams: data.dreams, cityLoading: false, timelineDay: null });
+          // ── (ADDED) Unchanged database rows must not rebuild terrain and meshes ──
+          const unchanged = JSON.stringify(get().userDreams) === JSON.stringify(data.dreams);
+          set({ userDreams: unchanged ? get().userDreams : data.dreams, cityLoading: false,
+            ...(unchanged ? {} : { timelineDay: null }) });
         } catch (error) {
           set({ cityLoading: false, cityError: error instanceof Error ? error.message : "Could not load city." });
+        } finally {
+          cityRequestActive = false;
         }
       },
       insights: {},

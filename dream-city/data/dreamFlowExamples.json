@@ -1,0 +1,249 @@
+[
+  {
+    "id": "school-clock",
+    "title": "The Exam That Would Not Start",
+    "dream": "I was in my old school, walking down a corridor towards an exam. Every door opened into the same classroom, and a clock insisted I was late.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt anxious and under pressure."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "8"
+      },
+      {
+        "question": "Does the approaching exam remind you of a current responsibility?",
+        "answer": "I have a deadline soon and worry about being prepared."
+      }
+    ],
+    "suggestedEmotion": "apprehension",
+    "themes": [
+      "pressure",
+      "performance",
+      "being late"
+    ]
+  },
+  {
+    "id": "school-paper",
+    "title": "The Paper Classroom",
+    "dream": "I entered a school through a paper door and found an exam in a corridor. The clock ran backwards, but I felt curious and began rearranging the questions.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt curious rather than frightened."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "6"
+      },
+      {
+        "question": "What felt different about being able to change the questions?",
+        "answer": "It felt like I had control instead of just pressure."
+      }
+    ],
+    "suggestedEmotion": "wonder",
+    "themes": [
+      "performance",
+      "control",
+      "change"
+    ]
+  },
+  {
+    "id": "school-voice",
+    "title": "The Unfair Exam",
+    "dream": "At school I waited outside an exam in a corridor. A clock skipped an hour and the door shut before I could enter. I argued that the rules were unfair.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt angry and frustrated."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "7"
+      },
+      {
+        "question": "What stood out about the rules in this situation?",
+        "answer": "I was upset that my effort did not seem to matter."
+      }
+    ],
+    "suggestedEmotion": "anger",
+    "themes": [
+      "performance",
+      "being late",
+      "unfairness"
+    ]
+  },
+  {
+    "id": "tide-home",
+    "title": "The House in the Tide",
+    "dream": "My childhood house stood in shallow water beside the ocean. A flood rose slowly around it while I packed things I wanted to keep.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt sad and full of longing."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "7"
+      },
+      {
+        "question": "What did you most want to keep?",
+        "answer": "Small reminders of childhood and the feeling of home."
+      }
+    ],
+    "suggestedEmotion": "sadness",
+    "themes": [
+      "home",
+      "childhood",
+      "loss"
+    ]
+  },
+  {
+    "id": "tide-quiet",
+    "title": "The Quiet Floating House",
+    "dream": "I returned to the same house on the ocean. The flood had settled into clear water, and I sat on the roof feeling safe as it drifted gently.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt peaceful and content."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "4"
+      },
+      {
+        "question": "What made this version feel safe?",
+        "answer": "There was no hurry. I could let change happen without resisting it."
+      }
+    ],
+    "suggestedEmotion": "happiness",
+    "themes": [
+      "home",
+      "calm",
+      "change"
+    ]
+  },
+  {
+    "id": "tide-door",
+    "title": "The House Below the Ocean",
+    "dream": "I saw a house beneath the ocean through clear water. The flood was suspended in place, and I could not decide whether the house was sinking or rising.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt confused and uncertain."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "6"
+      },
+      {
+        "question": "What was it like not knowing which direction things were moving?",
+        "answer": "It reminded me of a transition where I cannot yet tell whether I am making progress."
+      }
+    ],
+    "suggestedEmotion": "confusion",
+    "themes": [
+      "home",
+      "change"
+    ]
+  },
+  {
+    "id": "flight-first",
+    "title": "A Flight Above the Clouds",
+    "dream": "I was flying through a violet sky above the clouds. The moon unfolded like a map and the stars became destinations I could choose.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt amazed and full of wonder."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "8"
+      },
+      {
+        "question": "What appealed to you about choosing a destination?",
+        "answer": "Exploration and discovery felt possible without having a plan."
+      }
+    ],
+    "suggestedEmotion": "wonder",
+    "themes": [
+      "exploration",
+      "discovery",
+      "journey"
+    ]
+  },
+  {
+    "id": "flight-return",
+    "title": "The Familiar Flight",
+    "dream": "I was flying through the same sky and clouds again. The moon was close enough to touch and the stars arranged themselves into a route I recognised.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt joyful and free."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "7"
+      },
+      {
+        "question": "How did recognising the route change the experience?",
+        "answer": "I felt confident about the journey instead of needing to know every step."
+      }
+    ],
+    "suggestedEmotion": "happiness",
+    "themes": [
+      "exploration",
+      "journey",
+      "relief"
+    ]
+  },
+  {
+    "id": "silver-smile",
+    "title": "The Silver Smile",
+    "dream": "My teeth became tiny silver bells. In a mirror they rang whenever I smiled, but the reflection smiled a moment before I did.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt bewildered and amused."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "5"
+      },
+      {
+        "question": "What caught your attention most?",
+        "answer": "The delay felt backwards. I was interested rather than upset."
+      }
+    ],
+    "suggestedEmotion": "confusion",
+    "themes": [
+      "identity",
+      "transformation"
+    ]
+  },
+  {
+    "id": "ember-sculpture",
+    "title": "The Ember Sculpture",
+    "dream": "A statue made of fire stood perfectly still. Its flames changed colour whenever I hummed, and I listened quietly until the sculpture faded.",
+    "followUps": [
+      {
+        "question": "How did you feel during the dream?",
+        "answer": "I felt calm and quietly happy."
+      },
+      {
+        "question": "How intense did it feel, from 1 to 10?",
+        "answer": "3"
+      },
+      {
+        "question": "What did you enjoy about that moment?",
+        "answer": "I liked being able to watch without needing to fix or achieve anything."
+      }
+    ],
+    "suggestedEmotion": "happiness",
+    "themes": [
+      "calm",
+      "solitude"
+    ]
+  }
+]
