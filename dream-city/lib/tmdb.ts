@@ -26,3 +26,19 @@ export async function searchFilms(query: string, limit = 5): Promise<TmdbFilm[]>
     posterUrl: r.poster_path ? `https://image.tmdb.org/t/p/w342${r.poster_path}` : null,
   }));
 }
+
+/** One film by TMDB id (from a picked suggestion, "tmdb:<id>"), for an exact description. */
+export async function getFilm(id: number): Promise<TmdbFilm> {
+  const token = process.env.TMDB_TOKEN;
+  if (!token) throw new Error("Set TMDB_TOKEN in .env.local and restart the dev server.");
+  const res = await fetch(`${BASE}/movie/${id}`, { headers: { Authorization: `Bearer ${token}`, accept: "application/json" } });
+  if (!res.ok) throw new Error(`TMDB ${res.status}: ${await res.text()}`);
+  const r = (await res.json()) as { id: number; title: string; release_date?: string; overview?: string; poster_path?: string | null };
+  return {
+    id: r.id,
+    title: r.title,
+    year: r.release_date ? r.release_date.slice(0, 4) : null,
+    overview: r.overview ?? "",
+    posterUrl: r.poster_path ? `https://image.tmdb.org/t/p/w342${r.poster_path}` : null,
+  };
+}

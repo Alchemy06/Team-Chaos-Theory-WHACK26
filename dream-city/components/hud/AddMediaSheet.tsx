@@ -42,11 +42,12 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<Saved | null>(null);
 
-  // ---- film title dropdown (TMDB) ----
+  // ---- title dropdown: TMDB films, RAWG games, Open Library books, iTunes songs ----
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [listOpen, setListOpen] = useState(false);
   const [active, setActive] = useState(0);
   const [searching, setSearching] = useState(false);
+  const [searchDown, setSearchDown] = useState<Kind | null>(null); // this kind's search failed (e.g. no API key)
   const reqId = useRef(0);
 
   useEffect(() => {
@@ -59,10 +60,11 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
       setSearching(true);
       try {
         const res = await fetch(`/api/media/search?kind=${kind}&q=${encodeURIComponent(title.trim())}`);
-        const data = (await res.json()) as { results: Suggestion[] };
+        const data = (await res.json()) as { results: Suggestion[]; error?: string };
         if (id === reqId.current) {
           setSuggestions(data.results ?? []);
           setActive(0);
+          setSearchDown(!res.ok || data.error ? kind : null);
         }
       } catch {
         if (id === reqId.current) setSuggestions([]);
@@ -229,6 +231,11 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
                         </li>
                       ))}
                     </ul>
+                  )}
+                  {searchDown === kind && !externalId && title.trim().length >= 2 && (
+                    <span className="mt-1 block text-[12px] text-ink-faint">
+                      {KINDS.find((k) => k.kind === kind)?.label} search is unavailable right now. You can still add it by typing the title.
+                    </span>
                   )}
                 </label>
 

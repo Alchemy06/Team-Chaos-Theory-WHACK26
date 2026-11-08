@@ -3,6 +3,7 @@
 //   book -> Open Library (no key)
 //   song -> iTunes Search (no key)
 //   game -> RAWG        (RAWG_KEY, free at rawg.io/apidocs)
+import { searchGames } from "./rawg";
 import { searchFilms } from "./tmdb";
 
 export type Kind = "book" | "film" | "song" | "game";
@@ -46,16 +47,11 @@ async function songs(q: string, limit: number): Promise<Suggestion[]> {
 }
 
 async function games(q: string, limit: number): Promise<Suggestion[]> {
-  const key = process.env.RAWG_KEY;
-  if (!key) throw new Error("Set RAWG_KEY in .env.local (free key from rawg.io/apidocs) and restart the dev server.");
-  const d = await getJSON<{ results: { id: number; name: string; released?: string; background_image?: string | null }[] }>(
-    `https://api.rawg.io/api/games?key=${key}&search=${encodeURIComponent(q)}&page_size=${limit}`
-  );
-  return d.results.map((g) => ({
+  return (await searchGames(q, limit)).map((g) => ({
     externalId: `rawg:${g.id}`,
     title: g.name,
-    subtitle: g.released ? g.released.slice(0, 4) : null,
-    imageUrl: g.background_image ?? null,
+    subtitle: g.year,
+    imageUrl: g.imageUrl,
   }));
 }
 

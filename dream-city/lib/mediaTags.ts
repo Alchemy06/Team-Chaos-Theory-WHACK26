@@ -2,7 +2,8 @@
 import { z } from "zod";
 import { addMedia, type Media, type NewMedia } from "./db";
 import { groqJSON } from "./groq";
-import { searchFilms } from "./tmdb";
+import { getGame, searchGames } from "./rawg";
+import { getFilm, searchFilms } from "./tmdb";
 import { EMOTION_LIST, THEMES } from "./vocab";
 import type { Emotion } from "./types";
 
@@ -41,18 +42,31 @@ export async function tagMedia(m: {
   throw new Error(`Media tagging failed after retry: ${lastError}`);
 }
 
-// Insert media with Groq-made main_emotion + themes. For films, a TMDB overview is fetched
-// (when TMDB_TOKEN is set) to give Groq more to go on, and external_id is set to "tmdb:<id>".
-export async function addMediaTagged(m: Omit<NewMedia, "main_emotion" | "themes">): Promise<Media> {
-  let description: string | null = null;
-  let externalId = m.external_id ?? null;
-  if (m.kind === "film" && process.env.TMDB_TOKEN) {
-    const hit = (await searchFilms(m.title, 1).catch(() => []))[0];
-    if (hit) {
-      description = hit.overview;
-      externalId ??= `tmdb:${hit.id}`;
+// Insert media with Groq-made main_emotion + themes. Films (TMDB) and games (RAWG) get a
+// description so Groq has more to go on: the exact item when one was picked from the dropdown
+// ("tmdb:<id>" / "rawg:<id>"), otherwise the top search hit for the typed title, whose id is
+// then saved as external_id. A missing key or an outage never blocks saving.
+async function describe(kind: string, title: string, externalId: string | null): Promise<{ description: string | null; externalId: string | null }> {
+  const [source, raw] = externalId?.split(":") ?? [];
+  const id = Number(raw);
+  if (kind === "film") {
+    const film =
+      source === "tmdb" && id ? await getFilm(id).catch(() => null) : ((await searchFilms(title, 1).catch(() => []))[0] ?? null);
+    if (film) return { description: film.overview || null, externalId: externalId ?? `tmdb:${film.id}` };
+  }
+  if (kind === "game") {
+    const pickedId = source === "rawg" && id ? id : (await searchGames(title, 1).catch(() => []))[0]?.id;
+    const game = pickedId ? await getGame(pickedId).catch(() => null) : null;
+    if (game) {
+      const genres = game.genres.length ? `Genres: ${game.genres.join(", ")}. ` : "";
+      return { description: `${genres}${game.description}`.trim() || null, externalId: externalId ?? `rawg:${game.id}` };
     }
   }
+  return { description: null, externalId };
+}
+
+export async function addMediaTagged(m: Omit<NewMedia, "main_emotion" | "themes">): Promise<Media> {
+  const { description, externalId } = await describe(m.kind, m.title, m.external_id ?? null);
   const tags = await tagMedia({ ...m, description, userNote: m.user_note });
   return addMedia({ ...m, external_id: externalId, main_emotion: tags.mainEmotion, themes: tags.themes });
 }
