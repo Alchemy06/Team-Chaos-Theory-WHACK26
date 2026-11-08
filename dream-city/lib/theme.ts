@@ -20,6 +20,11 @@ export const EMOTION_LABELS: Record<Emotion, string> = {
   wonder: "Wonder",
 };
 
+/** A readable label for an emotion key (e.g. "anger" -> "Anger"), falling back to capitalising it. */
+export function emotionLabel(key: string): string {
+  return (EMOTION_LABELS as Record<string, string>)[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 export const LABEL_COLORS: Record<HonestyLabel, string> = {
   yours: "#f5b942",
   common: "#8b93a7",

@@ -19,7 +19,7 @@ const EXAMPLES = [
 
 // ------------------ Displaying Building Process ------------------ //
 
-const BUILD_STEPS = ["Writing the dream entry", "Extracting emotion, symbols & intensity", "Finding your district and street", "Linking it to your library"];
+const BUILD_STEPS = ["Writing the dream entry", "Extracting emotion, symbols & intensity", "Finding its island and street", "Linking it to related dreams"];
 
 function BuildingProgress() {
   const [step, setStep] = useState(0);
@@ -263,7 +263,7 @@ function RecordDreamDialog() {
           {/* ------------------ Footer & Submission Controls ------------------ */}
           {record.step !== "building" && (
             <div className="flex flex-wrap items-center justify-between gap-2 border-t-2 border-line px-4 py-3">
-              <p className="hidden text-[11px] leading-snug text-ink-faint sm:block">Your journal is saved to the team’s database.</p>
+              <p className="hidden text-[11px] leading-snug text-ink-faint sm:block">Your dream is saved to your journal.</p>
               <div className="ml-auto flex flex-wrap gap-2">
                 {/* ------------------ Offline Fallback ------------------ */}
                 {record.step === "followups" && record.canUseOffline && (

@@ -13,6 +13,7 @@ const W_RECENCY = 0.2;
 const W_INVOLVEMENT = 0.1;
 export const MIN_STRENGTH = 0.35; // below this, no road is drawn
 export const STRONG_STRENGTH = 0.6; // at or above this, a bright road
+export const WEAK_STRENGTH = 0.45; // below this, the link is drawn dashed ("weaker link" in the key)
 
 const MENTION_BOOST = 0.25; // the dreamer named this work while recording the dream (LLM 2a mentionedWorks)
 

@@ -47,7 +47,7 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
       <section className="border-2 border-line bg-(--well) p-3">
         <SectionTitle>Why “{LABEL_TEXT[stat.label]}”</SectionTitle>
         <p className="text-[12px] leading-relaxed text-ink-faint">
-          Fewer than {MIN_COUNT} appearances → Too early; at least {YOURS_MULTIPLIER}× the DreamBank rate → Yours; otherwise Common. The {YOURS_MULTIPLIER}× threshold is a heuristic,
+          Fewer than {MIN_COUNT} appearances → Too early; at least {YOURS_MULTIPLIER}× the DreamBank rate → Yours; otherwise Common; with no DreamBank figure → No baseline. The {YOURS_MULTIPLIER}× threshold is a heuristic,
           not a statistical test.
         </p>
         <CitedText className="mt-2 text-[12px] text-ink-faint" text="Baseline: [card:dreambank]" />

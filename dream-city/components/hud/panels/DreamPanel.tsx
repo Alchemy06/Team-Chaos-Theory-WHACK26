@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { computeLinks } from "@/lib/link";
 import { TDQ_SOURCE, byPrevalence } from "@/lib/typicalDreams";
 import type { Dream } from "@/lib/types";
-import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
+import { EMOTION_COLORS, EMOTION_LABELS, emotionLabel } from "@/lib/theme";
 import type { CityModel } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
 import { WORK_ICON } from "../icons";
@@ -33,7 +33,7 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
   return (
     <PanelFrame
       color={color}
-      kicker={`${EMOTION_LABELS[dream.primaryEmotion]} district · ${dream.microEmotion}`}
+      kicker={`${EMOTION_LABELS[dream.primaryEmotion]} island · ${dream.microEmotion}`}
       title={dream.summary}
       onTitleClick={() => openEntry(dream.id)}
       titleHint="Read the full journal entry"
@@ -41,7 +41,7 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         <span>
           {fmtDate(dream.date)}
           {dream.secondaryEmotion && <> · also {EMOTION_LABELS[dream.secondaryEmotion].toLowerCase()}</>}
-          {dream.hvdcEmotion && dream.hvdcEmotion !== dream.primaryEmotion && <> · coded as {dream.hvdcEmotion} (Hall &amp; Van de Castle)</>}
+          {dream.hvdcEmotion && dream.hvdcEmotion !== dream.primaryEmotion && <> · coded as {emotionLabel(dream.hvdcEmotion)} (Hall &amp; Van de Castle)</>}
           {!dream.emotionStated && <> · feeling not stated</>}
         </span>
       }
@@ -64,7 +64,11 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
         <SectionTitle
           aside={
             <span className="flex items-baseline gap-2">
-              {source === "fallback" && <span className="font-display text-[9px] uppercase text-ink-faint">template</span>}
+              {source === "fallback" && (
+                <span className="font-display text-[9px] uppercase text-ink-faint" title="The AI was unavailable, so this is a simple template insight.">
+                  simple
+                </span>
+              )}
               <button type="button" onClick={() => openEntry(dream.id)} className="pixel-focus font-display text-[9px] uppercase tracking-wider text-ink-dim hover:text-gold">
                 Full entry →
               </button>
@@ -230,7 +234,7 @@ function RelatedMedia({ dream }: { dream: Dream }) {
       <SectionTitle>Related media</SectionTitle>
       {related.length === 0 ? (
         <p className="text-[13px] text-ink-dim">
-          {media.length === 0 ? "Add films, books or songs with + Media to see links here." : "Nothing you logged before this dream shares its themes yet."}
+          {media.length === 0 ? "Add films, books, songs or games with + Media to see links here." : "Nothing you logged before this dream shares its themes yet."}
         </p>
       ) : (
         <ul className="space-y-2">

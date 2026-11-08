@@ -48,7 +48,7 @@ export function TopBar() {
       <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
         <Logo />
         <div className="hidden border-l-2 border-line pl-4 sm:block">
-          <div className="text-[14px] leading-tight text-ink">Saved dream city</div>
+          <div className="text-[14px] leading-tight text-ink">Your dream city</div>
           <div className="text-[12px] leading-tight text-ink-dim">
             {model.dreams.length} dreams · {model.works.length} works · {model.links.length} links
           </div>
@@ -61,7 +61,7 @@ export function TopBar() {
         <IconButton label="City-wide insights" aria-pressed={plazaOpen} onClick={() => select(plazaOpen ? null : { kind: "plaza" })}>
           ✦
         </IconButton>
-        <IconButton label="Districts" className="lg:hidden" aria-pressed={menu === "legend"} onClick={() => setMenu(menu === "legend" ? null : "legend")}>
+        <IconButton label="Islands" className="lg:hidden" aria-pressed={menu === "legend"} onClick={() => setMenu(menu === "legend" ? null : "legend")}>
           ◧
         </IconButton>
         <IconButton label="Reset view" onClick={resetCamera}>

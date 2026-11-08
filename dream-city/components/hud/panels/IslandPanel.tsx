@@ -31,7 +31,10 @@ export function IslandPanel({ emotion, model }: { emotion: Emotion; model: CityM
           <ul className="flex flex-wrap gap-1.5">
             {streets.map((s) => (
               <li key={s.id} className="border-2 px-2 py-0.5 text-[13px]" style={{ borderColor: color, color }}>
-                {s.name} <span className="text-ink-faint">· {onStreet(s.id)}</span>
+                {s.name}{" "}
+                <span className="text-ink-faint">
+                  · {onStreet(s.id)} building{onStreet(s.id) === 1 ? "" : "s"}
+                </span>
               </li>
             ))}
           </ul>

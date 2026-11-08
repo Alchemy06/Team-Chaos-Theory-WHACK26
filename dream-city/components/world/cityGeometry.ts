@@ -7,14 +7,13 @@
 
 import type { City } from "@/lib/layout";
 import { DREAM_START, PLAZA_RADIUS } from "@/lib/layout";
-import { STRONG_STRENGTH } from "@/lib/link";
+import { STRONG_STRENGTH, WEAK_STRENGTH } from "@/lib/link";
 import type { Dream, Emotion, SymbolStat, Work } from "@/lib/types";
 import { hashString } from "./rng";
 
 /** Grid units in lib/layout.ts -> voxels. */
 export const SCALE = 4;
 export const PLAZA_R = PLAZA_RADIUS * SCALE;
-const WEAK = 0.45; // below this a link is drawn dashed
 /** Extra outward push (voxels) so emotion districts sit toward the edge and the centre stays calm. */
 export const DISTRICT_PUSH = 12;
 const LIBRARY_PUSH = 6;
@@ -239,7 +238,7 @@ export function toWorldCity(
       to: r.to,
       strength: r.strength,
       bright: r.strength >= STRONG_STRENGTH,
-      dotted: r.strength < WEAK,
+      dotted: r.strength < WEAK_STRENGTH,
       path,
       lift,
     });

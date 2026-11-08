@@ -24,12 +24,12 @@ export function PlazaPanel({ model }: { model: CityModel }) {
   const boulevard = model.world.boulevard;
 
   return (
-    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title="Your dream city" meta="Built from saved database journals.">
+    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title="Your dream city" meta="Built from every dream in your journal.">
       <p className="font-display text-[10px] uppercase tracking-wider text-ink-dim">
         {model.dreams.length} dreams · {model.works.length} works · {model.links.length} links
       </p>
       <section>
-        <SectionTitle>Dominant districts</SectionTitle>
+        <SectionTitle>Biggest islands</SectionTitle>
         <ul className="space-y-1.5">
           {counts.map(({ e, n }) => (
             <li key={e} className="flex items-center gap-2">
@@ -48,7 +48,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
         <section className="border-2 border-[#7a5a1a] bg-[#1a1404] p-3">
           <SectionTitle>Main boulevard</SectionTitle>
           <p className="text-[15px] text-gold">
-            <span className="capitalize">{boulevard.symbol}</span> links {boulevard.buildingIds.length} buildings across the city.
+            <span className="capitalize">{boulevard.symbol}</span> appears in {boulevard.buildingIds.length} buildings across the city.
           </p>
         </section>
       )}

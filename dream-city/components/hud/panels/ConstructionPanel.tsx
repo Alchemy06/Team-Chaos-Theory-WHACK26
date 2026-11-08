@@ -17,8 +17,8 @@ export function ConstructionPanel({ rec, model }: { rec: Recommendation; model: 
       meta={
         <span>
           <span className="capitalize">{rec.kind}</span>
-          {rec.creator && <> · {rec.creator}</>} · could open a new corner of{" "}
-          <span style={{ color: EMOTION_COLORS[rec.primaryEmotion] }}>{EMOTION_LABELS[rec.primaryEmotion]}</span>
+          {rec.creator && <> · {rec.creator}</>} · could open a new corner of the{" "}
+          <span style={{ color: EMOTION_COLORS[rec.primaryEmotion] }}>{EMOTION_LABELS[rec.primaryEmotion]}</span> island
         </span>
       }
     >

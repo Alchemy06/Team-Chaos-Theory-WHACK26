@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { emotionLabel } from "@/lib/theme";
 import { useCityStore } from "@/store/useCityStore";
 import { PixelButton, PixelPanel, cx } from "./ui/Pixel";
 
@@ -146,7 +147,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
               <div className="space-y-2 text-[15px]">
                 <p className="text-ink">“{saved.title}”</p>
                 <p className="text-ink-dim">
-                  Main feeling: <span className="text-ink">{saved.main_emotion ?? "unknown"}</span>
+                  Main feeling: <span className="text-ink">{saved.main_emotion ? emotionLabel(saved.main_emotion) : "Unknown"}</span>
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {saved.themes.map((t) => (

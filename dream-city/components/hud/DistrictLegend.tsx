@@ -49,7 +49,7 @@ export function DistrictLegend({ collapsible = false }: { collapsible?: boolean 
   return (
     <PixelPanel className={cx("pointer-events-auto p-3", open ? "w-60" : "w-44")}>
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">{open ? "Districts · emotions" : "Islands"}</span>
+        <span className="font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">{open ? "Islands · emotions" : "Islands"}</span>
         {collapsible && (
           <button
             type="button"
@@ -94,7 +94,7 @@ export function DistrictLegend({ collapsible = false }: { collapsible?: boolean 
         <KeyRow icon={<LineIcon color="#ffd27a" thick />}>Strong link (thicker)</KeyRow>
         <p className="pb-1 text-[11px] text-ink-faint">Hover or select a building to light up its links.</p>
         <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Map</div>
-        <KeyRow icon={<Swatch color="#5d6178" />}>Path</KeyRow>
+        <KeyRow icon={<Swatch color="#5d6178" />}>Street</KeyRow>
         <KeyRow icon={<Swatch color="#8a7440" />}>Main boulevard · ring road on the central island</KeyRow>
         <KeyRow icon={<Swatch color="#4a5080" />}>Cloud sea · the city floats on a giant cloud</KeyRow>
         <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Places</div>

@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { STRONG_STRENGTH } from "@/lib/link";
+import { STRONG_STRENGTH, WEAK_STRENGTH } from "@/lib/link";
 import type { Link } from "@/lib/types";
 import { VOCAB } from "@/lib/vocab";
 import { CitedText } from "../ui/CitedText";
@@ -27,7 +27,8 @@ export function Highlighted({ text, symbols }: { text: string; symbols: string[]
 }
 
 export function LinkCard({ link, title, sub, icon, onOpen, otherText }: { link: Link; title: string; sub: string; icon: string; onOpen: () => void; otherText?: string }) {
-  const tag = link.strength >= STRONG_STRENGTH ? "strong" : link.toType === "dream" ? "recurring" : "possible";
+  // Same words as the map key: strong, recurring, weaker (dashed); anything in between is moderate.
+  const tag = link.strength >= STRONG_STRENGTH ? "strong" : link.toType === "dream" ? "recurring" : link.strength < WEAK_STRENGTH ? "weaker" : "moderate";
   return (
     <div className="border-2 border-line bg-(--well)">
       <button type="button" onClick={onOpen} className="pixel-focus flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-(--hover)">
@@ -37,7 +38,7 @@ export function LinkCard({ link, title, sub, icon, onOpen, otherText }: { link: 
           <span className="block truncate font-display text-[9px] uppercase tracking-wider text-ink-faint">{sub}</span>
         </span>
         <span className="text-right">
-          <span className="block font-display text-[11px] text-gold">{Math.round(link.strength * 100)}</span>
+          <span className="block font-display text-[11px] text-gold">{Math.round(link.strength * 100)}%</span>
           <span className="block font-display text-[8px] uppercase tracking-wider text-ink-faint">{tag}</span>
         </span>
       </button>
