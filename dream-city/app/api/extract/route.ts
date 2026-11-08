@@ -5,7 +5,7 @@ import { fromMarkdown } from "@/lib/entry";
 import { checkExtraction } from "@/lib/extraction";
 import { groqJSON } from "@/lib/groq";
 import { EXTRACTION_SYSTEM } from "@/lib/prompts";
-import { getMessages, getSession } from "@/lib/db";
+import { getMessages, getSession, upsertBuildData } from "@/lib/db";
 import { journalDocument } from "@/lib/journalMarkdown";
 import { z } from "zod";
 
@@ -37,7 +37,13 @@ export async function POST(request: Request) {
     try {
       const raw = await groqJSON(EXTRACTION_SYSTEM, user, { temperature: 0.1 });
       const result = checkExtraction(raw, entry);
-      if (result.ok) return Response.json({ entry, extraction: result.value, warnings: result.warnings });
+      if (result.ok) {
+        // ── (ADDED) A building is displayed only after its data is saved ──
+        if (body.sessionId) await upsertBuildData({ journalID: body.sessionId,
+          mainEmotion: result.value.primaryEmotion, secondaryEmotion: result.value.primaryEmotion,
+          buildHeight: result.value.intensity, hoverDesc: result.value.summary, themes: result.value.themes });
+        return Response.json({ entry, extraction: result.value, warnings: result.warnings });
+      }
       lastErrors = result.errors;
       // Retry once, telling the model exactly what was wrong
       user = `${markdown}\n\n---\nYour previous answer was rejected:\n- ${result.errors.join("\n- ")}\nReturn corrected JSON only.`;

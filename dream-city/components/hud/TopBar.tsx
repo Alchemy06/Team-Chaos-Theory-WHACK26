@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { demo } from "@/store/cityModel";
 import { useCity } from "@/store/useCity";
 import { useCityStore, type Settings } from "@/store/useCityStore";
 import { AddMediaButton } from "./AddMediaSheet";
@@ -41,8 +40,6 @@ export function TopBar() {
   const toggle = useCityStore((s) => s.toggleSetting);
   const select = useCityStore((s) => s.select);
   const resetCamera = useCityStore((s) => s.resetCamera);
-  const removeUserDreams = useCityStore((s) => s.removeUserDreams);
-  const userCount = useCityStore((s) => s.userDreams.length);
   const plazaOpen = useCityStore((s) => s.selection?.kind === "plaza");
   const [menu, setMenu] = useState<"settings" | "legend" | null>(null);
 
@@ -52,7 +49,7 @@ export function TopBar() {
       <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
         <Logo />
         <div className="hidden border-l-2 border-line pl-4 sm:block">
-          <div className="text-[14px] leading-tight text-ink">{demo.persona.name}</div>
+          <div className="text-[14px] leading-tight text-ink">Saved dream city</div>
           <div className="text-[12px] leading-tight text-ink-dim">
             {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
           </div>
@@ -103,18 +100,7 @@ export function TopBar() {
               ))}
             </ul>
             <p className="mt-2 text-[12px] leading-snug text-ink-faint">Turn off the pixel filter and glow on slower laptops.</p>
-            {userCount > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  removeUserDreams();
-                  setMenu(null);
-                }}
-                className="pixel-focus mt-3 w-full border-2 border-dashed border-line px-2 py-1.5 text-[13px] text-ink-dim hover:border-[var(--emo-anger)] hover:text-[var(--emo-anger)]"
-              >
-                Remove my {userCount} recorded dream{userCount === 1 ? "" : "s"}
-              </button>
-            )}
+
           </PixelPanel>
         )}
       </div>

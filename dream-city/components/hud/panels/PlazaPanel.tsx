@@ -2,7 +2,7 @@
 
 import { EMOTION_LIST } from "@/lib/vocab";
 import { EMOTION_COLORS, EMOTION_LABELS } from "@/lib/theme";
-import { baseRates, cards, demo, type CityModel } from "@/store/cityModel";
+import { baseRates, cards, type CityModel } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
 import { HonestyBadge, SectionTitle } from "../ui/Pixel";
 import { PanelFrame } from "./PanelFrame";
@@ -24,7 +24,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
   const boulevard = model.world.boulevard;
 
   return (
-    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title={`${demo.persona.name}'s city`} meta={demo.persona.blurb}>
+    <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title="Your dream city" meta="Built from saved database journals.">
       <p className="font-display text-[10px] uppercase tracking-wider text-ink-dim">
         {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
       </p>

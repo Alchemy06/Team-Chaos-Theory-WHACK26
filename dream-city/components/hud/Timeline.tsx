@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { TIMELINE_DAYS, dayToDate } from "@/store/cityModel";
+import { timelineRange, dayToDate } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
 import { fmtDate } from "./panels/PanelFrame";
 import { PixelPanel } from "./ui/Pixel";
@@ -12,7 +12,8 @@ export function Timeline() {
   const playing = useCityStore((s) => s.playing);
   const setDay = useCityStore((s) => s.setTimelineDay);
   const setPlaying = useCityStore((s) => s.setPlaying);
-  const max = TIMELINE_DAYS;
+  const dreams = useCityStore((s) => s.userDreams);
+  const { start, days: max } = timelineRange(dreams);
 
   useEffect(() => {
     if (!playing) return;
@@ -27,7 +28,7 @@ export function Timeline() {
     return () => clearInterval(id);
   }, [playing, max]);
 
-  const label = day === null ? "Tonight · full city" : `Night ${day + 1} · ${fmtDate(dayToDate(day))}`;
+  const label = day === null ? "Tonight · full city" : `Night ${day + 1} · ${fmtDate(dayToDate(day, start))}`;
 
   return (
     <PixelPanel className="pointer-events-auto flex items-center gap-3 px-3 py-2 sm:w-[min(460px,60vw)]">
@@ -38,6 +39,7 @@ export function Timeline() {
           setPlaying(!playing);
         }}
         className="pixel-btn grid h-9 w-9 shrink-0 place-items-center font-display text-xs"
+        disabled={max === 0}
         aria-label={playing ? "Pause time-lapse" : "Play time-lapse"}
       >
         {playing ? "❚❚" : "▶"}

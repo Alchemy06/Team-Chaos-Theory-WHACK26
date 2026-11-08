@@ -12,12 +12,17 @@ import { PixelButton } from "./ui/Pixel";
 
 /** Conventional UI layered over the 3D world. Never imports three.js. */
 export function HudShell() {
+  const cityLoading = useCityStore((s) => s.cityLoading);
+  const cityError = useCityStore((s) => s.cityError);
+  const dreamCount = useCityStore((s) => s.userDreams.length);
+  const loadCity = useCityStore((s) => s.loadCity);
   const openRecord = useCityStore((s) => s.openRecord);
   const recordOpen = useCityStore((s) => s.record.open);
   const hasSelection = useCityStore((s) => s.selection !== null);
 
   useEffect(() => {
     void useCityStore.persist.rehydrate();
+    void useCityStore.getState().loadCity();
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       const s = useCityStore.getState();
@@ -32,6 +37,13 @@ export function HudShell() {
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       <TopBar />
+      {/* ── (ADDED) Empty and error states never fall back to demo buildings ── */}
+      {!recordOpen && (cityLoading || cityError || dreamCount === 0) && (
+        <div role="status" className="pointer-events-auto absolute left-1/2 top-24 w-[min(90vw,420px)] -translate-x-1/2 border-2 border-line bg-(--well) p-3 text-center text-[14px] text-ink">
+          {cityLoading ? "Loading saved dreams…" : cityError ?? "Your city is waiting. Record your first dream."}
+          {cityError && <button type="button" className="pixel-btn ml-2 px-2 py-1" onClick={() => void loadCity()}>Retry</button>}
+        </div>
+      )}
       <div className="absolute bottom-3 left-3 hidden lg:block">
         <DistrictLegend />
       </div>
