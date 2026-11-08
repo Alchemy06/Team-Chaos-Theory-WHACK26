@@ -42,7 +42,7 @@ export function WorkPanel({ work, model }: { work: Work; model: CityModel }) {
       )}
       {work.rating && (
         <section>
-          <SectionTitle aside={<span className="font-display text-[10px] text-ink-dim">{work.rating}/5</span>}>Your rating · involvement</SectionTitle>
+          <SectionTitle aside={<span className="font-display text-[11px] text-ink-dim">{work.rating}/5</span>}>Your rating · involvement</SectionTitle>
           <BlockMeter value={work.rating} max={5} color={color} label="Rating" />
         </section>
       )}
@@ -56,7 +56,7 @@ export function WorkPanel({ work, model }: { work: Work; model: CityModel }) {
         <p className="mt-2 text-[13px] text-ink-dim">{work.themes.map((t) => `#${t}`).join(" ")}</p>
       </section>
       <section>
-        <SectionTitle aside={<span className="font-display text-[10px] text-gold">{links.length}</span>}>Dreams linked by road</SectionTitle>
+        <SectionTitle aside={<span className="font-display text-[11px] text-gold">{links.length}</span>}>Dreams linked by road</SectionTitle>
         {links.length === 0 ? (
           <p className="text-[13px] text-ink-dim">No dream shares enough with this yet.</p>
         ) : (

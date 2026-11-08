@@ -44,7 +44,7 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
           <p className="mt-2 border-2 border-dashed border-[var(--emo-happiness)]/60 p-2 text-[12px] leading-snug text-[var(--emo-happiness)]">{baseRates.note}</p>
         )}
       </section>
-      <section className="border-2 border-line bg-(--well) p-3">
+      <section className="rounded-md border-2 border-line bg-(--well) p-3">
         <SectionTitle>Why “{LABEL_TEXT[stat.label]}”</SectionTitle>
         <p className="text-[12px] leading-relaxed text-ink-faint">
           Fewer than {MIN_COUNT} appearances → Too early; at least {YOURS_MULTIPLIER}× the DreamBank rate → Yours; otherwise Common. The {YOURS_MULTIPLIER}× threshold is a heuristic,
@@ -60,7 +60,7 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
               <button type="button" onClick={() => select({ kind: "dream", id: d.id })} className="pixel-focus flex w-full items-center gap-2 border-2 border-transparent px-2 py-1 text-left hover:border-line">
                 <span className="h-3 w-3 shrink-0" style={{ background: EMOTION_COLORS[d.primaryEmotion] }} />
                 <span className="flex-1 truncate text-[14px]">{d.summary}</span>
-                <span className="font-display text-[9px] uppercase text-ink-faint">{fmtDate(d.date)}</span>
+                <span className="font-display text-[10px] uppercase text-ink-faint">{fmtDate(d.date)}</span>
               </button>
             </li>
           ))}
@@ -69,7 +69,7 @@ export function LandmarkPanel({ symbol, model }: { symbol: string; model: CityMo
               <button type="button" onClick={() => select({ kind: "work", id: w.id })} className="pixel-focus flex w-full items-center gap-2 border-2 border-transparent px-2 py-1 text-left hover:border-line">
                 <span className="h-3 w-3 shrink-0 border-2 border-gold" />
                 <span className="flex-1 truncate text-[14px] text-gold">{w.title}</span>
-                <span className="font-display text-[9px] uppercase text-ink-faint">{EMOTION_LABELS[w.primaryEmotion]}</span>
+                <span className="font-display text-[10px] uppercase text-ink-faint">{EMOTION_LABELS[w.primaryEmotion]}</span>
               </button>
             </li>
           ))}

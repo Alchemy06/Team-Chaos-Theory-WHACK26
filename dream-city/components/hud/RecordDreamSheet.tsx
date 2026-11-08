@@ -134,7 +134,7 @@ function RecordDreamDialog() {
           {/* ------------------ Header & Close Button ------------------ */}
           <div className="flex items-center justify-between border-b-2 border-line px-4 py-3">
             <div>
-              <div className="font-display text-[10px] uppercase tracking-[0.16em] text-[var(--emo-wonder)]">
+              <div className="font-display text-[11px] uppercase tracking-[0.16em] text-[var(--emo-wonder)]">
                 {record.step === "input" ? "Step 1 of 2" : record.step === "followups" ? "Step 2 of 2" : "Building"}
               </div>
               <h2 id="record-title" className="text-xl text-ink">
@@ -156,7 +156,7 @@ function RecordDreamDialog() {
                 )}
                 {/* ── (ADDED) Voice capture with a visible transcript ── */}
                 {inputMode === "voice" ? (
-                  <div className="space-y-4 border-2 border-line bg-(--well) p-4">
+                  <div className="space-y-4 rounded-md border-2 border-line bg-(--well) p-4">
                     <div className="flex flex-col items-center gap-3 py-3 text-center">
                       <button
                         type="button"
@@ -195,10 +195,10 @@ function RecordDreamDialog() {
                 )}
                 {/* ── (ADDED) Match the follow-up Voice / Type switch ── */}
                 {canSpeak && (
-                  <div className="inline-flex border-2 border-line bg-(--well) p-0.5" role="group" aria-label="Dream input mode">
+                  <div className="inline-flex rounded-md border-2 border-line bg-(--well) p-0.5" role="group" aria-label="Dream input mode">
                     {(["voice", "keyboard"] as const).map((option) => (
                       <button key={option} type="button" aria-pressed={inputMode === option}
-                        className={cx("px-3 py-1 font-display text-[9px] uppercase tracking-wider pixel-focus", inputMode === option ? "bg-line text-ink" : "text-ink-faint hover:text-ink")}
+                        className={cx("px-3 py-1 font-display text-[10px] uppercase tracking-wider pixel-focus", inputMode === option ? "bg-line text-ink" : "text-ink-faint hover:text-ink")}
                         onClick={() => {
                           if (option === inputMode) return;
                           if (option === "keyboard") switchToKeyboard();
@@ -212,14 +212,14 @@ function RecordDreamDialog() {
                 {/* ------------------ Microphone Error ------------------ */}
                 {micError && <p className="text-[13px] text-[var(--emo-anger)]">{micError}</p>}
                 <div>
-                  <div className="mb-1.5 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Or try an example</div>
+                  <div className="mb-1.5 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Or try an example</div>
                   <div className="flex flex-col gap-1.5">
                     {EXAMPLES.map((ex) => (
                       <button
                         key={ex}
                         type="button"
                         onClick={() => { stopMic(); setTranscript(ex); setInputMode("keyboard"); }}
-                        className="pixel-focus border-2 border-line bg-(--well) px-2 py-1.5 text-left text-[13px] leading-snug text-ink-dim hover:border-line-hi hover:text-ink"
+                        className="pixel-focus rounded-md border-2 border-line bg-(--well) px-2 py-1.5 text-left text-[13px] leading-snug text-ink-dim hover:border-line-hi hover:text-ink"
                       >
                         “{ex}”
                       </button>
@@ -234,7 +234,7 @@ function RecordDreamDialog() {
               <div className="space-y-3">
                 <p className="border-l-2 border-line pl-3 text-[13px] italic text-ink-faint">“{record.transcript}”</p>
                 {/* ── (ADDED) Speak assistant questions without reading the dream or answers ── */}
-                <p className="font-display text-[10px] text-ink-faint">Question {questionIndex + 1} of {record.questions.length}</p>
+                <p className="font-display text-[11px] text-ink-faint">Question {questionIndex + 1} of {record.questions.length}</p>
                 {/* ── (ADDED) One spoken question followed by voice or typed input ── */}
                 {!record.busy && record.questions[questionIndex] && (
                   <VoiceQuestionAnswer key={questionIndex} question={record.questions[questionIndex]} index={questionIndex} aiQuestion={questionIndex === 2 && record.aiQuestion} />

@@ -25,7 +25,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
 
   return (
     <PanelFrame color="#c9a8ff" kicker="The Plaza · the whole city" title={`${demo.persona.name}'s city`} meta={demo.persona.blurb}>
-      <p className="font-display text-[10px] uppercase tracking-wider text-ink-dim">
+      <p className="font-display text-[11px] uppercase tracking-wider text-ink-dim">
         {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
       </p>
       <section>
@@ -71,7 +71,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
         {baseRates.placeholder && <p className="mb-2 text-[12px] leading-snug text-[var(--emo-happiness)]">{baseRates.note}</p>}
         <table className="w-full text-[13px]">
           <thead>
-            <tr className="font-display text-[9px] uppercase tracking-wider text-ink-faint">
+            <tr className="font-display text-[10px] uppercase tracking-wider text-ink-faint">
               <th className="pb-1 text-left font-normal">Symbol</th>
               <th className="pb-1 text-right font-normal">You</th>
               <th className="pb-1 text-right font-normal">Base</th>
@@ -106,7 +106,7 @@ export function PlazaPanel({ model }: { model: CityModel }) {
           {[...cards.values()].map((c) => (
             <li key={c.id}>
               <button type="button" onClick={() => openCitation(c.id)} className="pixel-focus w-full border-2 border-transparent px-2 py-1 text-left hover:border-line">
-                <span className="block font-display text-[9px] uppercase tracking-wider text-gold">{c.id}</span>
+                <span className="block font-display text-[10px] uppercase tracking-wider text-gold">{c.id}</span>
                 <span className="block text-[13px] leading-snug text-ink-dim">{c.citation}</span>
               </button>
             </li>

@@ -21,11 +21,11 @@ export function ThemePicker() {
             title={t.blurb}
             onClick={() => setTheme(t.id)}
             className={cx(
-              "pixel-focus border-2 p-1.5 text-left text-[12px] leading-tight",
+              "pixel-focus rounded-md border-2 p-1.5 text-left text-[12px] leading-tight",
               on ? "border-gold text-gold" : "border-line text-ink-dim hover:border-line-hi hover:text-ink",
             )}
           >
-            <span className="mb-1 flex h-3" aria-hidden>
+            <span className="mb-1 flex h-3 overflow-hidden rounded-sm" aria-hidden>
               {t.swatch.map((c) => (
                 <span key={c} className="flex-1" style={{ background: c }} />
               ))}

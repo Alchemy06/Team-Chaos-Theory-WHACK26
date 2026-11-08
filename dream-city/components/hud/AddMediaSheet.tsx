@@ -127,7 +127,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
         <div role="dialog" aria-modal="true" aria-labelledby="media-title" className="flex max-h-[88dvh] flex-col">
           <div className="flex items-center justify-between border-b-2 border-line px-4 py-3">
             <div>
-              <div className="font-display text-[10px] uppercase tracking-[0.16em] text-[var(--emo-wonder)]">Your library</div>
+              <div className="font-display text-[11px] uppercase tracking-[0.16em] text-[var(--emo-wonder)]">Your library</div>
               <h2 id="media-title" className="text-xl text-ink">
                 {saved ? "Added to your library" : "What have you been into?"}
               </h2>
@@ -146,7 +146,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {saved.themes.map((t) => (
-                    <span key={t} className="border-2 border-line bg-(--well) px-2 py-0.5 text-[12px] text-ink-dim">
+                    <span key={t} className="rounded-md border-2 border-line bg-(--well) px-2 py-0.5 text-[12px] text-ink-dim">
                       {t}
                     </span>
                   ))}
@@ -155,7 +155,7 @@ function AddMediaDialog({ onClose }: { onClose: () => void }) {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <div className="mb-1.5 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Kind</div>
+                  <div className="mb-1.5 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Kind</div>
                   <div className="grid grid-cols-4 gap-1.5">
                     {KINDS.map((k) => (
                       <button

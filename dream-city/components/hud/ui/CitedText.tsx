@@ -4,7 +4,7 @@ import { useCity } from "@/store/useCity";
 import { cards } from "@/store/cityModel";
 import { useCityStore } from "@/store/useCityStore";
 
-const chip = "pixel-focus mx-0.5 inline-flex -translate-y-px items-center border-2 px-1 align-middle font-display text-[9px] uppercase leading-[14px] tracking-wider";
+const chip = "pixel-focus mx-0.5 inline-flex -translate-y-px items-center border-2 px-1 align-middle font-display text-[10px] uppercase leading-[14px] tracking-wider";
 
 /**
  * Renders backend insight text. Citations look like [card:media-2018],

@@ -48,11 +48,18 @@ export function TopBar() {
   return (
     <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2">
       <div className="flex items-stretch gap-2">
-      <PixelPanel className="pointer-events-auto flex items-center gap-4 px-3 py-2">
-        <Logo />
-        <div className="hidden border-l-2 border-line pl-4 sm:block">
+      {/* Just the logo; who the city belongs to and its size show in a card on hover or focus. */}
+      <PixelPanel className="group pointer-events-auto relative flex items-center px-3 py-2">
+        <button type="button" className="pixel-focus rounded-md text-left" aria-describedby="city-card">
+          <Logo />
+        </button>
+        <div
+          id="city-card"
+          role="tooltip"
+          className="pixel-panel pointer-events-none absolute left-0 top-full z-40 mt-2 w-max -translate-y-1 px-3 py-2 opacity-0 transition duration-200 ease-out group-focus-within:translate-y-0 group-focus-within:opacity-100 group-hover:translate-y-0 group-hover:opacity-100"
+        >
           <div className="text-[14px] leading-tight text-ink">{demo.persona.name}</div>
-          <div className="text-[12px] leading-tight text-ink-dim">
+          <div className="mt-0.5 text-[12px] leading-tight text-ink-dim">
             {model.dreams.length} dreams · {model.works.length} works · {model.links.length} roads
           </div>
         </div>
@@ -80,9 +87,9 @@ export function TopBar() {
         )}
         {menu === "settings" && (
           <PixelPanel className="anim-rise absolute right-0 top-12 z-40 w-64 p-3">
-            <div className="mb-2 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Theme</div>
+            <div className="mb-2 font-display text-[11px] uppercase tracking-[0.14em] text-ink-faint">Theme</div>
             <ThemePicker />
-            <div className="mb-2 mt-3 font-display text-[10px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
+            <div className="mb-2 mt-3 font-display text-[11px] uppercase tracking-[0.14em] text-ink-faint">Settings</div>
             <ul className="space-y-1">
               {(Object.keys(SETTING_LABELS) as (keyof Settings)[]).map((k) => (
                 <li key={k}>
@@ -102,6 +109,9 @@ export function TopBar() {
               ))}
             </ul>
             <p className="mt-2 text-[12px] leading-snug text-ink-faint">Turn off the pixel filter and glow on slower laptops.</p>
+            <p className="mt-1 text-[12px] leading-snug text-ink-faint">
+              Press <kbd className="rounded border border-line px-1 font-display text-[10px] text-ink-dim">H</kbd> for quiet mode: the interface fades so the city can breathe.
+            </p>
             {userCount > 0 && (
               <button
                 type="button"

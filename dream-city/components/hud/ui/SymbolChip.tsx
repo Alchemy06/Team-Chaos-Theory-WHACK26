@@ -7,7 +7,7 @@ import { HonestyBadge, cx } from "./Pixel";
 export function SymbolChip({ symbol, stat, highlight, onClick }: { symbol: string; stat?: SymbolStat; highlight?: boolean; onClick?: () => void }) {
   const body = (
     <span
-      className={cx("inline-flex items-center gap-1.5 border-2 bg-(--well) py-0.5 pl-2 pr-1 text-[13px] capitalize", highlight ? "border-gold text-gold" : "border-line text-ink")}
+      className={cx("inline-flex items-center gap-1.5 rounded-md border-2 bg-(--well) py-0.5 pl-2 pr-1 text-[13px] capitalize", highlight ? "border-gold text-gold" : "border-line text-ink")}
       title={stat ? explainStat(stat) : "Not enough data yet"}
     >
       {symbol}

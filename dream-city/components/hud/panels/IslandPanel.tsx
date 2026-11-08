@@ -16,7 +16,7 @@ export function IslandPanel({ emotion, model }: { emotion: Emotion; model: CityM
   const works = model.works.filter((w) => w.primaryEmotion === emotion);
   const streets = model.world.streets.filter((s) => s.emotion === emotion);
   const onStreet = (id: string) => model.world.buildings.filter((b) => b.street === id && model.visible.has(b.id)).length;
-  const rowClass = "pixel-focus flex w-full items-baseline gap-2 border-2 border-line bg-(--well) px-2 py-1.5 text-left hover:border-line-hi";
+  const rowClass = "pixel-focus flex w-full items-baseline gap-2 rounded-md border-2 border-line bg-(--well) px-2 py-1.5 text-left hover:border-line-hi";
 
   return (
     <PanelFrame
@@ -30,7 +30,7 @@ export function IslandPanel({ emotion, model }: { emotion: Emotion; model: CityM
           <SectionTitle>Streets</SectionTitle>
           <ul className="flex flex-wrap gap-1.5">
             {streets.map((s) => (
-              <li key={s.id} className="border-2 px-2 py-0.5 text-[13px]" style={{ borderColor: color, color }}>
+              <li key={s.id} className="rounded-full border-2 px-2.5 py-0.5 text-[13px]" style={{ borderColor: color, color }}>
                 {s.name} <span className="text-ink-faint">· {onStreet(s.id)}</span>
               </li>
             ))}
@@ -46,7 +46,7 @@ export function IslandPanel({ emotion, model }: { emotion: Emotion; model: CityM
             {dreams.map((d) => (
               <li key={d.id}>
                 <button type="button" onClick={() => select({ kind: "dream", id: d.id })} className={rowClass}>
-                  <span className="w-12 shrink-0 font-display text-[10px] uppercase text-ink-faint">{fmtDate(d.date)}</span>
+                  <span className="w-12 shrink-0 font-display text-[11px] uppercase text-ink-faint">{fmtDate(d.date)}</span>
                   <span className="min-w-0 flex-1 text-[14px] leading-snug text-ink">{d.summary}</span>
                   <span className="shrink-0 text-[12px]" style={{ color }}>
                     {d.microEmotion}

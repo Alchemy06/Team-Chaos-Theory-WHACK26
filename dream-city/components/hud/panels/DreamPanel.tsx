@@ -41,15 +41,15 @@ export function DreamPanel({ dream, model }: { dream: Dream; model: CityModel })
       }
     >
       <section>
-        <SectionTitle aside={<span className="font-display text-[10px] text-ink-dim">{dream.intensity}/10 · {dream.intensitySource === "self" ? "self-rated" : "AI estimate"}</span>}>
+        <SectionTitle aside={<span className="font-display text-[11px] text-ink-dim">{dream.intensity}/10 · {dream.intensitySource === "self" ? "self-rated" : "AI estimate"}</span>}>
           Intensity · building height
         </SectionTitle>
         <BlockMeter value={dream.intensity} color={color} label="Emotional intensity" />
       </section>
 
       <section>
-        <SectionTitle aside={source === "fallback" ? <span className="font-display text-[9px] uppercase text-ink-faint">template</span> : undefined}>Insight</SectionTitle>
-        <div className="border-2 border-line bg-(--well) p-3">
+        <SectionTitle aside={source === "fallback" ? <span className="font-display text-[10px] uppercase text-ink-faint">template</span> : undefined}>Insight</SectionTitle>
+        <div className="rounded-md border-2 border-line bg-(--well) p-3">
           {dream.insight ? (
             <CitedText text={dream.insight} />
           ) : loading ? (

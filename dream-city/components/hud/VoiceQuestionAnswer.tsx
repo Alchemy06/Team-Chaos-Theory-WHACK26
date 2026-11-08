@@ -116,16 +116,16 @@ export function VoiceQuestionAnswer({ question, index, aiQuestion }: {
         {aiQuestion && <span className="shrink-0 font-display text-[8px] text-ink-faint">AI QUESTION</span>}
       </div>
       {/* ── (ADDED) Compact mode switch follows the existing pixel theme ── */}
-      {supported && <div className="inline-flex border-2 border-line bg-(--well) p-0.5" role="group" aria-label="Answer input mode">
+      {supported && <div className="inline-flex rounded-md border-2 border-line bg-(--well) p-0.5" role="group" aria-label="Answer input mode">
         {(["voice", "type"] as const).map((option) => <button key={option} type="button" aria-pressed={mode === option}
-          className={cx("px-3 py-1 font-display text-[9px] uppercase tracking-wider pixel-focus", mode === option ? "bg-line text-ink" : "text-ink-faint hover:text-ink")}
+          className={cx("px-3 py-1 font-display text-[10px] uppercase tracking-wider pixel-focus", mode === option ? "bg-line text-ink" : "text-ink-faint hover:text-ink")}
           onClick={() => { stopListening(); modeRef.current = option; setMode(option); setError(""); }}>
           {option === "voice" ? "Voice" : "Type"}
         </button>)}
       </div>}
       {isIntensity && mode === "voice" ? (
-        <div className="border-2 border-line bg-(--well) px-3 py-4" aria-live="polite">
-          <p className="font-display text-[10px] text-ink-faint">SAY A NUMBER FROM 1 TO 10</p>
+        <div className="rounded-md border-2 border-line bg-(--well) px-3 py-4" aria-live="polite">
+          <p className="font-display text-[11px] text-ink-faint">SAY A NUMBER FROM 1 TO 10</p>
           <p className="mt-2 text-xl text-ink">{answer ? `${answer} / 10` : "Waiting for your rating…"}</p>
         </div>
       ) : isIntensity ? <div id={`answer-${index}`} className="flex flex-wrap gap-1" role="group" aria-label="Intensity from 1 to 10">
