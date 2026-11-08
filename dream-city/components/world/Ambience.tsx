@@ -24,7 +24,7 @@ function FogRing({ radius }: { radius: number }) {
     const rng = rngFor("fog");
     for (let i = 0; i < count; i++) {
       const a = rng() * Math.PI * 2;
-      const r = radius + 8 + rng() * 18; // out beyond the islands, over open water
+      const r = radius + 8 + rng() * 18; // wisps drifting beyond the cloud
       const s = 2 + Math.floor(rng() * 4);
       tmp.position.set(Math.cos(a) * r, 0.5 + rng() * 4, Math.sin(a) * r);
       tmp.scale.set(s, 1 + Math.floor(rng() * 3), s);

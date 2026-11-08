@@ -14,7 +14,7 @@ import { LinkLayer } from "./LinkLayer";
 import { Plaza } from "./Plaza";
 import { SelectionMarker } from "./SelectionMarker";
 import { Terrain } from "./Terrain";
-import { Water } from "./Water";
+import { CloudBase } from "./CloudBase";
 import { Bridges } from "./Bridges";
 import { markWorldMounted } from "./useRise";
 
@@ -25,7 +25,7 @@ function CityScene() {
   return (
     <>
       <Lighting radius={city.radius} />
-      <Water radius={city.radius} />
+      <CloudBase radius={city.radius} />
       <Terrain city={city} />
       <Bridges bridges={city.bridges} />
       <Plaza />

@@ -31,7 +31,7 @@ export function DistrictLegend() {
         <KeyRow icon={<Swatch color="#5d6178" />}>Path</KeyRow>
         <KeyRow icon={<Swatch color="#8a7440" />}>Main boulevard · ring road on the central island</KeyRow>
         <KeyRow icon={<Swatch color="#6b4d37" />}>Bridge to an emotion island</KeyRow>
-        <KeyRow icon={<Swatch color="#0d1733" />}>Water</KeyRow>
+        <KeyRow icon={<Swatch color="#4a5080" />}>Cloud sea · the city floats on a giant cloud</KeyRow>
         <div className="mb-1 mt-2 font-display text-[9px] uppercase tracking-[0.14em] text-ink-faint">Places</div>
         <KeyRow icon={<span className="text-[var(--yours)]">★</span>}>Landmark · “Yours” symbol</KeyRow>
         <KeyRow icon={<span className="text-[#ff9d3b]">?</span>}>Construction site</KeyRow>
