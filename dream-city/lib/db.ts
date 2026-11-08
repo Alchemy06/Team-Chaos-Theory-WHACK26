@@ -1,7 +1,7 @@
 // Server-only Supabase access for the journal tables (see supabase/schema.sql).
 // Uses the service role key, which bypasses RLS, so never import this from a client component.
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Emotion } from "./types";
+import type { Emotion, WorkKind } from "./types";
 
 export type SessionStatus = "draft" | "questioning" | "completed";
 
@@ -141,4 +141,35 @@ export async function upsertBuildData(b: BuildData): Promise<void> {
 
 export async function listBuildData(): Promise<BuildData[]> {
   return (must(await db().from("build_data").select()) as BuildDataRow[]).map(fromRow);
+}
+
+// ---- media (recently consumed books, films, songs, games) ----
+
+export type Media = {
+  id: string;
+  kind: WorkKind;
+  title: string;
+  creator: string | null;
+  consumed_on: string; // YYYY-MM-DD
+  user_note: string | null;
+  themes: string[];
+  main_emotion: Emotion | null;
+  external_id: string | null;
+  created_at: string;
+};
+
+export type NewMedia = Pick<Media, "kind" | "title"> &
+  Partial<Pick<Media, "creator" | "consumed_on" | "user_note" | "themes" | "main_emotion" | "external_id">>;
+
+export async function addMedia(m: NewMedia): Promise<Media> {
+  return must(await db().from("media").insert(m).select().single());
+}
+
+// Newest first. Pass a date (YYYY-MM-DD) to get only media consumed on or after it,
+// e.g. the week before a dream.
+export async function listMedia(opts: { since?: string; limit?: number } = {}): Promise<Media[]> {
+  let q = db().from("media").select().order("consumed_on", { ascending: false });
+  if (opts.since) q = q.gte("consumed_on", opts.since);
+  if (opts.limit) q = q.limit(opts.limit);
+  return must(await q);
 }
