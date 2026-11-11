@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { useCityStore } from "@/store/useCityStore";
 import { cellKey, type WorldCity } from "./cityGeometry";
 import { noiseTexture, voxelGeometry } from "./resources";
-import { buildGround, buildProps } from "./terrain";
+import { buildGround, buildProps } from "./terrainGeometry";
 import { VoxelMesh } from "./VoxelMesh";
 
 const tmp = new THREE.Object3D();
@@ -80,3 +80,4 @@ export function Terrain({ city }: { city: WorldCity }) {
     </group>
   );
 }
+
