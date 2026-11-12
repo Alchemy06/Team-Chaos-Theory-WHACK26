@@ -29,7 +29,7 @@ export function claimsOf(insight: string): Claim[] {
     .map((p) => ({ text: p, cited: [...p.matchAll(/\[([^\]]+)\]/g)].map((m) => m[1].trim()) }));
 }
 
-export async function checkSupport(insight: string, pack: EvidencePack): Promise<InsightSupport> {
+export async function checkSupport(insight: string, pack: EvidencePack, signal?: AbortSignal): Promise<InsightSupport> {
   const claims = claimsOf(insight);
   if (claims.length === 0) return { checked: false, reason: "No claims to check." };
   const byId = new Map(pack.items.map((i) => [i.id, i.text]));
@@ -43,7 +43,7 @@ export async function checkSupport(insight: string, pack: EvidencePack): Promise
   let lastError = "";
   for (const model of JUDGE_MODELS) {
     try {
-      const raw = (await groqJSON(SUPPORT_SYSTEM, user, { temperature: 0, maxTokens: 1500, model })) as { results?: unknown };
+      const raw = (await groqJSON(SUPPORT_SYSTEM, user, { temperature: 0, maxTokens: 1500, model, signal })) as { results?: unknown };
       const results = Array.isArray(raw.results) ? (raw.results as { n?: unknown; verdict?: unknown; reason?: unknown }[]) : [];
       const sentences = claims.map((c, i) => {
         const r = results.find((x) => Number(x.n) === i + 1);

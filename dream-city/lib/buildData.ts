@@ -19,14 +19,14 @@ export class ExtractError extends Error {
 export type ExtractResult = { entry: Entry; extraction: Extraction; warnings: string[] };
 
 // Asks the model, checks the answer in code, and retries once with the exact problems.
-export async function runExtraction(markdown: string, entry: Entry): Promise<ExtractResult> {
+export async function runExtraction(markdown: string, entry: Entry, signal?: AbortSignal): Promise<ExtractResult> {
   if (!entry.transcript.trim()) throw new ExtractError("The entry has no dream text.", 400);
   let user = markdown;
   let lastErrors: string[] = [];
   for (let attempt = 0; attempt < 2; attempt++) {
     let raw: unknown;
     try {
-      raw = await groqJSON(EXTRACTION_SYSTEM, user, { temperature: 0.1, maxTokens: 3000 });
+      raw = await groqJSON(EXTRACTION_SYSTEM, user, { temperature: 0.1, maxTokens: 3000, signal });
     } catch (err) {
       throw new ExtractError("Could not extract this dream.", 502, [err instanceof Error ? err.message : String(err)]);
     }

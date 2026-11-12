@@ -1,37 +1,11 @@
-# Re-explore
+# Re-explore — final flow
 
-The building's detail panel has a **Re-explore this dream** button below its
-insight. It prepares exactly three new questions from the complete saved journal.
-It uses the existing Groq model with a question-writing prompt; LLM 2 then reads
-the expanded journal to refresh the same building after the answers are saved.
+Each round asks three fresh questions using the complete saved conversation and previous AI reflections. Reflections are explicitly labelled as AI context, never evidence about the dreamer.
 
-## Database setup
+Answers are saved first to journal_messages and appended to journal_sessions.conversation_md. A separate retryable refresh uses LLM 2a, server-side evidence from the same city, and the shared LLM 2b writer and support checker. The resulting building, cited insight, and permanent round snapshots are committed atomically. Earlier rounds retain their questions, answers, Markdown, building snapshot and reflection. The first round also captures the prior reflection and building when available.
 
-Apply `supabase/migrations/004_reexplore.sql` once in Supabase SQL Editor before
-using the feature. It adds a server-only `journal_explorations` table and an atomic
-save function. No existing rows are changed by the migration. Like the existing
-journal routes, this feature uses the server's service-role client and the app's
-current no-login access model.
+The popup reuses the original assistant voice, microphone, keyboard mode, Next/Back and manual Mic retry behaviour. Closing preserves unfinished typed answers in this tab. Refresh errors never remove saved answers. Retry update works after reopening the panel; overlapping workers are leased and expired workers cannot overwrite a newer update.
 
-Each saved round appends six messages to `journal_messages`, keeping answer links,
-and appends a dated section to `journal_sessions.conversation_md`. The original
-Markdown remains at the beginning, and each completed round retains a full
-Markdown snapshot. Retries with identical answers do not append duplicates.
-Changed answers to a completed round are rejected. A draft based on a changed
-journal is rejected rather than overwriting newer history.
+Database setup: apply 004_reexplore.sql first, then 20261108105134_reexplore_insights.sql. The final migration adds missing extraction/insight storage and snapshot fields without rewriting existing dream text or building values. All new functions are service-role-only. Existing no-login journal access remains unchanged.
 
-Closing the form keeps the generated questions in the database; unfinished typed
-answers stay in this browser tab's session storage. Saving requires three answers
-(“I don't know” is a valid answer). Questions are generated from the full history,
-not from a summary. If generation fails, nothing is appended to the conversation.
-If extraction fails, the answers remain saved and **Retry building update** is
-available, including after reopening the panel.
-
-The full-entry and transcript views continue to show every saved question/answer.
-The original dream ID, date, text, and original completion timestamp are preserved.
-
-## Checks
-
-Run `npm test`, `npm run test:llm2`, `npm run test:reexplore`, `npm run build`, and
-`npm run test:smoke`. Automated AI calls are mocked. Database migration tests use
-a local disposable Postgres-compatible database, never the live Supabase project.
+Tests: npm test; npm run test:llm2; npm run test:reexplore; npm run build; npm run test:smoke. AI and microphone tests use mocks. SQL transaction tests execute the actual migrations in disposable local Postgres; they never write to the live database.

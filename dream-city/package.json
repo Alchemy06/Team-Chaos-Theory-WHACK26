@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:smoke": "node --test tests/smoke.test.mjs",
-    "test": "node --experimental-strip-types --test tests/journalSequence.test.mjs tests/journalMarkdown.test.mjs tests/loadSavedDreams.test.mjs tests/sharedVoiceAnswer.test.mjs",
+    "test": "node tests/run-tests.mjs",
     "test:llm2": "node --test tests/llm2Markdown.test.mjs",
     "test:llm2:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/llm2Emotion.live.test.mjs",
     "test:insight:live": "RUN_LIVE_LLM_TESTS=1 node --test tests/insight.live.test.mjs",
@@ -20,7 +20,9 @@
     "eval:score": "npx --yes tsx scripts/score_llm2a.ts",
     "eval:llm2b": "npx --yes tsx scripts/eval_llm2b.ts",
     "seed:demo": "node scripts/seedPersonas.mjs",
-    "test:reexplore": "node --test tests/reexplore.test.mjs tests/reexploreDatabase.test.mjs"
+    "test:reexplore": "node --test tests/reexplore.test.mjs tests/reexploreDatabase.test.mjs tests/reexploreFinalDatabase.test.mjs tests/reexploreRefresh.test.mjs",
+    "test:all": "npm test && npm run build && npm run test:smoke",
+    "test:live": "RUN_LIVE_LLM_TESTS=1 node --test --test-concurrency=1 tests/llm2Emotion.live.test.mjs tests/insight.live.test.mjs tests/questions.live.test.mjs tests/speech.live.test.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

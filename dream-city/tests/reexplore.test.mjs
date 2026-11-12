@@ -14,20 +14,22 @@ const markdown = "# Dream Journal\n\n## User\n\nI flew above a city.\n\n## Assis
 const questions = ["What detail do you remember most clearly?", "What did the city remind you of?", "What was happening just before you flew?"];
 
 // (added) Exercise the real routes and generation logic without network or live data.
-function harness({ rounds = [], ai = { questions }, missing = false, extractionFails = false, dbCode, rpcCode, aiFails = false } = {}) {
+function harness({ rounds = [], ai = { questions }, missing = false, extractionFails = false, dbCode, rpcCode, aiFails = false, previousInsight = null } = {}) {
   const state = { rounds: [...rounds], aiCalls: [], rpcCalls: [], extractionCalls: 0 };
   const client = {
-    from() {
+    from(table) {
       let mode = "read", payload;
       const query = {
         select() { return query; }, eq() { return query; }, order() { return query; },
         insert(value) { mode = "insert"; payload = value; return query; },
         update(value) { mode = "update"; payload = value; return query; },
         single() { return Promise.resolve(result()); },
+        maybeSingle() { return Promise.resolve(result()); },
         then(resolve, reject) { return Promise.resolve(result()).then(resolve, reject); },
       };
       function result() {
         if (dbCode) return { data: null, error: { code: dbCode, message: "database unavailable" } };
+        if (table === "build_data") return { data: { journal_id: sessionId }, error: null };
         if (mode === "insert") {
           const round = { id: roundId, ...payload, status: "draft", answers: null, build_updated: false, created_at: "2026-11-08T12:00:00Z" };
           state.rounds.push(round);
@@ -44,15 +46,15 @@ function harness({ rounds = [], ai = { questions }, missing = false, extractionF
     },
   };
   const mocks = {
-    "@/lib/db": { db: () => client, getSession: async () => missing ? null : ({ id: sessionId, status: "completed", conversation_md: markdown }) },
+    "@/lib/db": { latestInsights: async () => new Map(previousInsight ? [[sessionId, previousInsight]] : []), db: () => client, getSession: async () => missing ? null : ({ id: sessionId, status: "completed", conversation_md: markdown }) },
     "@/lib/groq": { groqJSON: async (_system, user) => {
       state.aiCalls.push(user);
       if (aiFails) throw new Error("AI unavailable");
       return ai;
     } },
-    "@/lib/buildData": { extractSession: async () => {
+    "@/lib/reexploreRefresh": { refreshExploration: async () => {
       state.extractionCalls++;
-      if (extractionFails) throw new Error("AI unavailable");
+      return { saved: true, updated: !extractionFails };
     } },
   };
   const cache = new Map();
@@ -90,7 +92,7 @@ test("generates three questions from the entire saved history and saves a draft"
   assert.equal(response.status, 200);
   const { round } = await response.json();
   assert.deepEqual(round.questions, questions);
-  assert.equal(h.state.aiCalls[0], markdown);
+  assert.equal(JSON.parse(h.state.aiCalls[0]).journal, markdown);
   assert.equal(h.state.rounds[0].base_markdown, markdown);
   assert.equal(h.state.rpcCalls.length, 0);
 });
@@ -121,7 +123,7 @@ test("missing dreams and database migrations produce actionable errors", async (
   assert.equal((await harness({ missing: true }).route.POST(null, context())).status, 404);
   const response = await harness({ dbCode: "42P01" }).route.POST(null, context());
   assert.equal(response.status, 503);
-  assert.match((await response.json()).error, /004_reexplore.sql/);
+  assert.match((await response.json()).error, /reexplore_insights.sql/);
 });
 
 test("all three answers are required before any persistence or extraction", async () => {
@@ -133,18 +135,18 @@ test("all three answers are required before any persistence or extraction", asyn
   }
 });
 
-test("saves using the transactional RPC before refreshing the same dream", async () => {
+test("saves using the transactional RPC before a separate AI refresh", async () => {
   const h = harness();
   const response = await h.route.PUT(request({ roundId, answers }), context());
-  assert.deepEqual(await response.json(), { saved: true, updated: true });
+  assert.deepEqual(await response.json(), { saved: true, updated: false });
   assert.equal(h.state.rpcCalls[0].name, "complete_journal_exploration");
   assert.equal(h.state.rpcCalls[0].args.p_session_id, sessionId);
-  assert.equal(h.state.extractionCalls, 1);
+  assert.equal(h.state.extractionCalls, 0);
 });
 
-test("extraction failure reports saved answers and allows an update retry", async () => {
+test("refresh failures report saved answers without repeating the save", async () => {
   const h = harness({ extractionFails: true });
-  const response = await h.route.PUT(request({ roundId, answers }), context());
+  const response = await h.route.PATCH(request({ roundId }), context());
   const result = await response.json();
   assert.equal(response.status, 200);
   assert.equal(result.saved, true);
@@ -160,5 +162,21 @@ test("stale rounds cannot trigger extraction", async () => {
 test("invalid session IDs are rejected before database or model access", async () => {
   const h = harness();
   assert.equal((await h.route.POST(null, context("bad"))).status, 400);
+  assert.equal(h.state.aiCalls.length, 0);
+});
+
+test("previous AI reflections are supplied as separate context alongside the full journal", async () => {
+  const insight = { text: "A prior reflection", source: "ai", cited: ["dream"] };
+  const h = harness({ previousInsight: insight });
+  assert.equal((await h.route.POST(null, context())).status, 200);
+  const contextValue = JSON.parse(h.state.aiCalls[0]);
+  assert.equal(contextValue.journal, markdown);
+  assert.equal(contextValue.previousReflections[0].text, insight.text);
+  assert.equal(h.state.rounds[0].previous_insight.text, insight.text);
+});
+
+test("an unfinished reflection update blocks another question round", async () => {
+  const h = harness({ rounds: [{ id: roundId, status: "completed", build_updated: true, insight_snapshot: null }] });
+  assert.equal((await h.route.POST(null, context())).status, 409);
   assert.equal(h.state.aiCalls.length, 0);
 });

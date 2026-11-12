@@ -39,7 +39,7 @@ export type InsightResult = {
 const writerModel = () => process.env.GROQ_MODEL ?? "openai/gpt-oss-120b";
 const supportOn = () => process.env.INSIGHT_SUPPORT_CHECK !== "off";
 
-export async function generateInsight(body: InsightRequest): Promise<InsightResult> {
+export async function generateInsight(body: InsightRequest, signal?: AbortSignal): Promise<InsightResult> {
   const works = new Map((body.works ?? []).map((w) => [w.id, w]));
   const pack = buildEvidencePack({
     dream: body.dream,
@@ -57,7 +57,7 @@ export async function generateInsight(body: InsightRequest): Promise<InsightResu
   for (let attempt = 0; attempt < 2; attempt++) {
     let text = "";
     try {
-      const out = (await groqJSON(INSIGHT_SYSTEM, user, { temperature: 0.4, maxTokens: 1200 })) as { insight?: unknown };
+      const out = (await groqJSON(INSIGHT_SYSTEM, user, { temperature: 0.4, maxTokens: 1200, signal })) as { insight?: unknown };
       text = typeof out.insight === "string" ? out.insight.trim() : "";
     } catch (err) {
       attempts.push({ text: "", problems: [], error: err instanceof Error ? err.message : String(err) });
@@ -68,7 +68,7 @@ export async function generateInsight(body: InsightRequest): Promise<InsightResu
     let problems = check.problems;
     let support: InsightSupport | undefined;
     if (check.ok && supportOn()) {
-      support = await checkSupport(text, pack);
+      support = await checkSupport(text, pack, signal);
       problems = supportProblems(support);
     }
     attempts.push({ text, problems, support });

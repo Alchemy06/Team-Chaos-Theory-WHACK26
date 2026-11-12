@@ -182,8 +182,9 @@ export const fromRow = (r: BuildDataRow): BuildData => ({
   typicalDreams: r.typical_dreams ?? [],
 });
 
-export async function upsertBuildData(b: BuildData): Promise<void> {
-  const row: BuildDataRow = {
+// (added) One row mapping for normal extraction and atomic Re-explore refresh.
+export function toBuildRow(b: BuildData): BuildDataRow {
+  return {
     journal_id: b.journalID,
     main_emotion: b.mainEmotion,
     secondary_emotion: b.secondaryEmotion,
@@ -201,6 +202,10 @@ export async function upsertBuildData(b: BuildData): Promise<void> {
     mentioned_works: b.mentionedWorks,
     typical_dreams: b.typicalDreams,
   };
+}
+
+export async function upsertBuildData(b: BuildData): Promise<void> {
+  const row = toBuildRow(b);
   const res = await db().from("build_data").upsert(row);
   // Database not migrated yet (supabase/migrations/003_build_data_llm2a.sql): save the original columns
   // so recording still works, and say what to run.
